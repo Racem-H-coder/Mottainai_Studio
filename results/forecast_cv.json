@@ -1,0 +1,1094 @@
+{
+ "folds": [
+  "2025-06",
+  "2025-07",
+  "2025-08",
+  "2025-09",
+  "2026-05"
+ ],
+ "early_stopping_days": 21,
+ "best": {
+  "target": "level",
+  "params": {
+   "num_leaves": 31,
+   "learning_rate": 0.06,
+   "min_data_in_leaf": 20,
+   "feature_fraction": 0.9
+  },
+  "cv_MAE": 20.27518945904772,
+  "cv_MAE_17_20": 33.68649611110157,
+  "cv_MAE_hot_eve": 41.48487330669137,
+  "mean_iter": 113.0
+ },
+ "grid": [
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.613239327037046,
+   "cv_MAE_17_20": 35.08060350371388,
+   "cv_MAE_hot_eve": 47.84863952153926,
+   "mean_iter": 173.0
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 20.474820448500832,
+   "cv_MAE_17_20": 35.0199289163654,
+   "cv_MAE_hot_eve": 47.639657999488406,
+   "mean_iter": 225.4
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.5478022566657,
+   "cv_MAE_17_20": 35.653656518422316,
+   "cv_MAE_hot_eve": 48.79517363284162,
+   "mean_iter": 164.4
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 20.509704622086584,
+   "cv_MAE_17_20": 35.24344878839663,
+   "cv_MAE_hot_eve": 47.86928191287215,
+   "mean_iter": 177.6
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.31163263256055,
+   "cv_MAE_17_20": 34.92185989265387,
+   "cv_MAE_hot_eve": 48.18971507399527,
+   "mean_iter": 170.2
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 20.60347709316691,
+   "cv_MAE_17_20": 34.46518291773593,
+   "cv_MAE_hot_eve": 46.78218535975987,
+   "mean_iter": 167.4
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.63646962901778,
+   "cv_MAE_17_20": 34.26957711748302,
+   "cv_MAE_hot_eve": 46.09703420946518,
+   "mean_iter": 230.8
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 20.471598349135462,
+   "cv_MAE_17_20": 33.00944558420526,
+   "cv_MAE_hot_eve": 41.00693118834756,
+   "mean_iter": 131.2
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.74553569436703,
+   "cv_MAE_17_20": 35.40240319849611,
+   "cv_MAE_hot_eve": 47.910441568035466,
+   "mean_iter": 101.8
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 20.718865221732912,
+   "cv_MAE_17_20": 35.23732837448736,
+   "cv_MAE_hot_eve": 47.77614269502943,
+   "mean_iter": 105.8
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.598844628979585,
+   "cv_MAE_17_20": 34.903598521765495,
+   "cv_MAE_hot_eve": 47.2944904690018,
+   "mean_iter": 92.2
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 20.75557146056499,
+   "cv_MAE_17_20": 35.27182818505785,
+   "cv_MAE_hot_eve": 48.30289710845468,
+   "mean_iter": 93.2
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.362556528060118,
+   "cv_MAE_17_20": 34.18726463476723,
+   "cv_MAE_hot_eve": 41.248902349660824,
+   "mean_iter": 213.0
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 20.58878401487872,
+   "cv_MAE_17_20": 34.551178750830296,
+   "cv_MAE_hot_eve": 45.9561382974272,
+   "mean_iter": 160.8
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.590329171991545,
+   "cv_MAE_17_20": 35.88237417819357,
+   "cv_MAE_hot_eve": 48.399852455279216,
+   "mean_iter": 155.8
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 20.491292567359544,
+   "cv_MAE_17_20": 35.135678049260896,
+   "cv_MAE_hot_eve": 47.64502662843275,
+   "mean_iter": 164.8
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.35119240476662,
+   "cv_MAE_17_20": 35.21384556960655,
+   "cv_MAE_hot_eve": 47.29579686416937,
+   "mean_iter": 182.0
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 20.346727553500124,
+   "cv_MAE_17_20": 34.74959506308152,
+   "cv_MAE_hot_eve": 45.35692032164055,
+   "mean_iter": 153.2
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.470606925269262,
+   "cv_MAE_17_20": 34.73517773102008,
+   "cv_MAE_hot_eve": 46.07143847500794,
+   "mean_iter": 147.0
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 20.27518945904772,
+   "cv_MAE_17_20": 33.68649611110157,
+   "cv_MAE_hot_eve": 41.48487330669137,
+   "mean_iter": 113.0
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.559913637645224,
+   "cv_MAE_17_20": 35.39514224500046,
+   "cv_MAE_hot_eve": 47.64817512885655,
+   "mean_iter": 78.0
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 20.72631774752552,
+   "cv_MAE_17_20": 34.97765805719393,
+   "cv_MAE_hot_eve": 47.009787818718685,
+   "mean_iter": 68.8
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.316333727403503,
+   "cv_MAE_17_20": 34.703134672685906,
+   "cv_MAE_hot_eve": 45.535010032001644,
+   "mean_iter": 85.8
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 20.35886558656373,
+   "cv_MAE_17_20": 34.796171339157375,
+   "cv_MAE_hot_eve": 44.97952439284636,
+   "mean_iter": 83.4
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.31430699368908,
+   "cv_MAE_17_20": 34.28294672617549,
+   "cv_MAE_hot_eve": 42.0312564896282,
+   "mean_iter": 206.2
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 20.539925576561863,
+   "cv_MAE_17_20": 35.222452741266004,
+   "cv_MAE_hot_eve": 44.721431144443216,
+   "mean_iter": 319.0
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.327695976859943,
+   "cv_MAE_17_20": 34.19510237301554,
+   "cv_MAE_hot_eve": 43.71508827524084,
+   "mean_iter": 201.6
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 20.329989363380157,
+   "cv_MAE_17_20": 34.927861574116015,
+   "cv_MAE_hot_eve": 43.598798336615175,
+   "mean_iter": 166.8
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.558375963046196,
+   "cv_MAE_17_20": 36.12263286714468,
+   "cv_MAE_hot_eve": 48.39743243257256,
+   "mean_iter": 182.6
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 20.61293073747427,
+   "cv_MAE_17_20": 35.46051352589788,
+   "cv_MAE_hot_eve": 47.194466544161855,
+   "mean_iter": 159.6
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.674431327853938,
+   "cv_MAE_17_20": 35.721410439938026,
+   "cv_MAE_hot_eve": 45.6032708684141,
+   "mean_iter": 184.0
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 20.335283005253554,
+   "cv_MAE_17_20": 34.051816023242054,
+   "cv_MAE_hot_eve": 43.0651951711904,
+   "mean_iter": 168.6
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.32637144456207,
+   "cv_MAE_17_20": 34.74755772747978,
+   "cv_MAE_hot_eve": 45.03628670368569,
+   "mean_iter": 101.6
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 20.413751915608962,
+   "cv_MAE_17_20": 34.77388228101351,
+   "cv_MAE_hot_eve": 45.03949487608359,
+   "mean_iter": 78.8
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.307340039886704,
+   "cv_MAE_17_20": 34.77127230868481,
+   "cv_MAE_hot_eve": 46.34224218675055,
+   "mean_iter": 288.2
+  },
+  {
+   "target": "level",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 20.837516234390876,
+   "cv_MAE_17_20": 35.75883776096687,
+   "cv_MAE_hot_eve": 47.16446715288051,
+   "mean_iter": 126.0
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.827647078927974,
+   "cv_MAE_17_20": 34.68909095128786,
+   "cv_MAE_hot_eve": 42.263715167918704,
+   "mean_iter": 501.4
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 21.06644505686278,
+   "cv_MAE_17_20": 35.01894118447229,
+   "cv_MAE_hot_eve": 42.69363245823779,
+   "mean_iter": 431.6
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.890703080982945,
+   "cv_MAE_17_20": 34.87516333822142,
+   "cv_MAE_hot_eve": 42.05175637599586,
+   "mean_iter": 856.0
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 21.178846619362478,
+   "cv_MAE_17_20": 35.32241388864163,
+   "cv_MAE_hot_eve": 42.39825926500802,
+   "mean_iter": 339.8
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 21.424675407601505,
+   "cv_MAE_17_20": 35.43802736331993,
+   "cv_MAE_hot_eve": 41.215430161605255,
+   "mean_iter": 587.8
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 21.57323824700187,
+   "cv_MAE_17_20": 35.60019186309659,
+   "cv_MAE_hot_eve": 43.04438890255246,
+   "mean_iter": 574.8
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.953656271329752,
+   "cv_MAE_17_20": 34.86267539332739,
+   "cv_MAE_hot_eve": 41.813525640026874,
+   "mean_iter": 229.4
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 21.23290092045497,
+   "cv_MAE_17_20": 35.40105098859712,
+   "cv_MAE_hot_eve": 43.65008809719102,
+   "mean_iter": 183.4
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.757313423173443,
+   "cv_MAE_17_20": 34.62298187136551,
+   "cv_MAE_hot_eve": 41.04765628976426,
+   "mean_iter": 258.8
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 21.181438249059457,
+   "cv_MAE_17_20": 35.32984010250889,
+   "cv_MAE_hot_eve": 45.21672225871242,
+   "mean_iter": 342.0
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 21.661398670428966,
+   "cv_MAE_17_20": 35.446209671694675,
+   "cv_MAE_hot_eve": 41.22414145115675,
+   "mean_iter": 211.0
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 15,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 21.791921703333465,
+   "cv_MAE_17_20": 36.076298040563636,
+   "cv_MAE_hot_eve": 42.59191516777817,
+   "mean_iter": 586.0
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.694153894281925,
+   "cv_MAE_17_20": 34.90378422133771,
+   "cv_MAE_hot_eve": 44.092038991192204,
+   "mean_iter": 724.2
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 21.00311885943325,
+   "cv_MAE_17_20": 35.56845502867695,
+   "cv_MAE_hot_eve": 46.22612793414035,
+   "mean_iter": 537.8
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.9517446806366,
+   "cv_MAE_17_20": 35.208260911044334,
+   "cv_MAE_hot_eve": 42.755071215146884,
+   "mean_iter": 768.6
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 20.873213422915,
+   "cv_MAE_17_20": 35.105191001554324,
+   "cv_MAE_hot_eve": 44.92692127701628,
+   "mean_iter": 655.4
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 21.23913986793162,
+   "cv_MAE_17_20": 35.30212620252847,
+   "cv_MAE_hot_eve": 43.10349718650865,
+   "mean_iter": 1161.6
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 21.563039905848427,
+   "cv_MAE_17_20": 35.750581497996734,
+   "cv_MAE_hot_eve": 45.59450654441162,
+   "mean_iter": 424.8
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.62082821029978,
+   "cv_MAE_17_20": 34.628518464557764,
+   "cv_MAE_hot_eve": 42.06023402398566,
+   "mean_iter": 214.2
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 20.852594879447047,
+   "cv_MAE_17_20": 34.90838203805736,
+   "cv_MAE_hot_eve": 45.23725816545211,
+   "mean_iter": 339.6
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.909607005613818,
+   "cv_MAE_17_20": 34.83763336826369,
+   "cv_MAE_hot_eve": 42.25140833081494,
+   "mean_iter": 270.4
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 21.01023371520627,
+   "cv_MAE_17_20": 35.109972256826424,
+   "cv_MAE_hot_eve": 46.84946768742692,
+   "mean_iter": 335.2
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 21.771258288839086,
+   "cv_MAE_17_20": 35.958869233094724,
+   "cv_MAE_hot_eve": 44.586740842933516,
+   "mean_iter": 440.0
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 31,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 21.40524501699365,
+   "cv_MAE_17_20": 35.25330381956171,
+   "cv_MAE_hot_eve": 45.31567771142261,
+   "mean_iter": 421.2
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.707034174686587,
+   "cv_MAE_17_20": 34.51835220938726,
+   "cv_MAE_hot_eve": 41.76926403847303,
+   "mean_iter": 609.2
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 20.93723323481284,
+   "cv_MAE_17_20": 35.443443880154476,
+   "cv_MAE_hot_eve": 45.58821507534268,
+   "mean_iter": 678.4
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.45718612012933,
+   "cv_MAE_17_20": 34.101978753945794,
+   "cv_MAE_hot_eve": 41.60803395689994,
+   "mean_iter": 527.0
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 21.00527013843795,
+   "cv_MAE_17_20": 35.18806588209563,
+   "cv_MAE_hot_eve": 44.99683957688878,
+   "mean_iter": 667.6
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 21.09752227986373,
+   "cv_MAE_17_20": 35.11938467325578,
+   "cv_MAE_hot_eve": 44.28083207085063,
+   "mean_iter": 831.6
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.03,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 21.62300727224238,
+   "cv_MAE_17_20": 35.86747676076248,
+   "cv_MAE_hot_eve": 46.25276285280974,
+   "mean_iter": 744.0
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.777140230802143,
+   "cv_MAE_17_20": 34.38778090600673,
+   "cv_MAE_hot_eve": 40.50597087606048,
+   "mean_iter": 365.8
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 20,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 21.042001990108034,
+   "cv_MAE_17_20": 35.13338047665341,
+   "cv_MAE_hot_eve": 44.95744322227186,
+   "mean_iter": 266.4
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 20.77646794615668,
+   "cv_MAE_17_20": 34.2759313816148,
+   "cv_MAE_hot_eve": 41.514441266608486,
+   "mean_iter": 192.2
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 60,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 21.09205120599434,
+   "cv_MAE_17_20": 35.26636922420105,
+   "cv_MAE_hot_eve": 45.066550726183344,
+   "mean_iter": 344.6
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.7
+   },
+   "cv_MAE": 21.250901705815885,
+   "cv_MAE_17_20": 34.99944136907789,
+   "cv_MAE_hot_eve": 42.538753248391494,
+   "mean_iter": 765.6
+  },
+  {
+   "target": "ratio",
+   "params": {
+    "num_leaves": 63,
+    "learning_rate": 0.06,
+    "min_data_in_leaf": 150,
+    "feature_fraction": 0.9
+   },
+   "cv_MAE": 21.438215823729053,
+   "cv_MAE_17_20": 35.273322425083315,
+   "cv_MAE_hot_eve": 46.04159394267451,
+   "mean_iter": 475.6
+  }
+ ],
+ "calibration": {
+  "applied": true,
+  "p90_adj": {
+   "0": 0.03668425749231119,
+   "1": -2.4462290708689522,
+   "2": -3.837422743069965,
+   "3": -5.003798089062769,
+   "4": -1.2654197374543799,
+   "5": -1.5495204907173274,
+   "6": 2.805196021788902,
+   "7": 4.123855627800253,
+   "8": 7.325797285564647,
+   "9": 4.53237114670867,
+   "10": 4.306731975506921,
+   "11": 6.125840920463986,
+   "12": 9.83423378273443,
+   "13": 10.616127160813335,
+   "14": 12.51415550499189,
+   "15": 14.142221501566382,
+   "16": 21.626511917333175,
+   "17": 35.27146773553477,
+   "18": 41.01128162737871,
+   "19": 33.286569620174646,
+   "20": 13.186443486623261,
+   "21": 6.210392493566474,
+   "22": 1.5538027208536391,
+   "23": -5.279512133107289
+  },
+  "hot_adj": 25.359520143452187,
+  "before": {
+   "by_hour": {
+    "0": 0.9019607843137255,
+    "1": 0.9183006535947712,
+    "2": 0.954248366013072,
+    "3": 0.9444444444444444,
+    "4": 0.9183006535947712,
+    "5": 0.9150326797385621,
+    "6": 0.8823529411764706,
+    "7": 0.8660130718954249,
+    "8": 0.8251633986928104,
+    "9": 0.8578431372549019,
+    "10": 0.8643790849673203,
+    "11": 0.8480392156862745,
+    "12": 0.8235294117647058,
+    "13": 0.8137254901960784,
+    "14": 0.8120915032679739,
+    "15": 0.8088235294117647,
+    "16": 0.7565359477124183,
+    "17": 0.673202614379085,
+    "18": 0.6258169934640523,
+    "19": 0.7418300653594772,
+    "20": 0.8186274509803921,
+    "21": 0.8562091503267973,
+    "22": 0.8856209150326797,
+    "23": 0.9411764705882353
+   },
+   "hot_eve": 0.6150793650793651
+  },
+  "after": {
+   "by_hour": {
+    "0": 0.9035947712418301,
+    "1": 0.9035947712418301,
+    "2": 0.9084967320261438,
+    "3": 0.9052287581699346,
+    "4": 0.9035947712418301,
+    "5": 0.9035947712418301,
+    "6": 0.9035947712418301,
+    "7": 0.9035947712418301,
+    "8": 0.9035947712418301,
+    "9": 0.9035947712418301,
+    "10": 0.9035947712418301,
+    "11": 0.9035947712418301,
+    "12": 0.9035947712418301,
+    "13": 0.9035947712418301,
+    "14": 0.9035947712418301,
+    "15": 0.9035947712418301,
+    "16": 0.9035947712418301,
+    "17": 0.9117647058823529,
+    "18": 0.9166666666666666,
+    "19": 0.9183006535947712,
+    "20": 0.9035947712418301,
+    "21": 0.9035947712418301,
+    "22": 0.9035947712418301,
+    "23": 0.9052287581699346
+   },
+   "hot_eve": 0.876984126984127
+  }
+ },
+ "cv": {
+  "v1": {
+   "MAE": 20.91171423923625,
+   "MAPE": 0.0642112487209105,
+   "MAPE_17_20": 0.07018181015766743,
+   "MAPE_heatwave": 0.05889589481376331,
+   "hot_eve_bias_kw": -37.630461183060426,
+   "worst_hot_eve_peak_err_kw": -204.1402391930684,
+   "peak_err_kw": 42.21498309215543,
+   "p90_coverage": 0.8312908496732027,
+   "p90_coverage_18_19": 0.6977124183006536,
+   "p90_coverage_hot_eve": 0.5952380952380952,
+   "pinball_p90": 5.64698607125493,
+   "n_hot_days": 21
+  },
+  "v2_raw": {
+   "MAE": 20.27518945904772,
+   "MAPE": 0.06345527588814646,
+   "MAPE_17_20": 0.06517921294699569,
+   "MAPE_heatwave": 0.06567211704992,
+   "hot_eve_bias_kw": -33.495524146028515,
+   "worst_hot_eve_peak_err_kw": -192.43795261157823,
+   "peak_err_kw": 39.524804948739074,
+   "p90_coverage": 0.8438861655773421,
+   "p90_coverage_18_19": 0.6838235294117647,
+   "p90_coverage_hot_eve": 0.6150793650793651,
+   "pinball_p90": 5.497485728389778,
+   "n_hot_days": 21
+  },
+  "v2": {
+   "MAE": 20.27518945904772,
+   "MAPE": 0.06345527588814646,
+   "MAPE_17_20": 0.06517921294699569,
+   "MAPE_heatwave": 0.06567211704992,
+   "hot_eve_bias_kw": -33.495524146028515,
+   "worst_hot_eve_peak_err_kw": -192.43795261157823,
+   "peak_err_kw": 39.524804948739074,
+   "p90_coverage": 0.9054330065359477,
+   "p90_coverage_18_19": 0.9174836601307189,
+   "p90_coverage_hot_eve": 0.876984126984127,
+   "pinball_p90": 4.817893821977152,
+   "n_hot_days": 21
+  }
+ },
+ "seconds": 248
+}

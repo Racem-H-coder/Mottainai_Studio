@@ -1,0 +1,66 @@
+{
+ "title": "Extra planning margin barely matters",
+ "caption": "Open loop. No overload at any margin; the p90 forecast already acts as the margin.",
+ "simulated": true,
+ "type": "bar",
+ "data": {
+  "labels": [
+   "0%",
+   "5%",
+   "10%"
+  ],
+  "datasets": [
+   {
+    "label": "70% adoption, mean peak (kW)",
+    "data": [
+     891.0,
+     892.0,
+     893.0
+    ],
+    "borderColor": "#2a78d6",
+    "backgroundColor": "#2a78d6"
+   },
+   {
+    "label": "80% adoption, mean peak (kW)",
+    "data": [
+     833.0,
+     834.0,
+     837.0
+    ],
+    "borderColor": "#1baf7a",
+    "backgroundColor": "#1baf7a"
+   }
+  ]
+ },
+ "options": {
+  "responsive": true,
+  "interaction": {
+   "mode": "index",
+   "intersect": false
+  },
+  "plugins": {
+   "title": {
+    "display": true,
+    "text": "Extra planning margin barely matters"
+   },
+   "subtitle": {
+    "display": true,
+    "text": "Simulated: synthetic 200-farm district on real Open-Meteo weather. Not a field measurement."
+   }
+  },
+  "scales": {
+   "x": {
+    "title": {
+     "display": true,
+     "text": "extra planning margin"
+    }
+   },
+   "y": {
+    "title": {
+     "display": true,
+     "text": "mean daily peak (kW)"
+    }
+   }
+  }
+ }
+}

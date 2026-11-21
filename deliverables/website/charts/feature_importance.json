@@ -1,0 +1,73 @@
+{
+ "title": "What the forecaster relies on",
+ "caption": "Share of total gain of the p50 model.",
+ "simulated": true,
+ "type": "bar",
+ "data": {
+  "labels": [
+   "load yesterday, same time",
+   "load last week, same time",
+   "hour",
+   "yesterday's mean load",
+   "day of week",
+   "3-day temperature mean",
+   "holiday",
+   "temperature forecast",
+   "Ramadan",
+   "Eid",
+   "minute"
+  ],
+  "datasets": [
+   {
+    "label": "Share of model gain (%)",
+    "data": [
+     28741683.2,
+     5985564.1,
+     1728733.9,
+     1524942.6,
+     1105357.5,
+     906663.8,
+     421660.6,
+     266962.2,
+     160674.3,
+     92422.8,
+     13634.4
+    ],
+    "borderColor": "#2a78d6",
+    "backgroundColor": "#2a78d6"
+   }
+  ]
+ },
+ "options": {
+  "responsive": true,
+  "interaction": {
+   "mode": "index",
+   "intersect": false
+  },
+  "plugins": {
+   "title": {
+    "display": true,
+    "text": "What the forecaster relies on"
+   },
+   "subtitle": {
+    "display": true,
+    "text": "Simulated: synthetic 200-farm district on real Open-Meteo weather. Not a field measurement."
+   }
+  },
+  "scales": {
+   "x": {
+    "title": {
+     "display": true,
+     "text": "share of gain (%)"
+    }
+   },
+   "y": {
+    "title": {
+     "display": true,
+     "text": ""
+    }
+   }
+  },
+  "indexAxis": "y"
+ }
+}

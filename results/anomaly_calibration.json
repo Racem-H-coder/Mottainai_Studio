@@ -1,0 +1,147 @@
+{
+ "days": [
+  "2025-07-24",
+  "2025-07-21",
+  "2025-07-23",
+  "2025-06-23",
+  "2025-07-04",
+  "2025-07-09",
+  "2025-07-07",
+  "2025-07-15",
+  "2025-07-11",
+  "2025-07-01",
+  "2025-07-03",
+  "2025-07-22",
+  "2025-06-24",
+  "2025-06-17",
+  "2025-07-25",
+  "2025-07-17",
+  "2025-07-05",
+  "2025-07-14",
+  "2025-07-30",
+  "2025-06-30"
+ ],
+ "farm_days_monitored": 1778,
+ "params": {
+  "buf": 2,
+  "ext": 1.0,
+  "drift": 0.0005,
+  "h": 0.1,
+  "clip": 0.08,
+  "n_dry": 1,
+  "n_pf": 1,
+  "n_stuck": 2
+ },
+ "lockout_quarters": 4,
+ "confidence_from_training_precision": {
+  "leak": 0.63,
+  "dry_run": 0.93,
+  "pump_failure": 0.82,
+  "stuck_sensor": 1.0,
+  "comm_loss": 1.0
+ },
+ "train_metrics": {
+  "leak": {
+   "episodes": 50,
+   "observable": 50,
+   "alerts": 41,
+   "precision": 0.6341463414634146,
+   "recall": 0.52,
+   "recall_observable": 0.52,
+   "f1": 0.5714285714285714,
+   "median_delay_min": 480.0,
+   "false_alarms_per_100_farm_days": 0.843644544431946
+  },
+  "dry_run": {
+   "episodes": 28,
+   "observable": 18,
+   "alerts": 15,
+   "precision": 0.9333333333333333,
+   "recall": 0.5,
+   "recall_observable": 0.7777777777777778,
+   "f1": 0.6511627906976745,
+   "median_delay_min": 30.0,
+   "false_alarms_per_100_farm_days": 0.0
+  },
+  "pump_failure": {
+   "episodes": 21,
+   "observable": 13,
+   "alerts": 17,
+   "precision": 0.8235294117647058,
+   "recall": 0.6190476190476191,
+   "recall_observable": 1.0,
+   "f1": 0.7067961165048543,
+   "median_delay_min": 105.0,
+   "false_alarms_per_100_farm_days": 0.0
+  },
+  "stuck_sensor": {
+   "episodes": 16,
+   "observable": 14,
+   "alerts": 12,
+   "precision": 1.0,
+   "recall": 0.75,
+   "recall_observable": 0.8571428571428571,
+   "f1": 0.8571428571428571,
+   "median_delay_min": 30.0,
+   "false_alarms_per_100_farm_days": 0.0
+  },
+  "comm_loss": {
+   "episodes": 35,
+   "observable": 35,
+   "alerts": 35,
+   "precision": 1.0,
+   "recall": 1.0,
+   "recall_observable": 1.0,
+   "f1": 1.0,
+   "median_delay_min": 0.0,
+   "false_alarms_per_100_farm_days": 0.0
+  },
+  "all": {
+   "episodes": 150,
+   "observable": 130,
+   "alerts": 120,
+   "precision": 0.8416666666666667,
+   "recall": 0.6666666666666666,
+   "recall_observable": 0.7692307692307693,
+   "f1": 0.7440147329650092,
+   "median_delay_min": 30.0,
+   "false_alarms_per_100_farm_days": 0.843644544431946
+  }
+ },
+ "physics_any_type_train": {
+  "episodes": 150,
+  "observable": 130,
+  "alerts": 120,
+  "precision": 0.875,
+  "recall": 0.6733333333333333,
+  "recall_observable": 0.7769230769230769,
+  "f1": 0.7610333692142087,
+  "median_delay_min": 30.0,
+  "false_alarms_per_100_farm_days": 0.843644544431946
+ },
+ "iforest_threshold": 0.6312202231596281,
+ "iforest_any_type_train": {
+  "episodes": 150,
+  "observable": 130,
+  "alerts": 555,
+  "precision": 0.05765765765765766,
+  "recall": 0.18,
+  "recall_observable": 0.2076923076923077,
+  "f1": 0.08733889310083397,
+  "median_delay_min": 270.0,
+  "false_alarms_per_100_farm_days": 29.41507311586052
+ },
+ "union_any_type_train": {
+  "episodes": 150,
+  "observable": 130,
+  "alerts": 675,
+  "precision": 0.20296296296296296,
+  "recall": 0.7066666666666667,
+  "recall_observable": 0.8153846153846154,
+  "f1": 0.3153528773072747,
+  "median_delay_min": 30.0,
+  "false_alarms_per_100_farm_days": 30.258717660292465
+ },
+ "combine": false,
+ "note": "Training days only (summer 2025). Simulated data, assumed fault rates (optimizer.FAULTS_B)."
+}

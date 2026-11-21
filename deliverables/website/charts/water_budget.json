@@ -1,0 +1,165 @@
+{
+ "title": "Water budget: pumping vs crop need",
+ "caption": "Mean per day over the 20 test days. In enforced mode, daily pumping is capped at 110 % of the FAO-56 crop need and never below need; advisory mode only warns.",
+ "simulated": true,
+ "type": "bar",
+ "data": {
+  "labels": [
+   "No Tameru",
+   "Tameru 50 %, budget off",
+   "Tameru 50 %, budget enforced",
+   "Tameru 70 %, budget off",
+   "Tameru 70 %, budget enforced"
+  ],
+  "datasets": [
+   {
+    "label": "Pumped (m³/day)",
+    "data": [
+     34323.0,
+     35169.0,
+     33539.0,
+     35592.0,
+     33175.0
+    ],
+    "borderColor": "#2a78d6",
+    "backgroundColor": "#2a78d6"
+   },
+   {
+    "label": "Crop need, FAO-56 (m³/day)",
+    "data": [
+     33125.0,
+     33125.0,
+     33125.0,
+     33125.0,
+     33125.0
+    ],
+    "borderColor": "#52514e",
+    "backgroundColor": "#52514e",
+    "type": "line",
+    "borderWidth": 2,
+    "pointRadius": 0,
+    "fill": false,
+    "borderDash": [
+     6,
+     4
+    ]
+   },
+   {
+    "label": "Budget, 110 % of need (m³/day)",
+    "data": [
+     36438.0,
+     36438.0,
+     36438.0,
+     36438.0,
+     36438.0
+    ],
+    "borderColor": "#eb6834",
+    "backgroundColor": "#eb6834",
+    "type": "line",
+    "borderWidth": 2,
+    "pointRadius": 0,
+    "fill": false,
+    "borderDash": [
+     2,
+     3
+    ]
+   }
+  ]
+ },
+ "options": {
+  "responsive": true,
+  "interaction": {
+   "mode": "index",
+   "intersect": false
+  },
+  "plugins": {
+   "title": {
+    "display": true,
+    "text": "Water budget: pumping vs crop need"
+   },
+   "subtitle": {
+    "display": true,
+    "text": "Simulated: synthetic 200-farm district on real Open-Meteo weather. Not a field measurement."
+   }
+  },
+  "scales": {
+   "x": {
+    "title": {
+     "display": true,
+     "text": "scenario"
+    }
+   },
+   "y": {
+    "title": {
+     "display": true,
+     "text": "m³ per day"
+    }
+   }
+  }
+ },
+ "table": {
+  "columns": [
+   "Scenario",
+   "Pumped m³/day",
+   "Water saved m³/day",
+   "Unmet crop need m³/day",
+   "Energy saved kWh/day",
+   "CO₂ avoided kg/day",
+   "kWh/m³",
+   "Mean peak kW"
+  ],
+  "rows": [
+   [
+    "No Tameru",
+    34323.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.165,
+    1285.0
+   ],
+   [
+    "Tameru 50 %, budget off",
+    35169.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.166,
+    975.0
+   ],
+   [
+    "Tameru 50 %, budget enforced",
+    33539.0,
+    469.0,
+    0.0,
+    76.0,
+    31.0,
+    0.166,
+    972.0
+   ],
+   [
+    "Tameru 70 %, budget off",
+    35592.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.166,
+    877.0
+   ],
+   [
+    "Tameru 70 %, budget enforced",
+    33175.0,
+    723.0,
+    0.0,
+    115.0,
+    47.0,
+    0.166,
+    855.0
+   ]
+  ]
+ },
+ "factor_source": "IFI Dataset of Default Grid Factors v2.0 (2019 dataset), 404 gCO2/kWh"
+}

@@ -1,0 +1,1926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tameru — Water &amp; Energy Digital Twin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#080c12;
+  --panel:rgba(12,17,25,.70);
+  --panel-2:rgba(255,255,255,.03);
+  --line:rgba(255,255,255,.075);
+  --line-2:rgba(255,255,255,.13);
+  --text:#e8edf2;
+  --muted:#8b96a4;
+  --dim:#5b6573;
+  --green:#3ddc97;
+  --cyan:#56c8f0;
+  --amber:#f2a93b;
+  --red:#ff5c5c;
+  --water:#4aa3ff;
+  --r:14px;
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;line-height:1.4;overflow:hidden;-webkit-font-smoothing:antialiased;user-select:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+#scene{position:fixed;inset:0;display:block;width:100vw;height:100vh;outline:none;touch-action:none}
+.vignette{position:fixed;inset:0;pointer-events:none;background:radial-gradient(120% 95% at 50% 42%,transparent 55%,rgba(4,7,11,.78) 100%)}
+#alarm{position:fixed;inset:0;pointer-events:none;opacity:0;transition:opacity .8s;box-shadow:inset 0 0 180px rgba(255,64,64,.32)}
+#alarm.on{opacity:1;animation:alarm 1.6s ease-in-out infinite}
+@keyframes alarm{50%{box-shadow:inset 0 0 90px rgba(255,64,64,.14)}}
+#fade{position:fixed;inset:0;background:#05080c;opacity:0;pointer-events:none;transition:opacity .55s ease;z-index:40}
+#fade.on{opacity:1}
+
+.glass{background:var(--panel);-webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 14px 44px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.045)}
+
+/* ---------- Top bar ---------- */
+.topbar{position:fixed;top:14px;left:16px;right:16px;height:58px;display:flex;align-items:center;gap:18px;padding:0 10px 0 16px;z-index:10}
+.brand{display:flex;align-items:center;gap:11px;width:260px;flex-shrink:0}
+.brand svg{width:30px;height:30px}
+.wordmark{font-weight:700;letter-spacing:.26em;font-size:14px}
+.tagline{font-size:10.5px;color:var(--muted);letter-spacing:.04em}
+.banner{flex:1;display:flex;justify-content:center;min-width:0}
+.bpill{display:flex;align-items:center;gap:12px;padding:7px 18px 7px 13px;border-radius:999px;border:1px solid var(--line-2);background:rgba(255,255,255,.03);transition:background .5s,border-color .5s;max-width:100%;min-width:0}
+.bpill .dot{width:9px;height:9px;border-radius:50%;background:var(--muted);flex-shrink:0;box-shadow:0 0 0 4px rgba(255,255,255,.05);transition:background .4s}
+.bpill .b-title{font-weight:600;letter-spacing:.09em;font-size:11.5px;white-space:nowrap}
+.bpill .b-sub{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bpill[data-state=red]{border-color:rgba(255,92,92,.55);background:rgba(255,92,92,.11)}
+.bpill[data-state=red] .dot{background:var(--red);box-shadow:0 0 0 4px rgba(255,92,92,.18),0 0 14px var(--red);animation:blink .9s steps(2) infinite}
+.bpill[data-state=red] .b-title{color:#ffb3b3}
+.bpill[data-state=green]{border-color:rgba(61,220,151,.45);background:rgba(61,220,151,.09)}
+.bpill[data-state=green] .dot{background:var(--green);box-shadow:0 0 0 4px rgba(61,220,151,.15),0 0 12px var(--green)}
+.bpill[data-state=green] .b-title{color:#a6f1cf}
+.bpill[data-state=amber]{border-color:rgba(242,169,59,.5);background:rgba(242,169,59,.1)}
+.bpill[data-state=amber] .dot{background:var(--amber);box-shadow:0 0 0 4px rgba(242,169,59,.15),0 0 12px var(--amber)}
+.bpill[data-state=amber] .b-title{color:#ffd59a}
+@keyframes blink{50%{opacity:.25}}
+.top-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+
+.seg{display:flex;padding:3px;background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:10px;gap:2px}
+.seg button{padding:6px 11px;border-radius:7px;color:var(--muted);font-weight:500;font-size:12px;transition:background .2s,color .2s;white-space:nowrap}
+.seg button:hover{color:var(--text)}
+.seg button.on{background:rgba(255,255,255,.09);color:var(--text);box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
+#scenarioSeg button[data-s="0"].on{background:rgba(255,92,92,.14);color:#ffc2c2;box-shadow:inset 0 0 0 1px rgba(255,92,92,.3)}
+#scenarioSeg button[data-s="1"].on{background:rgba(61,220,151,.14);color:#b5f5d8;box-shadow:inset 0 0 0 1px rgba(61,220,151,.3)}
+.btn-demo{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;font-weight:600;font-size:12px;letter-spacing:.04em;background:linear-gradient(180deg,rgba(86,200,240,.22),rgba(86,200,240,.1));border:1px solid rgba(86,200,240,.38);color:#d8f3ff;transition:transform .15s,background .2s}
+.btn-demo:hover{background:linear-gradient(180deg,rgba(86,200,240,.32),rgba(86,200,240,.14))}
+.btn-demo:active{transform:scale(.97)}
+.btn-demo svg{width:13px;height:13px}
+
+/* ---------- Panels ---------- */
+#left{position:fixed;top:86px;left:16px;bottom:16px;width:272px;z-index:5;display:flex;flex-direction:column;overflow:hidden}
+#right{position:fixed;top:86px;right:16px;bottom:16px;width:316px;z-index:5;display:flex;flex-direction:column;overflow:hidden}
+.scroll{overflow-y:auto;padding:14px 14px 16px;flex:1;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.12) transparent}
+.scroll::-webkit-scrollbar{width:6px}.scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
+.sec{padding:2px 0 14px;margin-bottom:14px;border-bottom:1px solid var(--line)}
+.sec:last-child{border-bottom:0;margin-bottom:0}
+.sec-h{display:flex;align-items:center;justify-content:space-between;font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.row{display:flex;gap:8px;margin-bottom:8px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:9px 12px;border-radius:10px;background:var(--panel-2);border:1px solid var(--line);font-weight:500;font-size:12.5px;transition:background .2s,border-color .2s,transform .12s}
+.btn:hover{background:rgba(255,255,255,.065);border-color:var(--line-2)}
+.btn:active{transform:scale(.98)}
+.btn svg{width:14px;height:14px;flex-shrink:0}
+.btn.primary{flex:1;background:rgba(255,255,255,.08);border-color:var(--line-2)}
+.btn.icon{width:40px;padding:9px 0}
+#speedSeg{width:100%}#speedSeg button{flex:1;font-family:var(--mono);font-size:11.5px}
+.ev{width:100%;justify-content:flex-start;text-align:left;margin-bottom:7px;padding:9px 11px}
+.ev .ev-t{display:flex;flex-direction:column;flex:1;min-width:0}
+.ev small{color:var(--muted);font-size:10.5px;font-weight:400}
+.ev .ev-state{font-family:var(--mono);font-size:10px;padding:2px 6px;border-radius:5px;background:rgba(255,255,255,.05);color:var(--muted)}
+.ev.active{border-color:rgba(242,169,59,.45);background:rgba(242,169,59,.09)}
+.ev.active .ev-state{background:rgba(242,169,59,.2);color:#ffd59a}
+.ev.flash{animation:evflash .9s ease}
+@keyframes evflash{0%{background:rgba(255,92,92,.3)}100%{background:var(--panel-2)}}
+
+.sw-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 11px;border-radius:10px;border:1px solid var(--line);background:var(--panel-2);transition:border-color .3s,background .3s}
+.sw-row.on{border-color:rgba(61,220,151,.38);background:rgba(61,220,151,.07)}
+.sw-title{font-weight:600;font-size:12.5px}
+.sw-sub{font-size:10.5px;color:var(--muted);margin-top:1px}
+.switch{width:40px;height:23px;border-radius:999px;background:rgba(255,255,255,.12);position:relative;flex-shrink:0;transition:background .25s}
+.switch span{position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:#cfd6de;transition:transform .25s cubic-bezier(.4,1.4,.6,1),background .25s}
+.switch[aria-checked=true]{background:rgba(61,220,151,.55)}
+.switch[aria-checked=true] span{transform:translateX(17px);background:#fff}
+
+#fcCanvas{width:100%;height:74px;display:block;border-radius:8px;background:rgba(0,0,0,.22);border:1px solid var(--line);margin-bottom:9px}
+.kv{display:grid;grid-template-columns:1fr auto;gap:4px 8px;font-size:11.5px}
+.kv dt{color:var(--muted)}
+.kv dd{font-family:var(--mono);font-size:11px;text-align:right}
+.strategy{margin-top:9px;padding:8px 10px;border-radius:9px;background:rgba(255,255,255,.035);border:1px solid var(--line);font-size:11.5px;color:var(--muted);line-height:1.45}
+.strategy b{color:var(--text);font-weight:600;letter-spacing:.06em;font-size:10.5px;display:block;margin-bottom:2px}
+.strategy[data-p=prefill] b{color:var(--cyan)}
+.strategy[data-p=peak] b{color:var(--green)}
+.strategy[data-p=recovery] b{color:#9ad8ff}
+.strategy[data-p=off] b{color:#ff9d9d}
+
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;font-size:11px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:7px}
+.legend i{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+details.assump{font-size:11px;color:var(--muted)}
+details.assump summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:6px;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+details.assump summary::-webkit-details-marker{display:none}
+details.assump summary::before{content:'+';font-family:var(--mono);color:var(--dim)}
+details.assump[open] summary::before{content:'–'}
+details.assump ul{margin:8px 0 0 14px;display:grid;gap:3px}
+details.assump p{margin-top:8px;font-size:10.5px;color:var(--dim)}
+
+/* right */
+.pill{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;padding:3px 7px;border-radius:6px;background:rgba(255,255,255,.06);color:var(--muted)}
+.pill.green{background:rgba(61,220,151,.14);color:#9ff0c9}
+.pill.amber{background:rgba(242,169,59,.16);color:#ffd59a}
+.pill.red{background:rgba(255,92,92,.18);color:#ffb3b3;animation:blink 1s steps(2) infinite}
+.big-row{display:flex;align-items:flex-end;gap:10px;margin-bottom:10px}
+.big{font-family:var(--mono);font-size:34px;font-weight:500;letter-spacing:-.02em;line-height:1}
+.unit{font-size:11px;color:var(--muted);line-height:1.25;padding-bottom:2px}
+.unit b{color:var(--text);font-weight:500}
+.ubar{position:relative;height:8px;border-radius:5px;background:rgba(255,255,255,.07);overflow:visible;margin-bottom:6px}
+.ubar-fill{position:absolute;left:0;top:0;bottom:0;border-radius:5px;width:0;background:var(--green);transition:background .4s}
+.ubar i{position:absolute;top:-3px;bottom:-3px;width:1px;background:rgba(255,255,255,.35)}
+.ubar i.crit{background:var(--red);width:2px}
+.ubar-lbl{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-bottom:12px}
+.ubar-lbl b{font-family:var(--mono);color:var(--text);font-weight:500}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.tile{padding:9px 10px;border-radius:10px;background:var(--panel-2);border:1px solid var(--line)}
+.tile .tl-l{font-size:10.5px;color:var(--muted);margin-bottom:3px;white-space:nowrap}
+.tile .tl-v{font-family:var(--mono);font-size:17px;font-weight:500}
+.tile .tl-v small{font-size:10.5px;color:var(--dim);margin-left:3px;font-weight:400}
+.tile.good .tl-v{color:#9ff0c9}.tile.warn .tl-v{color:#ffd59a}.tile.bad .tl-v{color:#ffb3b3}
+.chart-box{position:relative;height:96px;margin-top:10px}
+.cmp{display:grid;grid-template-columns:1.25fr 1fr 1fr;font-size:11.5px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.cmp>div{padding:6px 9px;border-bottom:1px solid var(--line)}
+.cmp>div:nth-last-child(-n+3){border-bottom:0}
+.cmp .h{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:rgba(255,255,255,.03)}
+.cmp .h.a{color:#ff9d9d}.cmp .h.b{color:#8fe9bf}
+.cmp .l{color:var(--muted)}
+.cmp .v{font-family:var(--mono);font-size:11px;text-align:right}
+.cmp .h.a,.cmp .h.b{text-align:right}
+.note{font-size:10px;color:var(--dim);margin-top:7px}
+
+/* bottom */
+#bottom{position:fixed;left:300px;right:344px;bottom:16px;height:204px;z-index:5;padding:12px 16px 10px;display:flex;gap:18px}
+.clock-col{width:128px;flex-shrink:0;display:flex;flex-direction:column;justify-content:space-between;padding:2px 0 4px}
+.clock{font-family:var(--mono);font-size:34px;font-weight:500;letter-spacing:-.02em;line-height:1}
+.day{font-size:11px;color:var(--muted);margin-top:5px}
+.phase{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:4px 8px;border-radius:7px;font-size:10px;font-weight:600;letter-spacing:.1em;background:rgba(255,255,255,.06);color:var(--muted);width:max-content}
+.phase.peak{background:rgba(242,169,59,.15);color:#ffd59a}
+.phase.peak::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--amber)}
+.mini-legend{display:grid;gap:4px;font-size:10.5px;color:var(--muted)}
+.mini-legend span{display:flex;align-items:center;gap:7px}
+.mini-legend i{width:14px;height:2px;border-radius:2px}
+.mini-legend i.dash{background:repeating-linear-gradient(90deg,rgba(255,255,255,.55) 0 4px,transparent 4px 7px)}
+.chart-col{flex:1;display:flex;flex-direction:column;min-width:0}
+.chart-head{display:flex;justify-content:space-between;align-items:center;font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.chart-head .lbl{font-weight:400;letter-spacing:0;text-transform:none;color:var(--dim)}
+#demandWrap{position:relative;flex:1;min-height:0}
+.tl{position:relative;height:22px;margin:4px 0 0 44px}
+.tl-track{position:absolute;left:0;right:0;top:9px;height:4px;border-radius:3px;background:rgba(255,255,255,.08)}
+.tl-band{position:absolute;top:7px;height:8px;border-radius:3px;background:rgba(242,169,59,.35)}
+.tl-prog{position:absolute;left:0;top:9px;height:4px;border-radius:3px;background:linear-gradient(90deg,rgba(86,200,240,.25),rgba(86,200,240,.7))}
+#timeline{position:absolute;inset:0;width:100%;height:22px;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer;margin:0}
+#timeline::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid #0d1520;box-shadow:0 0 0 1px rgba(255,255,255,.5),0 2px 8px rgba(0,0,0,.5)}
+#timeline::-moz-range-thumb{width:10px;height:10px;border-radius:50%;background:#fff;border:3px solid #0d1520}
+#timeline::-webkit-slider-runnable-track{background:transparent}
+.tl-ticks{display:flex;justify-content:space-between;margin-left:44px;font-family:var(--mono);font-size:9.5px;color:var(--dim)}
+
+/* labels over 3D */
+#labels{position:fixed;inset:0;pointer-events:none;z-index:3;overflow:hidden}
+.chip{position:absolute;left:0;top:0;transform:translate(-50%,-100%);padding:4px 9px 4px 8px;border-radius:8px;background:rgba(10,14,20,.72);border:1px solid var(--line-2);font-size:10.5px;white-space:nowrap;display:flex;align-items:center;gap:7px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:border-color .3s,background .3s;will-change:transform}
+.chip b{font-weight:600;letter-spacing:.08em;font-size:10px}
+.chip span{font-family:var(--mono);color:var(--muted);font-size:10px}
+.chip i{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.chip.off{border-color:rgba(255,92,92,.6);background:rgba(60,10,12,.75)}
+.chip.off i{background:var(--red);animation:blink .8s steps(2) infinite}
+.chip.off span{color:#ffb3b3}
+.chip.warn i{background:var(--amber)}
+.chip.st{border-color:rgba(255,255,255,.18)}
+.chip.st.over{border-color:rgba(255,92,92,.7)}
+
+/* inspector */
+#inspector{position:fixed;top:86px;left:300px;width:262px;z-index:6;padding:14px;transition:opacity .25s,transform .25s}
+#inspector.hidden{opacity:0;transform:translateY(-6px);pointer-events:none}
+.ins-h{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.ins-title{font-weight:600;font-size:14px}
+.ins-sub{font-size:11px;color:var(--muted)}
+.ins-close{width:26px;height:26px;border-radius:7px;color:var(--muted);display:grid;place-items:center}
+.ins-close:hover{background:rgba(255,255,255,.07);color:var(--text)}
+.ins-status{display:inline-flex;align-items:center;gap:7px;padding:4px 9px;border-radius:7px;font-size:11px;font-weight:600;margin-bottom:11px;background:rgba(255,255,255,.06)}
+.ins-status i{width:7px;height:7px;border-radius:50%}
+.ins-row{display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:5px}
+.ins-row span:first-child{color:var(--muted)}
+.ins-row span:last-child{font-family:var(--mono);font-size:11px}
+.ins-bar{height:6px;border-radius:4px;background:rgba(255,255,255,.07);margin:3px 0 10px;position:relative;overflow:hidden}
+.ins-bar div{position:absolute;inset:0 auto 0 0;border-radius:4px}
+.ins-bar i{position:absolute;top:0;bottom:0;width:2px;background:rgba(255,255,255,.7)}
+.ins-sched{font-size:10.5px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--line);line-height:1.5}
+.ins-sched b{color:var(--text);font-family:var(--mono);font-weight:500;font-size:10.5px}
+.ins-back{margin-top:10px;width:100%}
+
+/* demo caption */
+#caption{position:fixed;top:86px;left:50%;transform:translateX(-50%);width:min(560px,calc(100vw - 700px));min-width:380px;z-index:20;padding:13px 16px 12px;transition:opacity .35s,transform .35s}
+#caption.hidden{opacity:0;transform:translate(-50%,-8px);pointer-events:none}
+.cap-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.cap-tag{font-size:10px;font-weight:600;letter-spacing:.16em;color:var(--cyan);display:flex;align-items:center;gap:7px}
+.cap-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:blink 1.2s steps(2) infinite}
+.cap-exit{font-size:11px;color:var(--muted);padding:3px 8px;border-radius:6px;border:1px solid var(--line);pointer-events:auto}
+.cap-exit:hover{color:var(--text);border-color:var(--line-2)}
+#capText{font-size:13.5px;line-height:1.5;color:#cfd7df;min-height:40px}
+#capText b{color:#fff;font-weight:600}
+.cap-dots{display:flex;gap:4px;margin-top:10px}
+.cap-dots i{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.1);transition:background .4s}
+.cap-dots i.done{background:rgba(86,200,240,.75)}
+body.demo #left .scroll,body.demo #scenarioSeg,body.demo #bottom .tl,body.demo #demoBtn{pointer-events:none;opacity:.55}
+
+/* compare modal */
+#compare{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:rgba(4,7,11,.55);transition:opacity .4s}
+#compare.hidden{opacity:0;pointer-events:none}
+.cmp-card{width:min(720px,92vw);padding:24px 26px 22px}
+.cmp-card h2{font-size:20px;font-weight:600;letter-spacing:-.01em}
+.cmp-card .sub{color:var(--muted);font-size:12.5px;margin:4px 0 18px}
+.cmp-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr .8fr;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.cmp-grid>div{padding:11px 14px;border-bottom:1px solid var(--line);font-size:13px}
+.cmp-grid>div:nth-last-child(-n+4){border-bottom:0}
+.cmp-grid .h{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:rgba(255,255,255,.03)}
+.cmp-grid .num{font-family:var(--mono);text-align:right}
+.cmp-grid .a{color:#ffb0b0}.cmp-grid .b{color:#a6f1cf}
+.cmp-grid .d{font-family:var(--mono);text-align:right;color:var(--cyan);font-size:12px}
+.cmp-grid .h.num,.cmp-grid .h.d{text-align:right}
+.cmp-hero{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.hero{padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel-2)}
+.hero .hv{font-family:var(--mono);font-size:26px;font-weight:500;color:#a6f1cf}
+.hero .hl{font-size:11px;color:var(--muted);margin-top:2px}
+.cmp-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.cmp-foot{font-size:10.5px;color:var(--dim);margin-top:12px}
+
+/* toast */
+#toast{position:fixed;left:50%;bottom:236px;transform:translate(-50%,10px);z-index:25;padding:9px 14px;border-radius:10px;font-size:12px;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* loader */
+#loader{position:fixed;inset:0;z-index:50;background:radial-gradient(80% 70% at 50% 40%,#0e1621 0%,#06090d 100%);display:grid;place-items:center;transition:opacity .8s ease}
+#loader.done{opacity:0;pointer-events:none}
+.ld{display:flex;flex-direction:column;align-items:center;gap:14px;width:320px;text-align:center}
+.ld svg{width:54px;height:54px}
+.ld .wm{font-weight:700;letter-spacing:.42em;font-size:20px;margin-left:.42em}
+.ld .ts{color:var(--muted);font-size:12px;margin-top:-6px}
+.ld-bar{width:100%;height:3px;border-radius:2px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:10px}
+.ld-bar div{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--green));transition:width .35s ease}
+#ldStep{font-family:var(--mono);font-size:11px;color:var(--dim);height:16px}
+#ldErr{display:none;margin-top:6px;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,92,92,.4);background:rgba(255,92,92,.08);color:#ffc9c9;font-size:12px;line-height:1.5}
+
+/* responsive */
+@media (max-width:1360px){
+  #left{width:250px}#right{width:292px}
+  #bottom{left:278px;right:320px}
+  #inspector{left:278px}
+  .brand{width:220px}
+  .seg button{padding:6px 9px}
+}
+@media (max-width:1120px){
+  .tagline{display:none}.brand{width:auto}
+  .bpill .b-sub{display:none}
+  #caption{width:calc(100vw - 600px);min-width:320px}
+}
+@media (max-width:980px){
+  body{overflow:auto;display:flex;flex-direction:column}
+  .topbar{position:relative;top:auto;left:auto;right:auto;margin:12px;height:auto;flex-wrap:wrap;padding:10px 12px;gap:10px}
+  .banner{order:3;flex-basis:100%}
+  #scene{position:relative;width:100%;height:58vh;flex-shrink:0}
+  .vignette,#labels{display:none}
+  #left,#right,#bottom{position:relative;inset:auto;width:auto;margin:0 12px 12px;height:auto}
+  #bottom{height:230px;flex-direction:column}
+  .clock-col{width:auto;flex-direction:row;align-items:center;gap:14px}
+  #inspector{left:12px;top:12px}
+  #caption{width:calc(100vw - 24px);min-width:0;top:12px}
+  .scroll{overflow:visible}
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<canvas id="scene" tabindex="0" aria-label="3D agricultural district"></canvas>
+<div class="vignette"></div>
+<div id="alarm"></div>
+<div id="labels"></div>
+
+<!-- Loader -->
+<div id="loader">
+  <div class="ld">
+    <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <path d="M24 4C24 4 9 20 9 30a15 15 0 0 0 30 0C39 20 24 4 24 4Z" stroke="#56c8f0" stroke-width="2.2"/>
+      <path d="M26.5 17 19 30h6l-2.5 10L31 26h-6l1.5-9Z" fill="#3ddc97"/>
+    </svg>
+    <div class="wm">TAMERU</div>
+    <div class="ts">Water–Energy Digital Twin</div>
+    <div class="ld-bar"><div id="ldBar"></div></div>
+    <div id="ldStep">Loading libraries…</div>
+    <div id="ldErr"></div>
+  </div>
+</div>
+
+<!-- Top bar -->
+<header class="topbar glass">
+  <div class="brand">
+    <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <path d="M24 4C24 4 9 20 9 30a15 15 0 0 0 30 0C39 20 24 4 24 4Z" stroke="#56c8f0" stroke-width="2.4"/>
+      <path d="M26.5 17 19 30h6l-2.5 10L31 26h-6l1.5-9Z" fill="#3ddc97"/>
+    </svg>
+    <div>
+      <div class="wordmark">TAMERU</div>
+      <div class="tagline">Water–Energy Digital Twin · 200 farms</div>
+    </div>
+  </div>
+  <div class="banner">
+    <div class="bpill" id="banner" data-state="neutral">
+      <span class="dot"></span>
+      <div style="min-width:0">
+        <div class="b-title" id="bTitle">INITIALIZING</div>
+        <div class="b-sub" id="bSub">Building district…</div>
+      </div>
+    </div>
+  </div>
+  <div class="top-right">
+    <div class="seg" id="scenarioSeg" role="tablist" aria-label="Scenario">
+      <button data-s="0" class="on">Without Tameru</button>
+      <button data-s="1">With Tameru</button>
+    </div>
+    <button class="btn-demo" id="demoBtn" title="Guided 60–90 s presentation (D)">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9-5.5-9-5.5Z"/></svg>DEMO MODE
+    </button>
+  </div>
+</header>
+
+<!-- Left panel -->
+<aside id="left" class="glass">
+  <div class="scroll">
+    <div class="sec">
+      <div class="sec-h">Simulation</div>
+      <div class="row">
+        <button class="btn primary" id="playBtn" title="Start / pause (Space)">
+          <svg id="playIco" viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9-5.5-9-5.5Z"/></svg>
+          <span id="playLbl">Start</span>
+        </button>
+        <button class="btn icon" id="resetBtn" title="Reset simulation (R)" aria-label="Reset">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2.8 8a5.2 5.2 0 1 0 1.6-3.8"/><path d="M2.5 2.2v2.6h2.6"/></svg>
+        </button>
+      </div>
+      <div class="seg" id="speedSeg" aria-label="Simulation speed">
+        <button data-v="1">1×</button><button data-v="2">2×</button><button data-v="5">5×</button><button data-v="10">10×</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h">Tameru engine</div>
+      <div class="sw-row" id="swRow">
+        <div>
+          <div class="sw-title">Smart scheduling</div>
+          <div class="sw-sub" id="swSub">Off — pumps follow farm schedules</div>
+        </div>
+        <button class="switch" id="tameruSwitch" role="switch" aria-checked="false" aria-label="Toggle Tameru (T)"><span></span></button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h">Stress events</div>
+      <button class="btn ev" id="peakBtn">
+        <svg viewBox="0 0 16 16" fill="currentColor" style="color:var(--amber)"><path d="M9.2 1 3 9.2h4.2L6.6 15 13 6.6H8.8L9.2 1Z"/></svg>
+        <span class="ev-t">Trigger peak demand now<small>Unplanned +270 kW surge · 2 h</small></span>
+        <span class="ev-state" id="peakState">READY</span>
+      </button>
+      <button class="btn ev" id="heatBtn">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="color:#ffb45e"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6 13 13M3 13l1.4-1.4M11.6 4.4 13 3" stroke-linecap="round"/></svg>
+        <span class="ev-t">Simulated heatwave<small>+40% crop water need · −6% line rating</small></span>
+        <span class="ev-state" id="heatState">OFF</span>
+      </button>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h">Forecast module <span class="pill" id="fcConf">CONF 94%</span></div>
+      <canvas id="fcCanvas"></canvas>
+      <dl class="kv">
+        <dt>Overload risk</dt><dd id="fcRisk">—</dd>
+        <dt>Predicted peak</dt><dd id="fcPeak">—</dd>
+        <dt>Managed window</dt><dd id="fcWin">17:00–20:00</dd>
+        <dt>Next peak in</dt><dd id="fcNext">—</dd>
+      </dl>
+      <div class="strategy" id="fcStrategy" data-p="off"><b>INACTIVE</b>Forecast available, scheduling disabled.</div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h">Farm status lights</div>
+      <div class="legend">
+        <span><i style="background:var(--cyan);box-shadow:0 0 6px var(--cyan)"></i>Pumping</span>
+        <span><i style="background:var(--green);box-shadow:0 0 6px var(--green)"></i>On stored water</span>
+        <span><i style="background:var(--amber);box-shadow:0 0 6px var(--amber)"></i>Rescheduled</span>
+        <span><i style="background:#ff7a2a;box-shadow:0 0 6px #ff7a2a"></i>Reserve top-up</span>
+        <span><i style="background:var(--red);box-shadow:0 0 6px var(--red)"></i>Power cut / dry</span>
+        <span><i style="background:#3a4440"></i>Idle</span>
+      </div>
+    </div>
+
+    <details class="assump">
+      <summary>Simulated assumptions</summary>
+      <ul>
+        <li>200 farms in 4 sectors (A–D)</li>
+        <li>Pumps 4–6 kW (avg ≈ 5 kW)</li>
+        <li>Feeder capacity 1,000 kW (illustrative)</li>
+        <li>Feeder peak window 17:00–20:00 (STEG BT price peak is 19:00–23:00)</li>
+        <li>Tanks 35–90 m³, gravity-fed irrigation</li>
+        <li>Crop demand 7–14 m³/h per farm</li>
+        <li>Minimum reserve kept by Tameru: 15%</li>
+        <li>Rotating load shedding, 60-min slots</li>
+      </ul>
+      <p>Illustrative simulation: numbers differ from the backtest; see the project report. All values are deterministic simulation assumptions, not real measurements.</p>
+    </details>
+  </div>
+</aside>
+
+<!-- Right panel -->
+<aside id="right" class="glass">
+  <div class="scroll">
+    <div class="sec">
+      <div class="sec-h">Electricity <span class="pill" id="gridPill">NOMINAL</span></div>
+      <div class="big-row">
+        <div class="big" id="mDemand">0.00</div>
+        <div class="unit">MW demand<br><span id="mCap">of <b>1.00 MW</b> capacity</span></div>
+      </div>
+      <div class="ubar" title="0–130% of grid capacity"><div class="ubar-fill" id="uFill"></div><i style="left:65.38%"></i><i class="crit" style="left:76.92%"></i></div>
+      <div class="ubar-lbl"><span>Grid utilization <b id="mUtil">0%</b></span><span>85% · <span style="color:#ff9d9d">100%</span></span></div>
+      <div class="tiles">
+        <div class="tile"><div class="tl-l">Active pumps</div><div class="tl-v"><span id="mPumps">0</span><small>/ 200</small></div></div>
+        <div class="tile" id="tResched"><div class="tl-l">Pumps rescheduled</div><div class="tl-v" id="mResched">0</div></div>
+        <div class="tile" id="tRed"><div class="tl-l">Peak demand reduction</div><div class="tl-v" id="mRed">—</div></div>
+        <div class="tile" id="tShed"><div class="tl-l">Sectors shed</div><div class="tl-v"><span id="mShed">0</span><small>/ 4</small></div></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h">Water</div>
+      <div class="tiles">
+        <div class="tile"><div class="tl-l">Total stored</div><div class="tl-v"><span id="wStored">0</span><small>m³</small></div></div>
+        <div class="tile"><div class="tl-l">Avg tank fill</div><div class="tl-v"><span id="wFill">0</span><small>%</small></div></div>
+        <div class="tile good"><div class="tl-l">Farms irrigating</div><div class="tl-v" id="wIrr">0</div></div>
+        <div class="tile" id="tShort"><div class="tl-l">Water shortages</div><div class="tl-v" id="wShort">0</div></div>
+      </div>
+      <div class="chart-box"><canvas id="waterChart"></canvas></div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h">Scenario comparison <span class="pill">TODAY</span></div>
+      <div class="cmp">
+        <div class="h"></div><div class="h a">Without</div><div class="h b">With</div>
+        <div class="l">Peak demand</div><div class="v" id="cPeakA">—</div><div class="v" id="cPeakB">—</div>
+        <div class="l">Load shedding</div><div class="v" id="cShedA">—</div><div class="v" id="cShedB">—</div>
+        <div class="l">Farms interrupted</div><div class="v" id="cIntA">—</div><div class="v" id="cIntB">—</div>
+        <div class="l">Farm-hours dry</div><div class="v" id="cDryA">—</div><div class="v" id="cDryB">—</div>
+        <div class="l">Pump kWh in peak</div><div class="v" id="cPkA">—</div><div class="v" id="cPkB">—</div>
+      </div>
+      <div class="note">Both scenarios run in parallel on identical farms, schedules and weather.</div>
+    </div>
+  </div>
+</aside>
+
+<!-- Bottom panel -->
+<section id="bottom" class="glass">
+  <div class="clock-col">
+    <div>
+      <div class="clock" id="clock">06:00</div>
+      <div class="day" id="dayLbl">Day 1 · illustrative simulation</div>
+      <div class="phase" id="phase">OFF-PEAK</div>
+    </div>
+    <div class="mini-legend">
+      <span><i style="background:#ff6b6b"></i>Without Tameru</span>
+      <span><i style="background:#3ddc97"></i>With Tameru</span>
+      <span><i class="dash"></i>Grid capacity</span>
+    </div>
+  </div>
+  <div class="chart-col">
+    <div class="chart-head">Electricity demand · 24 h <span class="lbl">requested load, kW</span></div>
+    <div id="demandWrap"><canvas id="demandChart"></canvas></div>
+    <div class="tl">
+      <div class="tl-track"></div>
+      <div class="tl-prog" id="tlProg"></div>
+      <div class="tl-band" id="tlBand"></div>
+      <input type="range" id="timeline" min="0" max="1439" step="1" value="360" aria-label="Simulated time of day" />
+    </div>
+    <div class="tl-ticks"><span>00</span><span>03</span><span>06</span><span>09</span><span>12</span><span>15</span><span>18</span><span>21</span><span>24</span></div>
+  </div>
+</section>
+
+<!-- Farm inspector -->
+<div id="inspector" class="glass hidden" aria-live="polite">
+  <div class="ins-h">
+    <div><div class="ins-title" id="iTitle">Farm 001</div><div class="ins-sub" id="iSub">Sector A</div></div>
+    <button class="ins-close" id="iClose" aria-label="Close">✕</button>
+  </div>
+  <div class="ins-status" id="iStatus"><i></i><span>—</span></div>
+  <div class="ins-row"><span>Tank level</span><span id="iTank">—</span></div>
+  <div class="ins-bar"><div id="iTankBar"></div><i id="iTarget"></i></div>
+  <div class="ins-row"><span>Field moisture</span><span id="iMoist">—</span></div>
+  <div class="ins-bar"><div id="iMoistBar" style="background:#7fbf5a"></div></div>
+  <div class="ins-row"><span>Pump</span><span id="iPump">—</span></div>
+  <div class="ins-row"><span>Irrigation</span><span id="iIrr">—</span></div>
+  <div class="ins-row"><span>Tameru fill target</span><span id="iTgt">—</span></div>
+  <div class="ins-sched" id="iSched"></div>
+  <button class="btn ins-back" id="iBack">Back to overview</button>
+</div>
+
+<!-- Demo caption -->
+<div id="caption" class="glass hidden">
+  <div class="cap-top"><span class="cap-tag" id="capTag">DEMO · 1 / 8</span><button class="cap-exit" id="capExit">Exit demo (Esc)</button></div>
+  <div id="capText"></div>
+  <div class="cap-dots" id="capDots"></div>
+</div>
+
+<!-- Comparison modal -->
+<div id="compare" class="hidden">
+  <div class="cmp-card glass">
+    <h2>Same district, same day — two outcomes</h2>
+    <div class="sub" id="cmpSub">Results up to 19:50, identical farms, schedules and weather.</div>
+    <div class="cmp-hero">
+      <div class="hero"><div class="hv" id="hRed">—</div><div class="hl">Peak demand reduction</div></div>
+      <div class="hero"><div class="hv" id="hShed">—</div><div class="hl">Simulated load-shedding minutes avoided</div></div>
+      <div class="hero"><div class="hv" id="hFarms">—</div><div class="hl">Farms kept irrigating</div></div>
+    </div>
+    <div class="cmp-grid" id="cmpGrid"></div>
+    <div class="cmp-foot">Illustrative simulation: numbers differ from the backtest; see the project report. Not field measurements.</div>
+    <div class="cmp-actions">
+      <button class="btn" id="cmpReplay">Replay demo</button>
+      <button class="btn primary" style="flex:0 0 auto;padding:9px 18px" id="cmpClose">Explore freely</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="glass"></div>
+<div id="fade"></div>
+
+<script>
+/* Boot watchdog: if the module (three.js from CDN) never starts, explain why. */
+window.__tameruBooted = false;
+setTimeout(function(){
+  if (!window.__tameruBooted) {
+    var e = document.getElementById('ldErr');
+    e.style.display = 'block';
+    e.innerHTML = '<b>Could not load the 3D libraries.</b><br>Tameru loads Three.js and Chart.js from a CDN — check your internet connection and reload. Use a recent Chrome, Edge, Firefox or Safari.';
+    document.getElementById('ldStep').textContent = 'Waiting for CDN…';
+  }
+}, 15000);
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+window.__tameruBooted = true;
+
+/* =====================================================================
+   0. Helpers
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const lerp = (a, b, t) => a + (b - a) * t;
+const smooth = (a, b, v) => { const t = clamp((v - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const fmtHM = m => { m = Math.max(0, Math.round(m)); const h = Math.floor(m / 60) % 24, mm = m % 60; return String(h).padStart(2, '0') + ':' + String(mm).padStart(2, '0'); };
+const fmtInt = v => Math.round(v).toLocaleString('en-US');
+const nextFrame = () => new Promise(r => requestAnimationFrame(() => r()));
+function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function setLoad(p, txt) { $('ldBar').style.width = (p * 100) + '%'; $('ldStep').textContent = txt; }
+
+/* =====================================================================
+   1. Configuration (illustrative, simulated assumptions)
+   ===================================================================== */
+const CFG = {
+  N: 200, PER_SECTOR: 50, CAP: 1000,       // kW feeder capacity
+  TARIFF: [17 * 60, 20 * 60],              // peak window (minutes)
+  RESERVE: 0.15,                           // min tank reserve kept by Tameru
+  MIN_PER_SEC_1X: 5,                       // 1× = 5 simulated minutes / real second
+  PX: 4.6, PZ: 3.9,                        // plot pitch (3D units)
+  SURGE_KW: 270, SURGE_MIN: 120,
+};
+const N = CFG.N;
+const SECT = [
+  { n: 'A', x: -28, z: -14.75 }, { n: 'B', x: 28, z: -14.75 },
+  { n: 'C', x: -28, z: 14.75 }, { n: 'D', x: 28, z: 14.75 },
+];
+// Non-pump district load (households, services) — kW per hour 0..24
+const BASE = [190, 182, 176, 172, 176, 196, 238, 276, 292, 298, 304, 310, 316, 322, 334, 362, 412, 470, 520, 512, 468, 404, 326, 252, 190];
+
+/* =====================================================================
+   2. Farm generation (deterministic)
+   ===================================================================== */
+const F = {
+  cap: new Float32Array(N), dem: new Float32Array(N), kw: new Float32Array(N), rate: new Float32Array(N),
+  mS: new Int16Array(N), mD: new Int16Array(N), eS: new Int16Array(N), eD: new Int16Array(N), hS: new Int16Array(N),
+  sec: new Uint8Array(N), x: new Float32Array(N), z: new Float32Array(N), lvl0: new Float32Array(N), m0: new Float32Array(N),
+  phase: new Float32Array(N),
+};
+(function genFarms() {
+  const rng = mulberry32(20261112);
+  const r5 = v => Math.round(v / 5) * 5;
+  for (let i = 0; i < N; i++) {
+    const s = Math.floor(i / CFG.PER_SECTOR), k = i % CFG.PER_SECTOR, col = k % 10, row = Math.floor(k / 10);
+    F.sec[i] = s;
+    F.x[i] = SECT[s].x + (col - 4.5) * CFG.PX;
+    F.z[i] = SECT[s].z + (row - 2) * CFG.PZ;
+    F.cap[i] = Math.round(35 + 55 * Math.pow(rng(), 1.25));
+    F.dem[i] = 7 + 7 * rng();
+    F.kw[i] = 4 + 2 * rng();
+    F.rate[i] = F.kw[i] * 3.4;                         // m³/h at full pump speed
+    F.mS[i] = rng() < 0.55 ? r5(300 + rng() * 150) : -1; F.mD[i] = r5(90 + rng() * 90);
+    F.eS[i] = rng() < 0.70 ? r5(930 + rng() * 150) : -1; F.eD[i] = r5(150 + rng() * 120);
+    F.hS[i] = rng() < 0.35 ? r5(690 + rng() * 60) : -1;
+    F.lvl0[i] = (0.1 + 0.25 * rng()) * F.cap[i];
+    F.m0[i] = 0.55 + 0.25 * rng();
+    F.phase[i] = rng();
+  }
+})();
+
+/* =====================================================================
+   3. App state
+   ===================================================================== */
+const App = {
+  t: 0, day: 1, running: false, speed: 2, acc: 0, tameru: false, heat: false,
+  surges: [], win: [...CFG.TARIFF], risk: null, fc: null, fcPeak: 0, fcPeakT: 0,
+  target: new Float32Array(N), snap: null, waiters: [], dirtyChart: true, lastChart: 0,
+};
+const Series = { A: [], B: [], fA: [], fB: [], cap: [{ x: 0, y: CFG.CAP }, { x: 1440, y: CFG.CAP }] };
+
+function inWin(i, t) {
+  const ms = F.mS[i]; if (ms >= 0 && t >= ms && t < ms + F.mD[i]) return true;
+  const es = F.eS[i]; if (es >= 0 && t >= es && t < es + F.eD[i]) return true;
+  if (App.heat) { const hs = F.hS[i]; if (hs >= 0 && t >= hs && t < hs + 110) return true; }
+  return false;
+}
+function bump(t, c, w) { const d = (t - c) / w; return Math.abs(d) >= 1 ? 0 : 0.5 * (1 + Math.cos(Math.PI * d)); }
+function surgeLoad(t) { let v = 0; for (const s of App.surges) if (t >= s && t < s + CFG.SURGE_MIN) v += CFG.SURGE_KW * Math.min(1, (t - s) / 8, (s + CFG.SURGE_MIN - t) / 8); return v; }
+function surgeActive(t) { return App.surges.some(s => t >= s && t < s + CFG.SURGE_MIN); }
+function baseLoad(t, withSurge = true) {
+  const h = t / 60, i = Math.floor(h) % 24, f = h - Math.floor(h);
+  const s = (1 - Math.cos(Math.PI * f)) / 2;
+  let v = BASE[i] + (BASE[i + 1] - BASE[i]) * s + 7 * Math.sin(t * 0.047) + 4 * Math.sin(t * 0.0131 + 1.7);
+  if (App.heat) v *= 1 + 0.17 * bump(t, 900, 330);
+  if (withSurge) v += surgeLoad(t);
+  return v;
+}
+const capacity = () => CFG.CAP * (App.heat ? 0.94 : 1);
+function sunFactor(t) { const d = (t - 360) / (1170 - 360); return d <= 0 || d >= 1 ? 0 : Math.sin(Math.PI * d); }
+function overlap(s, d, a, b) { if (s < 0) return 0; return Math.max(0, Math.min(s + d, b) - Math.max(s, a)); }
+
+/* ---------- Forecast module (what Tameru "knows") ---------- */
+function computeForecast() {
+  const cap = capacity(), fc = new Float32Array(97);
+  let pk = 0, pkT = 0, rs = -1, re = -1;
+  for (let k = 0; k <= 96; k++) {
+    const t = Math.min(1439, k * 15); let p = 0;
+    for (let i = 0; i < N; i++) if (inWin(i, t)) p += F.kw[i];
+    const v = baseLoad(t, false) + p + 18; fc[k] = v;
+    if (v > pk) { pk = v; pkT = t; }
+    if (t >= 720 && v > 0.9 * cap) { if (rs < 0) rs = t; re = t + 15; }
+  }
+  App.fc = fc; App.fcPeak = pk; App.fcPeakT = pkT; App.risk = rs >= 0 ? [rs, re] : null;
+  const ws = rs >= 0 ? Math.min(CFG.TARIFF[0], Math.floor(rs / 30) * 30) : CFG.TARIFF[0];
+  const we = rs >= 0 ? Math.max(CFG.TARIFF[1], Math.ceil(re / 30) * 30) : CFG.TARIFF[1];
+  App.win = [ws, we];
+  // Forecast error: the model under-estimates heatwave crop demand (+20% assumed vs +40% real)
+  const hm = App.heat ? 1.2 : 1;
+  for (let i = 0; i < N; i++) {
+    let ov = overlap(F.mS[i], F.mD[i], ws, we) + overlap(F.eS[i], F.eD[i], ws, we);
+    if (App.heat) ov += overlap(F.hS[i], 110, ws, we);
+    const need = F.dem[i] * hm * ov / 60;
+    App.target[i] = clamp((need + 0.3 * F.cap[i]) / F.cap[i], 0.6, 0.95);
+  }
+  Series.cap[0].y = Series.cap[1].y = cap;
+  updateTimelineBand();
+}
+
+/* =====================================================================
+   4. Simulation engine — two worlds run in parallel (A: unmanaged, B: Tameru)
+   ===================================================================== */
+class World {
+  constructor(managed) {
+    this.managed = managed;
+    this.level = new Float32Array(N); this.moist = new Float32Array(N);
+    this.latch = new Uint8Array(N); this.want = new Uint8Array(N); this.pumpOn = new Uint8Array(N);
+    this.irrig = new Uint8Array(N); this.short = new Uint8Array(N); this.resched = new Uint8Array(N);
+    this.emerg = new Uint8Array(N); this.everShort = new Uint8Array(N); this.prio = new Float32Array(N);
+    this.shed = [0, 0, 0, 0]; this.shedUntil = [0, 0, 0, 0]; this.lastShed = [-1e9, -1e9, -1e9, -1e9]; this.L = [0, 0, 0, 0];
+    this.st = { req: 0, served: 0, cap: CFG.CAP, active: 0, resched: 0, emerg: 0, stored: 0, fill: 0, irrOK: 0, short: 0, shedN: 0 };
+    this.cand = [];
+    this.init();
+  }
+  init() {
+    this.level.set(F.lvl0); this.moist.set(F.m0);
+    for (const a of [this.latch, this.want, this.pumpOn, this.irrig, this.short, this.resched, this.emerg]) a.fill(0);
+    this.shed = [0, 0, 0, 0]; this.shedUntil = [0, 0, 0, 0]; this.lastShed = [-1e9, -1e9, -1e9, -1e9];
+    this.resetDay();
+  }
+  resetDay() {
+    this.day = { peakReq: 0, peakT: 0, shedMin: 0, shortFM: 0, kwh: 0, peakKWh: 0, pumped: 0, ever: 0 };
+    this.everShort.fill(0);
+  }
+  snapshot() {
+    return { level: this.level.slice(), moist: this.moist.slice(), latch: this.latch.slice(), pumpOn: this.pumpOn.slice(),
+      shed: [...this.shed], shedUntil: [...this.shedUntil], lastShed: [...this.lastShed] };
+  }
+  restore(s) {
+    this.level.set(s.level); this.moist.set(s.moist); this.latch.set(s.latch); this.pumpOn.set(s.pumpOn);
+    this.shed = [...s.shed]; this.shedUntil = [...s.shedUntil]; this.lastShed = [...s.lastShed];
+    this.resetDay();
+  }
+}
+const WA = new World(false), WB = new World(true);
+
+function envAt(t) {
+  const surge = surgeActive(t);
+  return {
+    base: baseLoad(t, true), cap: capacity(), heatMul: App.heat ? 1.4 : 1, heatET: App.heat ? 1.5 : 1, sunF: sunFactor(t),
+    peak: (t >= App.win[0] && t < App.win[1]) || surge,
+    prefill: !surge && t >= App.win[0] - 360 && t < App.win[0],
+    night: t < 360,
+  };
+}
+
+function stepWorld(W, t, env) {
+  const h = 1 / 60, cap = env.cap;
+  for (let i = 0; i < N; i++) W.irrig[i] = inWin(i, t) ? 1 : 0;
+
+  /* --- pump decisions --- */
+  if (!W.managed) {
+    // Unmanaged: pump whenever irrigating, top up tank when low. No grid awareness.
+    for (let i = 0; i < N; i++) {
+      const f = W.level[i] / F.cap[i];
+      if (f < 0.08) W.latch[i] = 1; else if (f >= 0.3) W.latch[i] = 0;
+      W.want[i] = (W.irrig[i] || W.latch[i]) ? 1 : 0;
+      W.resched[i] = 0; W.emerg[i] = 0;
+    }
+  } else {
+    // Tameru: forecast-driven scheduling under a load ceiling, priority by need.
+    const cand = W.cand; cand.length = 0;
+    for (let i = 0; i < N; i++) {
+      const f = W.level[i] / F.cap[i], was = W.pumpOn[i];
+      let want = false, prio = 0;
+      if (env.peak) {                       // shave the peak: only protect the minimum reserve
+        want = f < CFG.RESERVE || (was && f < CFG.RESERVE + 0.1);
+        prio = 2 + (0.3 - f) + (W.irrig[i] ? 0.5 : 0);
+      } else if (env.prefill) {             // fill tanks ahead of the forecast peak
+        const tg = App.target[i];
+        want = f < tg - 0.04 || (was && f < tg);
+        prio = (tg - f) + (W.irrig[i] ? 0.3 : 0);
+      } else {                              // normal operation / staggered recovery / night valley filling
+        const lo = W.irrig[i] ? 0.45 : 0.3;
+        want = f < lo || (was && f < 0.65);
+        prio = (0.65 - f) + (W.irrig[i] ? 0.4 : 0);
+      }
+      W.prio[i] = prio; W.want[i] = 0;
+      if (want) cand.push(i);
+    }
+    cand.sort((a, b) => W.prio[b] - W.prio[a]);
+    const ceil = env.peak ? 0.9 : env.prefill ? 0.68 : env.night ? 0.6 : 0.78;
+    let budget = ceil * cap - env.base;
+    for (const c of cand) if (F.kw[c] <= budget) { W.want[c] = 1; budget -= F.kw[c]; }
+    for (let i = 0; i < N; i++) {
+      const f = W.level[i] / F.cap[i];
+      const baselineWould = W.irrig[i] || f < 0.15;
+      W.resched[i] = (baselineWould && !W.want[i]) ? 1 : 0;
+      W.emerg[i] = (env.peak && W.want[i]) ? 1 : 0;
+    }
+  }
+
+  /* --- grid: requested load per sector, rotating load shedding --- */
+  const L = W.L; L[0] = L[1] = L[2] = L[3] = env.base / 4;
+  for (let i = 0; i < N; i++) if (W.want[i]) L[F.sec[i]] += F.kw[i];
+  const req = L[0] + L[1] + L[2] + L[3];
+  let served = 0; for (let s = 0; s < 4; s++) if (!W.shed[s]) served += L[s];
+  for (let s = 0; s < 4; s++) {
+    if (W.shed[s] && t >= W.shedUntil[s]) {
+      if (served + L[s] <= 0.95 * cap) { W.shed[s] = 0; served += L[s]; }
+      else {
+        let best = -1;
+        for (let j = 0; j < 4; j++) if (!W.shed[j] && j !== s && served + L[s] - L[j] <= 0.97 * cap && (best < 0 || W.lastShed[j] < W.lastShed[best])) best = j;
+        if (best >= 0) { W.shed[best] = 1; W.shedUntil[best] = t + 60; W.lastShed[best] = t; served += L[s] - L[best]; W.shed[s] = 0; }
+        else W.shedUntil[s] = t + 10;
+      }
+    }
+  }
+  while (served > cap) {
+    let best = -1, bs = -1e9;
+    for (let j = 0; j < 4; j++) if (!W.shed[j]) { const sc = L[j] - (t - W.lastShed[j] < 90 ? 500 : 0); if (sc > bs) { bs = sc; best = j; } }
+    if (best < 0) break;
+    W.shed[best] = 1; W.shedUntil[best] = t + 60; W.lastShed[best] = t; served -= L[best];
+  }
+
+  /* --- water balance (tanks are elevated: irrigation runs by gravity even without power) --- */
+  let active = 0, irrOK = 0, short = 0, stored = 0, fillSum = 0, pkw = 0, rs = 0, em = 0, pumped = 0;
+  const et = (0.015 + 0.035 * env.sunF) * env.heatET;
+  for (let i = 0; i < N; i++) {
+    const powered = !W.shed[F.sec[i]];
+    const on = W.want[i] && powered;
+    W.pumpOn[i] = on ? 1 : 0;
+    const dem = W.irrig[i] ? F.dem[i] * env.heatMul : 0;
+    let inflow = 0;
+    if (on) {
+      inflow = (!W.managed && W.irrig[i] && !W.latch[i]) ? dem : F.rate[i];   // unmanaged pumps feed fields directly
+      active++; pkw += F.kw[i]; pumped += inflow * h;
+    }
+    let lv = W.level[i] + (inflow - dem) * h, delivered = 1;
+    if (lv < 0) { delivered = dem > 0 ? Math.max(0, 1 + lv / (dem * h)) : 1; lv = 0; }
+    if (lv > F.cap[i]) lv = F.cap[i];
+    W.level[i] = lv;
+    const sh = dem > 0 && delivered < 0.5;
+    W.short[i] = sh ? 1 : 0;
+    if (sh) { short++; if (!W.everShort[i]) { W.everShort[i] = 1; W.day.ever++; } }
+    else if (dem > 0) irrOK++;
+    W.moist[i] = clamp(W.moist[i] + (dem > 0 && !sh ? 0.4 * h : 0) - et * h * (sh ? 2.2 : 1), 0.05, 1);
+    stored += lv; fillSum += lv / F.cap[i];
+    rs += W.resched[i]; em += (W.emerg[i] && on) ? 1 : 0;
+  }
+  const shedN = W.shed[0] + W.shed[1] + W.shed[2] + W.shed[3];
+  const S = W.st;
+  S.req = req; S.served = served; S.cap = cap; S.active = active; S.resched = rs; S.emerg = em;
+  S.stored = stored; S.fill = fillSum / N; S.irrOK = irrOK; S.short = short; S.shedN = shedN;
+  const D = W.day;
+  if (req > D.peakReq) { D.peakReq = req; D.peakT = t; }
+  if (shedN) D.shedMin++;
+  D.shortFM += short; D.kwh += pkw * h; D.pumped += pumped;
+  if (t >= CFG.TARIFF[0] && t < CFG.TARIFF[1]) D.peakKWh += pkw * h;
+}
+
+function record(t) {
+  Series.A.push({ x: t, y: WA.st.req }); Series.B.push({ x: t, y: WB.st.req });
+  Series.fA.push({ x: t, y: WA.st.fill * 100 }); Series.fB.push({ x: t, y: WB.st.fill * 100 });
+  App.dirtyChart = true;
+}
+function clearSeries() { Series.A.length = Series.B.length = Series.fA.length = Series.fB.length = 0; App.dirtyChart = true; }
+
+function simStep() {
+  const t = App.t, env = envAt(t);
+  stepWorld(WA, t, env); stepWorld(WB, t, env);
+  if (t % 5 === 0) record(t);
+  App.t++;
+  if (App.t >= 1440) newDay();
+}
+function newDay() {
+  App.day++; App.t = 0; App.surges = [];
+  for (const W of [WA, WB]) { W.resetDay(); for (let s = 0; s < 4; s++) { W.shedUntil[s] -= 1440; W.lastShed[s] -= 1440; } }
+  clearSeries(); computeForecast();
+  App.snap = { A: WA.snapshot(), B: WB.snapshot() };
+}
+function seek(target) {
+  target = clamp(Math.round(target), 0, 1439);
+  WA.restore(App.snap.A); WB.restore(App.snap.B);
+  App.t = 0; App.acc = 0; clearSeries();
+  App.surges = App.surges.filter(s => s < target);
+  while (App.t < target) simStep();
+}
+function resetAll(startAt = 360) {
+  App.heat = false; App.surges = []; App.day = 1; App.t = 0; App.acc = 0;
+  WA.init(); WB.init(); computeForecast(); clearSeries();
+  App.snap = { A: WA.snapshot(), B: WB.snapshot() };
+  while (App.t < startAt) simStep();
+  syncEventButtons();
+}
+
+/* =====================================================================
+   5. 3D scene
+   ===================================================================== */
+const S3 = { ok: false };
+const V = new THREE.Vector3(), Q = new THREE.Quaternion(), SC = new THREE.Vector3(), M = new THREE.Matrix4();
+const UP = new THREE.Vector3(0, 1, 0), Q0 = new THREE.Quaternion();
+const col = hex => new THREE.Color(hex);
+const LED = {
+  pump: new THREE.Color(0.22, 1.35, 2.7), stored: new THREE.Color(0.3, 2.3, 0.85), resched: new THREE.Color(2.7, 1.35, 0.12),
+  emerg: new THREE.Color(3.0, 0.75, 0.08), short: new THREE.Color(3.2, 0.22, 0.2), cut: new THREE.Color(3.2, 0.18, 0.18),
+  idle: new THREE.Color(0.06, 0.09, 0.08), off: new THREE.Color(0.25, 0.03, 0.03),
+};
+const FC = {
+  soilDry: col(0x6b5338), soilWet: col(0x30251b), lush: col(0x3f8f3a), dry: col(0x9a8a45), parched: col(0x7a5530),
+  water: col(0x2f8cff), waterLow: col(0xf2a93b),
+};
+
+function hasWebGL() { try { const c = document.createElement('canvas'); return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl'))); } catch (e) { return false; } }
+
+function inst(geo, mat, count, { shadow = true, receive = false, dynamic = false } = {}) {
+  const m = new THREE.InstancedMesh(geo, mat, count);
+  m.castShadow = shadow; m.receiveShadow = receive;
+  if (dynamic) { m.instanceMatrix.setUsage(THREE.DynamicDrawUsage); m.frustumCulled = false; }
+  S3.scene.add(m); return m;
+}
+function setInst(m, i, x, y, z, sx = 1, sy = 1, sz = 1, q = Q0) { V.set(x, y, z); SC.set(sx, sy, sz); M.compose(V, q, SC); m.setMatrixAt(i, M); }
+function stdMat(o) { return new THREE.MeshStandardMaterial(Object.assign({ color: 0xffffff, roughness: 0.85, metalness: 0.05 }, o)); }
+function box(w, h, d, x = 0, y = 0, z = 0) { return new THREE.BoxGeometry(w, h, d).translate(x, y, z); }
+
+// Farm-local layout (relative to plot centre)
+const L3 = {
+  field: [-0.62, 0], tank: [1.45, -0.55], house: [1.45, 0.95], pump: [1.45, -1.38],
+  pipeMainA: new THREE.Vector3(1.05, 0.21, -0.55), pipeMainB: new THREE.Vector3(-1.95, 0.21, -0.55),
+  pipePumpA: new THREE.Vector3(1.45, 0.42, -1.25), pipePumpB: new THREE.Vector3(1.45, 1.33, -0.9),
+};
+
+function buildScene() {
+  const canvas = $('scene');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.08;
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0a0f16);
+  scene.fog = new THREE.Fog(0x0a0f16, 150, 360);
+  const camera = new THREE.PerspectiveCamera(36, 1, 0.5, 1200);
+  Object.assign(S3, { renderer, scene, camera, canvas });
+
+  const controls = new OrbitControls(camera, canvas);
+  controls.enableDamping = true; controls.dampingFactor = 0.07;
+  controls.maxPolarAngle = 1.38; controls.minDistance = 8; controls.maxDistance = 280;
+  controls.screenSpacePanning = false; controls.panSpeed = 0.9; controls.rotateSpeed = 0.6;
+  S3.controls = controls;
+
+  // Lights
+  const hemi = new THREE.HemisphereLight(0xa9c2e6, 0x1d231c, 0.55); scene.add(hemi);
+  const sun = new THREE.DirectionalLight(0xfff1dc, 1.6);
+  sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+  Object.assign(sun.shadow.camera, { left: -100, right: 100, top: 100, bottom: -100, near: 10, far: 400 });
+  sun.shadow.bias = -0.0006; sun.shadow.normalBias = 0.03;
+  sun.target.position.set(-8, 0, 0); scene.add(sun); scene.add(sun.target);
+  Object.assign(S3, { hemi, sun });
+
+  // Post-processing (bloom on emissive elements only)
+  try {
+    const composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    const bloom = new UnrealBloomPass(new THREE.Vector2(512, 512), 0.55, 0.45, 0.92);
+    composer.addPass(bloom); composer.addPass(new OutputPass());
+    S3.composer = composer; S3.bloom = bloom;
+  } catch (e) { console.warn('Bloom disabled', e); }
+
+  buildGround(); buildFarms(); buildStation(); buildReservoir(); buildPowerNetwork(); buildDecor();
+  S3.ok = true;
+}
+
+function buildGround() {
+  const { scene } = S3;
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(520, 380), stdMat({ color: 0x111915, roughness: 1 }));
+  ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+  const grid = new THREE.GridHelper(520, 104, 0x1f2c35, 0x17222b);
+  grid.material.transparent = true; grid.material.opacity = 0.35; grid.position.y = 0.012; scene.add(grid);
+
+  const asphalt = stdMat({ color: 0x1a1f26, roughness: 0.95 });
+  const roads = [
+    box(112, 0.06, 10, -2, 0.03, 0), box(10, 0.06, 59, 0, 0.031, 0),
+    box(112, 0.06, 4, -2, 0.03, -27.6), box(112, 0.06, 4, -2, 0.03, 27.6),
+    box(4, 0.06, 59, -55.6, 0.03, 0), box(4, 0.06, 59, 53.6, 0.03, 0),
+  ];
+  const rm = new THREE.Mesh(mergeGeometries(roads), asphalt); rm.receiveShadow = true; scene.add(rm);
+  // Lane dashes
+  const dashes = [];
+  for (let x = -52; x <= 50; x += 4) if (Math.abs(x) > 6) dashes.push(box(1.6, 0.02, 0.14, x, 0.07, 0));
+  for (let z = -26; z <= 26; z += 4) if (Math.abs(z) > 6) dashes.push(box(0.14, 0.02, 1.6, 0, 0.07, z));
+  scene.add(new THREE.Mesh(mergeGeometries(dashes), new THREE.MeshBasicMaterial({ color: 0x3b4553 })));
+
+  // Sector bases, outlines and outage overlays
+  S3.sectorOverlay = []; S3.sectorLine = [];
+  for (let s = 0; s < 4; s++) {
+    const c = SECT[s];
+    const base = new THREE.Mesh(box(46.6, 0.08, 19.9, c.x, 0.04, c.z), stdMat({ color: 0x151c18, roughness: 1 }));
+    base.receiveShadow = true; scene.add(base);
+    const ov = new THREE.Mesh(new THREE.PlaneGeometry(46.6, 19.9), new THREE.MeshBasicMaterial({ color: 0xff2a2a, transparent: true, opacity: 0, depthWrite: false }));
+    ov.rotation.x = -Math.PI / 2; ov.position.set(c.x, 0.42, c.z); ov.renderOrder = 2; scene.add(ov); S3.sectorOverlay.push(ov);
+    const hw = 23.4, hd = 10.05, y = 0.1;
+    const pts = [new THREE.Vector3(c.x - hw, y, c.z - hd), new THREE.Vector3(c.x + hw, y, c.z - hd), new THREE.Vector3(c.x + hw, y, c.z + hd), new THREE.Vector3(c.x - hw, y, c.z + hd)];
+    const ln = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: 0x2c4a5a, transparent: true, opacity: 0.9 }));
+    scene.add(ln); S3.sectorLine.push(ln);
+  }
+}
+
+function buildFarms() {
+  const fx = L3.field[0];
+  // geometries
+  const gPlot = box(4.3, 0.1, 3.5, 0, 0.13, 0);
+  const gField = box(2.75, 0.06, 2.95, fx, 0.21, 0);
+  const rows = []; for (let r = 0; r < 7; r++) rows.push(box(2.55, 0.17, 0.2, fx, 0.31, -1.2 + r * 0.4));
+  const gCrop = mergeGeometries(rows);
+  const gHouse = box(0.85, 0.55, 0.7, L3.house[0], 0.455, L3.house[1]);
+  const gRoof = new THREE.ConeGeometry(0.63, 0.38, 4).rotateY(Math.PI / 4).translate(L3.house[0], 0.92, L3.house[1]);
+  const gLED = new THREE.SphereGeometry(0.12, 12, 8).translate(L3.house[0], 1.25, L3.house[1]);
+  const gShell = new THREE.CylinderGeometry(0.4, 0.4, 1.2, 22, 1, true).translate(L3.tank[0], 0.78, L3.tank[1]);
+  const gRims = mergeGeometries([
+    new THREE.CylinderGeometry(0.5, 0.52, 0.08, 22).translate(L3.tank[0], 0.2, L3.tank[1]),
+    new THREE.CylinderGeometry(0.42, 0.42, 0.06, 22).translate(L3.tank[0], 0.24, L3.tank[1]),
+    new THREE.CylinderGeometry(0.43, 0.43, 0.06, 22).translate(L3.tank[0], 1.36, L3.tank[1]),
+  ]);
+  const gWater = new THREE.CylinderGeometry(0.36, 0.36, 1, 22).translate(0, 0.5, 0);
+  const gPump = box(0.42, 0.3, 0.36, L3.pump[0], 0.33, L3.pump[1]);
+  const gImp = mergeGeometries([
+    new THREE.CylinderGeometry(0.07, 0.07, 0.06, 10),
+    box(0.34, 0.025, 0.07), box(0.34, 0.025, 0.07).rotateY(Math.PI / 3), box(0.34, 0.025, 0.07).rotateY(-Math.PI / 3),
+  ]);
+  const gPipe = new THREE.CylinderGeometry(0.055, 0.055, 1, 8, 1, true).translate(0, 0.5, 0);
+  const gDrop = new THREE.SphereGeometry(0.07, 8, 6);
+
+  const mPlot = stdMat({ roughness: 1 });
+  const mField = stdMat({ roughness: 0.95 });
+  const mCrop = stdMat({ roughness: 0.8 });
+  const mHouse = stdMat({ color: 0xd9d4c8, roughness: 0.8 });
+  const mRoof = stdMat({ roughness: 0.7 });
+  const mLED = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  const mShell = new THREE.MeshStandardMaterial({ color: 0xbfd6ea, transparent: true, opacity: 0.2, roughness: 0.1, metalness: 0.2, side: THREE.DoubleSide, depthWrite: false });
+  const mRims = stdMat({ color: 0x6f7a86, metalness: 0.6, roughness: 0.4 });
+  const mWater = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.15, metalness: 0.0, emissive: 0x0b3366, emissiveIntensity: 0.55 });
+  const mPump = stdMat({ color: 0x5c6b7a, metalness: 0.5, roughness: 0.45 });
+  const mImp = stdMat({ color: 0xc9d3dd, metalness: 0.7, roughness: 0.3 });
+  const mPipe = new THREE.MeshStandardMaterial({ color: 0xa7cdea, transparent: true, opacity: 0.32, roughness: 0.1, depthWrite: false });
+  const mDrop = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+  const fm = S3.farm = {
+    plot: inst(gPlot, mPlot, N, { receive: true, shadow: false }),
+    field: inst(gField, mField, N, { receive: true, shadow: false }),
+    crop: inst(gCrop, mCrop, N, { receive: true }),
+    house: inst(gHouse, mHouse, N, { receive: true }),
+    roof: inst(gRoof, mRoof, N),
+    led: inst(gLED, mLED, N, { shadow: false }),
+    shell: inst(gShell, mShell, N, { shadow: false }),
+    rims: inst(gRims, mRims, N),
+    water: inst(gWater, mWater, N, { dynamic: true, shadow: false }),
+    pump: inst(gPump, mPump, N),
+    imp: inst(gImp, mImp, N, { dynamic: true }),
+    pipeM: inst(gPipe, mPipe, N, { shadow: false }),
+    pipeP: inst(gPipe, mPipe, N, { shadow: false }),
+    drops: inst(gDrop, mDrop, N * 6, { dynamic: true, shadow: false }),
+  };
+  fm.shell.renderOrder = 3; fm.pipeM.renderOrder = 3; fm.pipeP.renderOrder = 3;
+  const rng = mulberry32(77);
+  const roofCols = [0x7a3b33, 0x34515f, 0x5d4a3a, 0x3e5a46, 0x6b6f75];
+  const dirM = new THREE.Vector3().subVectors(L3.pipeMainB, L3.pipeMainA), lenM = dirM.length(); dirM.normalize();
+  const dirP = new THREE.Vector3().subVectors(L3.pipePumpB, L3.pipePumpA), lenP = dirP.length(); dirP.normalize();
+  const qM = new THREE.Quaternion().setFromUnitVectors(UP, dirM), qP = new THREE.Quaternion().setFromUnitVectors(UP, dirP);
+  const tmp = new THREE.Color();
+  for (let i = 0; i < N; i++) {
+    const x = F.x[i], z = F.z[i];
+    for (const k of ['plot', 'field', 'crop', 'house', 'roof', 'led', 'shell', 'rims', 'pump']) setInst(fm[k], i, x, 0, z);
+    setInst(fm.pipeM, i, x + L3.pipeMainA.x, L3.pipeMainA.y, z + L3.pipeMainA.z, 1, lenM, 1, qM);
+    setInst(fm.pipeP, i, x + L3.pipePumpA.x, L3.pipePumpA.y, z + L3.pipePumpA.z, 1, lenP, 1, qP);
+    fm.plot.setColorAt(i, tmp.setHex(0x2a231b).offsetHSL(0, 0, (rng() - 0.5) * 0.03));
+    fm.roof.setColorAt(i, tmp.setHex(roofCols[Math.floor(rng() * roofCols.length)]));
+    fm.field.setColorAt(i, FC.soilDry); fm.crop.setColorAt(i, FC.lush); fm.led.setColorAt(i, LED.idle);
+    fm.water.setColorAt(i, FC.water); setInst(fm.water, i, x + L3.tank[0], 0.27, z + L3.tank[1], 1, 0.5, 1);
+    setInst(fm.imp, i, x + L3.pump[0], 0.51, z + L3.pump[1]);
+  }
+  for (let j = 0; j < N * 6; j++) { setInst(fm.drops, j, 0, -10, 0, 0, 0, 0); fm.drops.setColorAt(j, LED.pump); }
+  for (const k in fm) { fm[k].instanceMatrix.needsUpdate = true; if (fm[k].instanceColor) fm[k].instanceColor.needsUpdate = true; }
+  fm.dispLevel = new Float32Array(N); fm.dispMoist = new Float32Array(N); fm.dispStress = new Float32Array(N); fm.dispWet = new Float32Array(N); fm.imp_a = new Float32Array(N);
+  fm.qM = qM;
+
+  // Hover & selection outlines
+  const eg = new THREE.EdgesGeometry(new THREE.BoxGeometry(4.45, 0.5, 3.65));
+  S3.hover = new THREE.LineSegments(eg, new THREE.LineBasicMaterial({ color: 0xbfe9ff, transparent: true, opacity: 0.8 }));
+  S3.select = new THREE.LineSegments(eg, new THREE.LineBasicMaterial({ color: 0x56c8f0 }));
+  S3.hover.visible = S3.select.visible = false; S3.scene.add(S3.hover, S3.select);
+}
+
+function buildStation() {
+  const { scene } = S3, g = new THREE.Group(); scene.add(g); S3.station = g;
+  const plaza = new THREE.Mesh(box(9.2, 0.22, 9.2, 0, 0.11, 0), stdMat({ color: 0x232b35, roughness: 0.9 })); plaza.receiveShadow = true; g.add(plaza);
+  const metal = stdMat({ color: 0x8995a3, metalness: 0.65, roughness: 0.38 });
+  const trafo = [], fins = [], bush = [];
+  for (const x of [-2.4, 0, 2.4]) {
+    trafo.push(box(1.6, 1.5, 1.3, x, 0.97, -1.7));
+    for (let f = -3; f <= 3; f++) fins.push(box(0.04, 1.2, 0.3, x + f * 0.2, 0.9, -1.7 + 0.8));
+    for (let b = -1; b <= 1; b++) bush.push(new THREE.CylinderGeometry(0.07, 0.11, 0.6, 8).translate(x + b * 0.45, 2.02, -1.7));
+  }
+  const tm = new THREE.Mesh(mergeGeometries([...trafo, ...fins]), metal); tm.castShadow = tm.receiveShadow = true; g.add(tm);
+  g.add(new THREE.Mesh(mergeGeometries(bush), stdMat({ color: 0xc8b89a, roughness: 0.5 })));
+  // gantry
+  const gan = mergeGeometries([box(0.18, 4, 0.18, -3.6, 2.2, -3.6), box(0.18, 4, 0.18, 3.6, 2.2, -3.6), box(7.4, 0.18, 0.18, 0, 4.1, -3.6), box(0.18, 4, 0.18, -3.6, 2.2, 3.6), box(0.18, 4, 0.18, 3.6, 2.2, 3.6)]);
+  const gm = new THREE.Mesh(gan, metal); gm.castShadow = true; g.add(gm);
+  // control building
+  const bld = new THREE.Mesh(box(3.4, 1.5, 2.0, -1.0, 0.97, 2.0), stdMat({ color: 0x3a4655, roughness: 0.7 })); bld.castShadow = bld.receiveShadow = true; g.add(bld);
+  S3.stStrip = new THREE.Mesh(box(3.1, 0.14, 0.04, -1.0, 1.25, 3.02), new THREE.MeshBasicMaterial({ color: new THREE.Color(0.3, 2.2, 0.9) })); g.add(S3.stStrip);
+  // tower + beacon
+  const tw = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.42, 7.5, 4).translate(2.6, 3.97, 2.3), metal); tw.castShadow = true; g.add(tw);
+  S3.beacon = new THREE.Mesh(new THREE.SphereGeometry(0.26, 14, 10).translate(2.6, 7.95, 2.3), new THREE.MeshBasicMaterial({ color: new THREE.Color(0.3, 2.4, 0.9) })); g.add(S3.beacon);
+  // warning lights on corner posts
+  S3.warn = [];
+  for (const [x, z] of [[-4.3, -4.3], [4.3, -4.3], [-4.3, 4.3], [4.3, 4.3]]) {
+    const p = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1.2, 6).translate(x, 0.82, z), metal); g.add(p);
+    const l = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 8).translate(x, 1.5, z), new THREE.MeshBasicMaterial({ color: new THREE.Color(0.2, 1.6, 0.6) })); g.add(l); S3.warn.push(l);
+  }
+  // status ring + shockwave
+  const ringMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(0.3, 2.2, 0.9), transparent: true, opacity: 0.9, side: THREE.DoubleSide, depthWrite: false });
+  S3.ring = new THREE.Mesh(new THREE.RingGeometry(6.0, 6.3, 72).rotateX(-Math.PI / 2), ringMat); S3.ring.position.y = 0.09; g.add(S3.ring);
+  S3.shock = new THREE.Mesh(new THREE.RingGeometry(6.0, 6.45, 72).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: new THREE.Color(3, 0.3, 0.3), transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false }));
+  S3.shock.position.y = 0.1; g.add(S3.shock);
+  // feeder outlet posts
+  for (const [sx, sz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+    const p = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 3.4, 6).translate(sx * 3.4, 1.8, sz * 4.0), metal); p.castShadow = true; g.add(p);
+  }
+}
+
+function buildReservoir() {
+  const { scene } = S3, cx = -74, cz = 0;
+  const wall = new THREE.Mesh(new THREE.CylinderGeometry(11, 11.6, 2.4, 64, 1, true).translate(cx, 1.2, cz), stdMat({ color: 0x4a545e, roughness: 0.9, side: THREE.DoubleSide }));
+  wall.castShadow = wall.receiveShadow = true; scene.add(wall);
+  scene.add(new THREE.Mesh(new THREE.TorusGeometry(11.3, 0.28, 8, 64).rotateX(Math.PI / 2).translate(cx, 2.4, cz), stdMat({ color: 0x5d6873, roughness: 0.8 })));
+  const floor = new THREE.Mesh(new THREE.CircleGeometry(11, 48).rotateX(-Math.PI / 2).translate(cx, 0.05, cz), stdMat({ color: 0x0c1720 })); scene.add(floor);
+  S3.resWater = new THREE.Mesh(new THREE.CircleGeometry(10.95, 64).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: 0x1d6fb8, roughness: 0.08, metalness: 0.25, transparent: true, opacity: 0.9, emissive: 0x0a3256, emissiveIntensity: 0.7 }));
+  S3.resWater.position.set(cx, 1.8, cz); scene.add(S3.resWater);
+  const ph = new THREE.Mesh(box(3.6, 2.2, 3, -59.5, 1.1, -6.5), stdMat({ color: 0x3a4655 })); ph.castShadow = true; scene.add(ph);
+  scene.add(new THREE.Mesh(new THREE.ConeGeometry(2.8, 0.8, 4).rotateY(Math.PI / 4).translate(-59.5, 2.6, -6.5), stdMat({ color: 0x2b3440 })));
+  // trunk water mains along the central road
+  const mPipe = new THREE.MeshStandardMaterial({ color: 0x9cc6e6, transparent: true, opacity: 0.3, roughness: 0.1, depthWrite: false });
+  const geo = mergeGeometries([
+    new THREE.CylinderGeometry(0.22, 0.22, 116, 12, 1, true).rotateZ(Math.PI / 2).translate(-5, 0.35, -4.4),
+    new THREE.CylinderGeometry(0.22, 0.22, 116, 12, 1, true).rotateZ(Math.PI / 2).translate(-5, 0.35, 4.4),
+  ]);
+  const mains = new THREE.Mesh(geo, mPipe); mains.renderOrder = 3; scene.add(mains);
+  S3.mainDrops = inst(new THREE.SphereGeometry(0.16, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffffff }), 80, { dynamic: true, shadow: false });
+  for (let j = 0; j < 80; j++) S3.mainDrops.setColorAt(j, new THREE.Color(0.25, 0.9, 2.4));
+}
+
+function buildPowerNetwork() {
+  const H = 2.45, SAG = 0.22, poleGeo = mergeGeometries([new THREE.CylinderGeometry(0.05, 0.07, 2.5, 6).translate(0, 1.25, 0), box(0.72, 0.06, 0.07, 0, 2.38, 0)]);
+  const poles = [];  // {x,z,rot}
+  S3.paths = []; S3.wires = [];
+  const sagPts = (a, b, out) => { const n = 8; for (let k = (out.length ? 1 : 0); k <= n; k++) { const u = k / n; const p = new THREE.Vector3().lerpVectors(a, b, u); p.y -= SAG * Math.sin(Math.PI * u) * (a.distanceTo(b) / 4.6); out.push(p); } };
+  for (let s = 0; s < 4; s++) {
+    const c = SECT[s], sx = Math.sign(c.x), sz = Math.sign(c.z);
+    const st = new THREE.Vector3(sx * 3.4, 3.45, sz * 4.0);
+    const corner = new THREE.Vector3(sx * 4.4, H, sz * 5.6);
+    const lats = []; for (let r = 0; r < 5; r++) lats.push(c.z + (r - 2) * CFG.PZ - CFG.PZ / 2);
+    lats.sort((a, b) => Math.abs(a) - Math.abs(b));
+    const segs = [];  // list of [a,b] for drawing
+    const trunkPoles = [corner, ...lats.map(z => new THREE.Vector3(sx * 4.4, H, z))];
+    poles.push({ x: corner.x, z: corner.z, rot: 0 });
+    for (let k = 1; k < trunkPoles.length; k++) poles.push({ x: trunkPoles[k].x, z: trunkPoles[k].z, rot: 0 });
+    segs.push([st, corner]);
+    for (let k = 1; k < trunkPoles.length; k++) segs.push([trunkPoles[k - 1], trunkPoles[k]]);
+    lats.forEach((z, ri) => {
+      const latPoles = []; for (let k = 0; k <= 10; k++) latPoles.push(new THREE.Vector3(sx * (4.4 + k * 4.66), H, z));
+      for (let k = 1; k < latPoles.length; k++) { poles.push({ x: latPoles[k].x, z, rot: Math.PI / 2 }); segs.push([latPoles[k - 1], latPoles[k]]); }
+      // particle path: station → corner → trunk → this lateral
+      const pts = []; sagPts(st, corner, pts);
+      for (let k = 1; k <= ri + 1; k++) sagPts(trunkPoles[k - 1], trunkPoles[k], pts);
+      for (let k = 1; k < latPoles.length; k++) sagPts(latPoles[k - 1], latPoles[k], pts);
+      const cum = [0]; for (let k = 1; k < pts.length; k++) cum.push(cum[k - 1] + pts[k].distanceTo(pts[k - 1]));
+      S3.paths.push({ s, pts, cum, len: cum[cum.length - 1], off: Math.random() });
+    });
+    // wires (two conductors offset by cross-arm)
+    const wp = [];
+    for (const [a, b] of segs) {
+      const d = new THREE.Vector3().subVectors(b, a); const perp = new THREE.Vector3(-d.z, 0, d.x).normalize().multiplyScalar(0.28);
+      for (const o of [perp, perp.clone().negate()]) {
+        const line = []; sagPts(a.clone().add(o), b.clone().add(o), line);
+        for (let k = 1; k < line.length; k++) wp.push(line[k - 1], line[k]);
+      }
+    }
+    const wire = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(wp), new THREE.LineBasicMaterial({ color: 0x6d7f92, transparent: true, opacity: 0.55 }));
+    S3.scene.add(wire); S3.wires.push(wire);
+  }
+  const pm = inst(poleGeo, stdMat({ color: 0x5a4a3b, roughness: 0.9 }), poles.length);
+  const q = new THREE.Quaternion();
+  poles.forEach((p, i) => { q.setFromAxisAngle(UP, p.rot); setInst(pm, i, p.x, 0, p.z, 1, 1, 1, q); });
+  pm.instanceMatrix.needsUpdate = true;
+  const K = 5;
+  S3.energy = inst(new THREE.SphereGeometry(0.1, 8, 6), new THREE.MeshBasicMaterial({ color: 0xffffff }), S3.paths.length * K, { dynamic: true, shadow: false });
+  S3.energyK = K;
+  for (let j = 0; j < S3.paths.length * K; j++) S3.energy.setColorAt(j, new THREE.Color(0.3, 1.6, 2.8));
+  S3.pathU = new Float32Array(S3.paths.length).map(() => Math.random());
+}
+function samplePath(p, d, out) {
+  d = ((d % p.len) + p.len) % p.len;
+  let lo = 0, hi = p.cum.length - 1;
+  while (hi - lo > 1) { const m = (lo + hi) >> 1; if (p.cum[m] <= d) lo = m; else hi = m; }
+  const seg = p.cum[hi] - p.cum[lo] || 1;
+  return out.lerpVectors(p.pts[lo], p.pts[hi], (d - p.cum[lo]) / seg);
+}
+
+function buildDecor() {
+  const rng = mulberry32(911), pts = [];
+  while (pts.length < 320) {
+    const x = (rng() - 0.5) * 300, z = (rng() - 0.5) * 210;
+    if (Math.abs(x + 2) < 62 && Math.abs(z) < 34) continue;
+    if (Math.hypot(x + 74, z) < 17) continue;
+    if (Math.abs(x + 59.5) < 5 && Math.abs(z + 6.5) < 5) continue;
+    pts.push([x, z, 0.7 + rng() * 0.9, rng()]);
+  }
+  const fol = inst(new THREE.ConeGeometry(1.1, 3, 7).translate(0, 2.7, 0), stdMat({ roughness: 0.9 }), pts.length);
+  const trunk = inst(new THREE.CylinderGeometry(0.12, 0.16, 1.3, 5).translate(0, 0.65, 0), stdMat({ color: 0x4a3a2c }), pts.length);
+  const c = new THREE.Color();
+  pts.forEach(([x, z, s, h], i) => { setInst(fol, i, x, 0, z, s, s, s); setInst(trunk, i, x, 0, z, s, s, s); fol.setColorAt(i, c.setHSL(0.27 + h * 0.08, 0.35, 0.16 + h * 0.06)); });
+  fol.receiveShadow = true;
+}
+
+/* ---------- Camera ---------- */
+const HOME = { target: new THREE.Vector3(-6, 0, 3), pos: new THREE.Vector3(44, 62, 88) };
+const Tween = { active: false };
+function flyTo(pos, target, dur = 1.5) {
+  if (!S3.ok) return;
+  if (dur <= 0) { S3.camera.position.copy(pos); S3.controls.target.copy(target); Tween.active = false; return; }
+  Object.assign(Tween, { active: true, t: 0, dur, p0: S3.camera.position.clone(), p1: pos.clone(), q0: S3.controls.target.clone(), q1: target.clone() });
+}
+function flyHome(d = 1.5) { flyTo(HOME.pos, HOME.target, d); }
+function flyToSector(s, d = 1.6, close = false) {
+  const c = SECT[s], t = new THREE.Vector3(c.x, 0, c.z);
+  flyTo(t.clone().add(close ? new THREE.Vector3(9, 17, 22) : new THREE.Vector3(20, 40, 52)), t, d);
+}
+function flyToFarm(i, d = 1.4) {
+  const t = new THREE.Vector3(F.x[i] + 0.3, 0.5, F.z[i]);
+  flyTo(t.clone().add(new THREE.Vector3(6.5, 7.2, 9.5)), t, d);
+}
+function updateTween(dt) {
+  if (!Tween.active) return;
+  Tween.t += dt / Tween.dur; const k = ease(Math.min(1, Tween.t));
+  S3.camera.position.lerpVectors(Tween.p0, Tween.p1, k);
+  S3.controls.target.lerpVectors(Tween.q0, Tween.q1, k);
+  if (Tween.t >= 1) Tween.active = false;
+}
+
+/* ---------- Per-frame 3D update ---------- */
+const tmpC = new THREE.Color(), tmpC2 = new THREE.Color(), PV = new THREE.Vector3(), PV2 = new THREE.Vector3();
+let clock3 = 0;
+function viewWorld() { return App.tameru ? WB : WA; }
+function farmStatus(W, i) {
+  if (W.short[i]) return 'short';
+  if (W.shed[F.sec[i]]) return 'cut';
+  if (W.pumpOn[i]) return W.emerg[i] ? 'emerg' : 'pump';
+  if (W.resched[i]) return 'resched';
+  if (W.irrig[i]) return 'stored';
+  return 'idle';
+}
+function update3D(dt) {
+  clock3 += dt;
+  const W = viewWorld(), fm = S3.farm, k = Math.min(1, dt * 5), ks = Math.min(1, dt * 2.2);
+  const blink = (Math.sin(clock3 * 9) > 0);
+  for (let i = 0; i < N; i++) {
+    const x = F.x[i], z = F.z[i];
+    const f = W.level[i] / F.cap[i];
+    fm.dispLevel[i] += (f - fm.dispLevel[i]) * k;
+    fm.dispMoist[i] += (W.moist[i] - fm.dispMoist[i]) * ks;
+    fm.dispStress[i] += ((W.short[i] ? 1 : 0) - fm.dispStress[i]) * ks;
+    const wetT = (W.irrig[i] && !W.short[i]) ? 1 : 0;
+    fm.dispWet[i] += (wetT - fm.dispWet[i]) * ks;
+    // tank water
+    setInst(fm.water, i, x + L3.tank[0], 0.27, z + L3.tank[1], 1, Math.max(0.005, fm.dispLevel[i] * 1.06), 1);
+    tmpC.copy(FC.water); if (fm.dispLevel[i] < 0.2) tmpC.lerp(FC.waterLow, 1 - fm.dispLevel[i] / 0.2);
+    fm.water.setColorAt(i, tmpC);
+    // impeller
+    if (W.pumpOn[i]) fm.imp_a[i] += dt * 16;
+    Q.setFromAxisAngle(UP, fm.imp_a[i]); setInst(fm.imp, i, x + L3.pump[0], 0.51, z + L3.pump[1], 1, 1, 1, Q);
+    // LED
+    const st = farmStatus(W, i);
+    let c = LED.idle;
+    if (st === 'short') c = blink ? LED.short : LED.off;
+    else if (st === 'cut') c = blink ? LED.cut : LED.off;
+    else c = LED[st];
+    fm.led.setColorAt(i, c);
+    // field soil & crop
+    tmpC.copy(FC.soilDry).lerp(FC.soilWet, fm.dispWet[i] * 0.85);
+    fm.field.setColorAt(i, tmpC);
+    const m = smooth(0.15, 0.8, fm.dispMoist[i]);
+    tmpC.copy(FC.dry).lerp(FC.lush, m).lerp(FC.parched, fm.dispStress[i] * 0.85);
+    if (fm.dispWet[i] > 0.01) { tmpC2.setRGB(0.05, 0.16, 0.12); tmpC.lerp(tmpC2, fm.dispWet[i] * 0.12); }
+    fm.crop.setColorAt(i, tmpC);
+    // water particles
+    const base = i * 6, ph = F.phase[i];
+    const flowing = W.irrig[i] && !W.short[i];
+    for (let j = 0; j < 4; j++) {
+      if (flowing) {
+        const u = (clock3 * 0.55 + j / 4 + ph) % 1;
+        PV.lerpVectors(L3.pipeMainA, L3.pipeMainB, u);
+        setInst(fm.drops, base + j, x + PV.x, PV.y, z + PV.z);
+        fm.drops.setColorAt(base + j, tmpC2.setRGB(0.25, 0.85, 2.6));
+      } else setInst(fm.drops, base + j, 0, -10, 0, 0, 0, 0);
+    }
+    for (let j = 0; j < 2; j++) {
+      if (W.pumpOn[i]) {
+        const u = (clock3 * 1.1 + j / 2 + ph) % 1;
+        PV.lerpVectors(L3.pipePumpA, L3.pipePumpB, u);
+        setInst(fm.drops, base + 4 + j, x + PV.x, PV.y, z + PV.z, 0.85, 0.85, 0.85);
+        fm.drops.setColorAt(base + 4 + j, W.emerg[i] ? LED.emerg : LED.pump);
+      } else setInst(fm.drops, base + 4 + j, 0, -10, 0, 0, 0, 0);
+    }
+  }
+  for (const key of ['water', 'imp', 'drops']) fm[key].instanceMatrix.needsUpdate = true;
+  for (const key of ['water', 'led', 'field', 'crop', 'drops']) fm[key].instanceColor.needsUpdate = true;
+
+  // Grid state
+  const util = W.st.req / W.st.cap, over = W.st.shedN > 0 || util > 1;
+  const gc = over ? new THREE.Color(3, 0.3, 0.28) : util > 0.85 ? new THREE.Color(2.6, 1.3, 0.15) : new THREE.Color(0.25, 2.2, 0.9);
+  // energy particles
+  const K = S3.energyK;
+  S3.paths.forEach((p, pi) => {
+    const s = p.s, shed = W.shed[s];
+    const load = W.L[s] || 0;
+    const speed = 3 + 13 * clamp(load / 330, 0, 1.6);
+    S3.pathU[pi] += dt * speed;
+    for (let j = 0; j < K; j++) {
+      const id = pi * K + j;
+      if (shed) { setInst(S3.energy, id, 0, -10, 0, 0, 0, 0); continue; }
+      samplePath(p, S3.pathU[pi] + j * p.len / K + p.off * p.len, PV);
+      setInst(S3.energy, id, PV.x, PV.y, PV.z);
+      S3.energy.setColorAt(id, over ? tmpC.setRGB(3, 0.4, 0.3) : util > 0.85 ? tmpC.setRGB(2.8, 1.4, 0.2) : tmpC.setRGB(0.3, 1.6, 2.9));
+    }
+  });
+  S3.energy.instanceMatrix.needsUpdate = true; S3.energy.instanceColor.needsUpdate = true;
+  for (let s = 0; s < 4; s++) {
+    const shed = W.shed[s];
+    const ov = S3.sectorOverlay[s];
+    const tgt = shed ? 0.075 + 0.035 * Math.sin(clock3 * 4) : 0;
+    ov.material.opacity += (tgt - ov.material.opacity) * Math.min(1, dt * 4);
+    ov.visible = ov.material.opacity > 0.003;
+    S3.sectorLine[s].material.color.setHex(shed ? 0xff4040 : (W.managed ? 0x2a5a4a : 0x2c4a5a));
+    S3.wires[s].material.color.setHex(shed ? 0x5a2020 : over ? 0x9a5050 : 0x6d7f92);
+  }
+  // station
+  const pulse = 0.5 + 0.5 * Math.sin(clock3 * (over ? 10 : 2.4));
+  S3.ring.material.color.copy(gc).multiplyScalar(over ? 0.6 + 0.6 * pulse : 0.8 + 0.2 * pulse);
+  S3.stStrip.material.color.copy(gc);
+  S3.beacon.material.color.copy(gc).multiplyScalar(over ? (blink ? 1.2 : 0.15) : 1);
+  S3.warn.forEach((l, i) => l.material.color.copy(over ? ((blink ^ (i % 2)) ? new THREE.Color(3.4, 0.25, 0.2) : new THREE.Color(0.3, 0.02, 0.02)) : gc).multiplyScalar(over ? 1 : 0.6));
+  if (over) {
+    const sp = (clock3 % 1.2) / 1.2;
+    S3.shock.scale.setScalar(1 + sp * 1.6); S3.shock.material.opacity = 0.75 * (1 - sp);
+  } else S3.shock.material.opacity = 0;
+  // reservoir & mains
+  S3.resWater.position.y = 1.15 + 1.0 * clamp(0.85 - W.day.pumped / 9000, 0.25, 0.95);
+  const md = S3.mainDrops, flow = W.st.active / N;
+  for (let j = 0; j < 80; j++) {
+    if (flow < 0.01) { setInst(md, j, 0, -10, 0, 0, 0, 0); continue; }
+    const lane = j % 2, u = ((clock3 * (0.03 + 0.12 * flow)) + j / 80 * 2) % 1;
+    setInst(md, j, -62 + u * 112, 0.35, lane ? 4.4 : -4.4);
+  }
+  md.instanceMatrix.needsUpdate = true;
+  // time of day
+  updateSun(App.t + App.acc);
+  // hover / selection outline follow
+  if (Sel.farm >= 0) S3.select.position.set(F.x[Sel.farm], 0.38, F.z[Sel.farm]);
+}
+function updateSun(t) {
+  const d = (t - 360) / (1170 - 360);
+  const el = Math.sin(Math.PI * clamp(d, -0.12, 1.12));
+  const day = clamp(el, 0, 1);
+  const sun = S3.sun;
+  sun.position.set(-8 + Math.cos(Math.PI * clamp(d, 0, 1)) * 95, 14 + day * 90, 50);
+  sun.target.position.set(-8, 0, 0);
+  sun.intensity = 0.4 + 2.2 * day;
+  sun.color.setRGB(1, lerp(0.62, 0.95, smooth(0, 0.5, day)), lerp(0.42, 0.86, smooth(0, 0.6, day)));
+  if (el <= 0) sun.color.setRGB(0.55, 0.65, 1);
+  S3.hemi.intensity = 0.38 + 0.7 * day;
+  S3.scene.background.setRGB(lerp(0.028, 0.045, day), lerp(0.04, 0.066, day), lerp(0.066, 0.095, day));
+  S3.scene.fog.color.copy(S3.scene.background);
+  if (S3.bloom) S3.bloom.strength = lerp(0.85, 0.5, day);
+}
+
+/* ---------- Labels projected from 3D ---------- */
+const Labels = [];
+function buildLabels() {
+  const host = $('labels');
+  const mk = (cls, html, pos) => { const el = document.createElement('div'); el.className = 'chip ' + cls; el.innerHTML = html; host.appendChild(el); const o = { el, pos }; Labels.push(o); return o; };
+  S3.secLabels = SECT.map(c => mk('', `<i></i><b>SECTOR ${c.n}</b><span>— kW</span>`, new THREE.Vector3(c.x, 3.4, c.z)));
+  S3.stLabel = mk('st', `<i></i><b>SUBSTATION</b><span>—</span>`, new THREE.Vector3(0, 9.2, 2.3));
+  S3.resLabel = mk('st', `<i style="background:var(--water)"></i><b>RESERVOIR</b><span>—</span>`, new THREE.Vector3(-74, 4.2, 0));
+}
+function updateLabels(force) {
+  const w = S3.canvas.clientWidth, h = S3.canvas.clientHeight;
+  for (const L of Labels) {
+    PV.copy(L.pos).project(S3.camera);
+    if (PV.z > 1 || PV.z < -1) { L.el.style.display = 'none'; continue; }
+    L.el.style.display = '';
+    const x = (PV.x * 0.5 + 0.5) * w, y = (-PV.y * 0.5 + 0.5) * h;
+    L.el.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) translate(-50%,-100%)`;
+  }
+  if (!force) return;
+  const W = viewWorld();
+  S3.secLabels.forEach((o, s) => {
+    const shed = W.shed[s];
+    o.el.classList.toggle('off', !!shed);
+    o.el.querySelector('span').textContent = shed ? 'POWER CUT' : `${fmtInt(W.L[s])} kW`;
+  });
+  const util = W.st.req / W.st.cap;
+  S3.stLabel.el.classList.toggle('over', W.st.shedN > 0 || util > 1);
+  S3.stLabel.el.querySelector('i').style.background = W.st.shedN > 0 || util > 1 ? 'var(--red)' : util > 0.85 ? 'var(--amber)' : 'var(--green)';
+  S3.stLabel.el.querySelector('span').textContent = `${Math.round(util * 100)}% load`;
+  S3.resLabel.el.querySelector('span').textContent = `${W.st.active} pumps drawing`;
+}
+
+/* ---------- Picking ---------- */
+const Sel = { farm: -1, hover: -1, down: null };
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+function pick(ev) {
+  const r = S3.canvas.getBoundingClientRect();
+  ndc.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ndc, S3.camera);
+  const hits = ray.intersectObjects([S3.farm.plot, S3.farm.crop, S3.farm.house, S3.farm.shell], false);
+  return hits.length ? hits[0].instanceId : -1;
+}
+let hoverPending = null;
+function bindPicking() {
+  const cv = S3.canvas;
+  cv.addEventListener('pointermove', ev => { hoverPending = ev; });
+  cv.addEventListener('pointerdown', ev => { Sel.down = [ev.clientX, ev.clientY]; });
+  cv.addEventListener('pointerup', ev => {
+    if (!Sel.down) return;
+    const moved = Math.hypot(ev.clientX - Sel.down[0], ev.clientY - Sel.down[1]); Sel.down = null;
+    if (moved > 5 || Demo.active) return;
+    const id = pick(ev);
+    if (id >= 0) openInspector(id);
+  });
+}
+function processHover() {
+  if (!hoverPending) return;
+  const ev = hoverPending; hoverPending = null;
+  const id = Demo.active ? -1 : pick(ev);
+  Sel.hover = id;
+  S3.hover.visible = id >= 0 && id !== Sel.farm;
+  if (id >= 0) S3.hover.position.set(F.x[id], 0.38, F.z[id]);
+  S3.canvas.style.cursor = id >= 0 ? 'pointer' : '';
+}
+
+/* =====================================================================
+   6. Charts
+   ===================================================================== */
+const Charts = {};
+function buildCharts() {
+  if (!window.Chart) return;
+  Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
+  Chart.defaults.color = '#7d8896';
+  const grid = { color: 'rgba(255,255,255,0.05)', drawTicks: false };
+  const peakBand = {
+    id: 'peakBand',
+    beforeDatasetsDraw(chart) {
+      const { ctx, chartArea: a, scales: { x } } = chart;
+      if (!a) return;
+      ctx.save();
+      const x0 = x.getPixelForValue(App.win[0]), x1 = x.getPixelForValue(App.win[1]);
+      ctx.fillStyle = 'rgba(242,169,59,0.07)'; ctx.fillRect(x0, a.top, x1 - x0, a.bottom - a.top);
+      ctx.strokeStyle = 'rgba(242,169,59,0.25)'; ctx.setLineDash([2, 3]);
+      ctx.beginPath(); ctx.moveTo(x0, a.top); ctx.lineTo(x0, a.bottom); ctx.moveTo(x1, a.top); ctx.lineTo(x1, a.bottom); ctx.stroke();
+      if (chart.canvas.id === 'demandChart') {
+        ctx.setLineDash([]); ctx.fillStyle = 'rgba(242,169,59,0.75)'; ctx.font = '600 9px Inter, sans-serif'; ctx.textAlign = 'left';
+        ctx.fillText('PEAK WINDOW', x0 + 5, a.top + 10);
+        for (const s of App.surges) { const sx = x.getPixelForValue(s), ex = x.getPixelForValue(Math.min(1440, s + CFG.SURGE_MIN)); ctx.fillStyle = 'rgba(255,92,92,0.08)'; ctx.fillRect(sx, a.top, ex - sx, a.bottom - a.top); ctx.fillStyle = 'rgba(255,140,140,0.8)'; ctx.fillText('SURGE', sx + 4, a.bottom - 5); }
+      }
+      ctx.restore();
+    },
+    afterDatasetsDraw(chart) {
+      const { ctx, chartArea: a, scales: { x } } = chart; if (!a) return;
+      const cx = x.getPixelForValue(App.t);
+      ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(cx, a.top); ctx.lineTo(cx, a.bottom); ctx.stroke(); ctx.restore();
+    }
+  };
+  const grad = (rgb, a0) => c => { const { ctx, chartArea } = c.chart; if (!chartArea) return `rgba(${rgb},0.08)`; const g = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom); g.addColorStop(0, `rgba(${rgb},${a0})`); g.addColorStop(1, `rgba(${rgb},0)`); return g; };
+  const xAxis = { type: 'linear', min: 0, max: 1440, grid, border: { display: false }, ticks: { stepSize: 180, padding: 6, font: { size: 9.5, family: "'JetBrains Mono', monospace" }, callback: v => fmtHM(v) } };
+  const tooltip = { backgroundColor: 'rgba(10,14,20,0.92)', borderColor: 'rgba(255,255,255,0.12)', borderWidth: 1, padding: 9, titleFont: { family: "'JetBrains Mono', monospace", size: 11 }, bodyFont: { size: 11 }, callbacks: { title: it => it.length ? fmtHM(it[0].parsed.x) : '' } };
+  Charts.demand = new Chart($('demandChart'), {
+    type: 'line',
+    data: { datasets: [
+      { label: 'Without Tameru', data: Series.A, borderColor: '#ff6b6b', backgroundColor: grad('255,107,107', 0.2), borderWidth: 2, pointRadius: 0, tension: 0.25, fill: 'origin' },
+      { label: 'With Tameru', data: Series.B, borderColor: '#3ddc97', backgroundColor: grad('61,220,151', 0.2), borderWidth: 1.4, pointRadius: 0, tension: 0.25, fill: false },
+      { label: 'Grid capacity', data: Series.cap, borderColor: 'rgba(255,255,255,0.5)', borderDash: [5, 5], borderWidth: 1, pointRadius: 0, fill: false },
+    ] },
+    options: { animation: false, responsive: true, maintainAspectRatio: false, parsing: false, normalized: true,
+      interaction: { mode: 'nearest', axis: 'x', intersect: false },
+      plugins: { legend: { display: false }, tooltip: { ...tooltip, callbacks: { ...tooltip.callbacks, label: c => ` ${c.dataset.label}: ${fmtInt(c.parsed.y)} kW` } } },
+      scales: { x: xAxis, y: { min: 0, suggestedMax: 1400, grid, border: { display: false }, ticks: { maxTicksLimit: 4, padding: 6, font: { size: 9.5, family: "'JetBrains Mono', monospace" }, callback: v => v >= 1000 ? (v / 1000).toFixed(1) + 'MW' : v } } } },
+    plugins: [peakBand],
+  });
+  Charts.water = new Chart($('waterChart'), {
+    type: 'line',
+    data: { datasets: [
+      { label: 'Without', data: Series.fA, borderColor: '#ff6b6b', borderWidth: 1.4, pointRadius: 0, tension: 0.3, fill: false },
+      { label: 'With Tameru', data: Series.fB, borderColor: '#4aa3ff', backgroundColor: grad('74,163,255', 0.25), borderWidth: 1.8, pointRadius: 0, tension: 0.3, fill: 'origin' },
+    ] },
+    options: { animation: false, responsive: true, maintainAspectRatio: false, parsing: false, normalized: true,
+      interaction: { mode: 'nearest', axis: 'x', intersect: false },
+      plugins: { legend: { display: false }, tooltip: { ...tooltip, callbacks: { ...tooltip.callbacks, label: c => ` ${c.dataset.label}: ${c.parsed.y.toFixed(0)}% avg fill` } } },
+      scales: { x: { ...xAxis, ticks: { ...xAxis.ticks, stepSize: 360 } }, y: { min: 0, max: 100, grid, border: { display: false }, ticks: { stepSize: 50, padding: 4, font: { size: 9, family: "'JetBrains Mono', monospace" }, callback: v => v + '%' } } } },
+    plugins: [peakBand],
+  });
+  styleCharts();
+}
+function styleCharts() {
+  if (!Charts.demand) return;
+  const [a, b] = Charts.demand.data.datasets;
+  const on = App.tameru;
+  a.borderWidth = on ? 1.3 : 2.2; b.borderWidth = on ? 2.2 : 1.3;
+  a.borderColor = on ? 'rgba(255,107,107,0.55)' : '#ff6b6b'; b.borderColor = on ? '#3ddc97' : 'rgba(61,220,151,0.55)';
+  a.fill = on ? false : 'origin'; b.fill = on ? 'origin' : false;
+  const [wa, wb] = Charts.water.data.datasets;
+  wa.borderColor = on ? 'rgba(255,107,107,0.5)' : '#ff6b6b'; wb.borderColor = on ? '#4aa3ff' : 'rgba(74,163,255,0.55)';
+  wa.fill = false; wb.fill = on ? 'origin' : false;
+  App.dirtyChart = true;
+}
+function updateCharts(now, force) {
+  if (!Charts.demand) return;
+  if (!force && now - App.lastChart < 220) return;
+  App.lastChart = now;
+  Charts.demand.update('none'); Charts.water.update('none'); App.dirtyChart = false;
+}
+
+/* ---------- Forecast sparkline ---------- */
+function drawForecast() {
+  const c = $('fcCanvas'), dpr = Math.min(2, window.devicePixelRatio || 1);
+  const w = c.clientWidth, h = c.clientHeight; if (!w) return;
+  if (c.width !== Math.round(w * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
+  const ctx = c.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
+  const cap = capacity(), maxY = Math.max(cap * 1.4, App.fcPeak * 1.08);
+  const X = t => 4 + (t / 1440) * (w - 8), Y = v => h - 6 - (v / maxY) * (h - 12);
+  ctx.fillStyle = 'rgba(242,169,59,0.12)'; ctx.fillRect(X(App.win[0]), 0, X(App.win[1]) - X(App.win[0]), h);
+  if (App.tameru) { ctx.fillStyle = 'rgba(86,200,240,0.07)'; ctx.fillRect(X(App.win[0] - 360), 0, X(App.win[0]) - X(App.win[0] - 360), h); }
+  const fc = App.fc;
+  ctx.beginPath(); ctx.moveTo(X(0), Y(0));
+  for (let k = 0; k <= 96; k++) ctx.lineTo(X(k * 15), Y(fc[k]));
+  ctx.lineTo(X(1440), Y(0)); ctx.closePath();
+  const g = ctx.createLinearGradient(0, 0, 0, h); g.addColorStop(0, 'rgba(255,107,107,0.28)'); g.addColorStop(1, 'rgba(255,107,107,0.02)');
+  ctx.fillStyle = g; ctx.fill();
+  ctx.beginPath(); for (let k = 0; k <= 96; k++) ctx[k ? 'lineTo' : 'moveTo'](X(k * 15), Y(fc[k]));
+  ctx.strokeStyle = 'rgba(255,140,140,0.75)'; ctx.lineWidth = 1.2; ctx.setLineDash([3, 2]); ctx.stroke(); ctx.setLineDash([]);
+  const ser = App.tameru ? Series.B : Series.A;
+  if (ser.length > 1) { ctx.beginPath(); ser.forEach((p, i) => ctx[i ? 'lineTo' : 'moveTo'](X(p.x), Y(p.y))); ctx.strokeStyle = App.tameru ? '#3ddc97' : '#ff8a8a'; ctx.lineWidth = 1.6; ctx.stroke(); }
+  ctx.strokeStyle = 'rgba(255,255,255,0.45)'; ctx.setLineDash([4, 3]); ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, Y(cap)); ctx.lineTo(w, Y(cap)); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = '#fff'; ctx.fillRect(X(App.t) - 0.5, 0, 1, h);
+  ctx.font = '600 8.5px Inter, sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.55)'; ctx.fillText('CAPACITY', 6, Y(cap) - 3);
+  ctx.fillStyle = 'rgba(255,140,140,0.7)'; ctx.fillText('FORECAST', 6, h - 6);
+}
+
+/* =====================================================================
+   7. UI
+   ===================================================================== */
+class Num {
+  constructor(el, fmt, rate = 7) { this.el = el; this.fmt = fmt; this.v = 0; this.target = 0; this.rate = rate; this.last = ''; }
+  set(v, snap) { this.target = v; if (snap) this.v = v; }
+  tick(dt) {
+    const d = this.target - this.v;
+    this.v = Math.abs(d) < 1e-3 ? this.target : this.v + d * Math.min(1, dt * this.rate);
+    const s = this.fmt(this.v); if (s !== this.last) { this.el.textContent = s; this.last = s; }
+  }
+}
+const UI = {};
+function buildUI() {
+  UI.nums = {
+    demand: new Num($('mDemand'), v => (v / 1000).toFixed(2)),
+    util: new Num($('mUtil'), v => Math.round(v) + '%'),
+    pumps: new Num($('mPumps'), v => Math.round(v)),
+    resched: new Num($('mResched'), v => App.tameru ? Math.round(v) : '—'),
+    shed: new Num($('mShed'), v => Math.round(v)),
+    stored: new Num($('wStored'), v => fmtInt(v)),
+    fill: new Num($('wFill'), v => Math.round(v)),
+    irr: new Num($('wIrr'), v => Math.round(v)),
+    short: new Num($('wShort'), v => Math.round(v)),
+  };
+  $('playBtn').onclick = () => setRunning(!App.running);
+  $('resetBtn').onclick = () => { stopDemo(); resetAll(); setRunning(false); flyHome(1.2); toast('Simulation reset to 06:00, day 1'); };
+  $('speedSeg').querySelectorAll('button').forEach(b => b.onclick = () => setSpeed(+b.dataset.v));
+  $('scenarioSeg').querySelectorAll('button').forEach(b => b.onclick = () => setScenario(b.dataset.s === '1'));
+  $('tameruSwitch').onclick = () => setScenario(!App.tameru);
+  $('peakBtn').onclick = triggerSurge;
+  $('heatBtn').onclick = () => setHeat(!App.heat);
+  $('demoBtn').onclick = runDemo;
+  $('capExit').onclick = stopDemo;
+  $('cmpClose').onclick = () => { $('compare').classList.add('hidden'); };
+  $('cmpReplay').onclick = () => { $('compare').classList.add('hidden'); runDemo(); };
+  $('iClose').onclick = closeInspector; $('iBack').onclick = () => { closeInspector(); flyHome(1.3); };
+  const tl = $('timeline'); let pending = null;
+  tl.addEventListener('pointerdown', () => { UI.scrubbing = true; });
+  tl.addEventListener('input', () => { pending = +tl.value; if (!UI.scrubRAF) UI.scrubRAF = requestAnimationFrame(() => { UI.scrubRAF = 0; if (pending != null) { seek(pending); pending = null; updateCharts(0, true); } }); });
+  tl.addEventListener('change', () => { UI.scrubbing = false; });
+  window.addEventListener('pointerup', () => { UI.scrubbing = false; });
+  window.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT' && e.target.type !== 'range') return;
+    if (e.code === 'Escape') { if (Demo.active) stopDemo(); else if (!$('compare').classList.contains('hidden')) $('compare').classList.add('hidden'); else closeInspector(); }
+    if (Demo.active) return;
+    if (e.code === 'Space') { e.preventDefault(); setRunning(!App.running); }
+    else if (e.key === 't' || e.key === 'T') setScenario(!App.tameru);
+    else if (e.key === 'h' || e.key === 'H') setHeat(!App.heat);
+    else if (e.key === 'd' || e.key === 'D') runDemo();
+    else if (e.key === 'r' || e.key === 'R') $('resetBtn').click();
+    else if (e.key === 'p' || e.key === 'P') triggerSurge();
+  });
+  const dots = $('capDots'); for (let i = 0; i < 8; i++) dots.appendChild(document.createElement('i'));
+}
+function setRunning(on) {
+  App.running = on;
+  $('playLbl').textContent = on ? 'Pause' : 'Start';
+  $('playIco').innerHTML = on ? '<path d="M4 2.5h3v11H4zM9 2.5h3v11H9z"/>' : '<path d="M4 2.5v11l9-5.5-9-5.5Z"/>';
+}
+function setSpeed(v) {
+  App.speed = v; App.demoRate = null;
+  $('speedSeg').querySelectorAll('button').forEach(b => b.classList.toggle('on', +b.dataset.v === v));
+}
+function setScenario(on, silent) {
+  App.tameru = on;
+  $('scenarioSeg').querySelectorAll('button').forEach(b => b.classList.toggle('on', (b.dataset.s === '1') === on));
+  $('tameruSwitch').setAttribute('aria-checked', on ? 'true' : 'false');
+  $('swRow').classList.toggle('on', on);
+  $('swSub').textContent = on ? 'On — forecast-driven pump scheduling' : 'Off — pumps follow farm schedules';
+  styleCharts();
+  if (!silent) toast(on ? 'Showing the district <b>with Tameru</b> — same farms, same moment' : 'Showing the district <b>without Tameru</b> — unmanaged schedules');
+}
+function setHeat(on) {
+  App.heat = on; computeForecast(); syncEventButtons();
+  toast(on ? 'Heatwave: crop water need <b>+40%</b>, line rating <b>−6%</b>, AC load up' : 'Heatwave ended — normal weather');
+}
+function triggerSurge() {
+  if (App.t > 1440 - 20) return;
+  App.surges.push(App.t); syncEventButtons();
+  $('peakBtn').classList.remove('flash'); void $('peakBtn').offsetWidth; $('peakBtn').classList.add('flash');
+  toast('Unplanned demand surge: <b>+270 kW</b> for 2 h — Tameru curtails pumps in real time');
+}
+function syncEventButtons() {
+  $('heatBtn').classList.toggle('active', App.heat); $('heatState').textContent = App.heat ? 'ACTIVE' : 'OFF';
+  const s = surgeActive(App.t); $('peakBtn').classList.toggle('active', s); $('peakState').textContent = s ? 'ACTIVE' : 'READY';
+}
+let toastT = 0;
+function toast(html) { const t = $('toast'); t.innerHTML = html; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 3200); }
+function updateTimelineBand() {
+  const b = $('tlBand'); if (!b) return;
+  b.style.left = (App.win[0] / 1440 * 100) + '%'; b.style.width = ((App.win[1] - App.win[0]) / 1440 * 100) + '%';
+  $('fcWin').textContent = `${fmtHM(App.win[0])}–${fmtHM(App.win[1])}`;
+}
+
+function phaseOf(t) {
+  if (surgeActive(t)) return 'surge';
+  if (t >= App.win[0] && t < App.win[1]) return 'peak';
+  if (t >= App.win[0] - 360 && t < App.win[0]) return 'prefill';
+  if (t >= App.win[1] && t < App.win[1] + 150) return 'recovery';
+  return 'normal';
+}
+let uiAcc = 0;
+function updateUI(dt, now) {
+  const W = viewWorld(), S = W.st, n = UI.nums;
+  const util = S.req / S.cap;
+  n.demand.set(S.req); n.util.set(util * 100); n.pumps.set(S.active); n.resched.set(S.resched); n.shed.set(S.shedN);
+  n.stored.set(S.stored); n.fill.set(S.fill * 100); n.irr.set(S.irrOK); n.short.set(S.short);
+  for (const k in n) n[k].tick(dt);
+  uiAcc += dt;
+  if (uiAcc < 0.12) return; uiAcc = 0;
+
+  const over = S.shedN > 0 || util > 1;
+  const uf = $('uFill'); uf.style.width = (clamp(util / 1.3, 0, 1) * 100) + '%';
+  uf.style.background = over ? 'var(--red)' : util > 0.85 ? 'var(--amber)' : 'var(--green)';
+  $('mCap').innerHTML = `of <b>${(S.cap / 1000).toFixed(2)} MW</b> capacity`;
+  const gp = $('gridPill'); gp.className = 'pill ' + (over ? 'red' : util > 0.85 ? 'amber' : 'green'); gp.textContent = over ? 'OVERLOAD' : util > 0.85 ? 'STRESSED' : 'STABLE';
+  $('tShed').className = 'tile ' + (S.shedN ? 'bad' : '');
+  $('tShort').className = 'tile ' + (S.short ? 'bad' : 'good');
+  $('tResched').className = 'tile ' + (App.tameru && S.resched ? 'warn' : '');
+  const pa = WA.day.peakReq, pb = WB.day.peakReq;
+  const red = pa > 0 ? 1 - pb / pa : 0;
+  $('mRed').innerHTML = App.t < App.win[0] && App.day === 1 && pa < CFG.CAP ? '<small style="margin:0">at peak</small>' : pa > 0 ? `${red > 0 ? '−' : '+'}${Math.abs(red * 100).toFixed(0)}<small>% · ${fmtInt(pa - pb)} kW</small>` : '—';
+  $('tRed').className = 'tile ' + (red > 0.05 ? 'good' : '');
+
+  // comparison table
+  const cap = capacity();
+  $('cPeakA').textContent = `${fmtInt(pa)} kW`; $('cPeakB').textContent = `${fmtInt(pb)} kW`;
+  $('cShedA').textContent = `${WA.day.shedMin} min`; $('cShedB').textContent = `${WB.day.shedMin} min`;
+  $('cIntA').textContent = WA.day.ever; $('cIntB').textContent = WB.day.ever;
+  $('cDryA').textContent = (WA.day.shortFM / 60).toFixed(1); $('cDryB').textContent = (WB.day.shortFM / 60).toFixed(1);
+  $('cPkA').textContent = fmtInt(WA.day.peakKWh); $('cPkB').textContent = fmtInt(WB.day.peakKWh);
+
+  // clock & timeline
+  $('clock').textContent = fmtHM(App.t);
+  $('dayLbl').textContent = `Day ${App.day} · illustrative simulation · ${App.running ? (App.demoRate ? 'demo' : App.speed + '× speed') : 'paused'}`;
+  const ph = phaseOf(App.t), phEl = $('phase');
+  phEl.className = 'phase' + (ph === 'peak' || ph === 'surge' ? ' peak' : '');
+  phEl.textContent = { peak: 'PEAK HOURS', surge: 'DEMAND SURGE', prefill: 'PRE-PEAK', recovery: 'POST-PEAK', normal: App.t < 360 ? 'NIGHT · OFF-PEAK' : 'OFF-PEAK' }[ph];
+  if (!UI.scrubbing) $('timeline').value = App.t;
+  $('tlProg').style.width = (App.t / 1440 * 100) + '%';
+  syncEventButtons();
+
+  // forecast panel
+  $('fcRisk').textContent = App.risk ? `${fmtHM(App.risk[0])}–${fmtHM(App.risk[1])}` : 'none';
+  $('fcPeak').textContent = `${(App.fcPeak / 1000).toFixed(2)} MW · ${Math.round(App.fcPeak / cap * 100)}%`;
+  $('fcConf').textContent = `CONF ${App.heat ? 88 : 94}%`;
+  const until = App.win[0] - App.t;
+  $('fcNext').textContent = until > 0 ? `${Math.floor(until / 60)} h ${String(until % 60).padStart(2, '0')} min` : (App.t < App.win[1] ? 'in progress' : 'tomorrow');
+  const sEl = $('fcStrategy');
+  let avgTarget = 0; for (let i = 0; i < N; i++) avgTarget += App.target[i]; avgTarget /= N;
+  if (!App.tameru) { sEl.dataset.p = 'off'; sEl.innerHTML = `<b>SCHEDULING OFF</b>The forecast sees the overload coming, but pumps keep following individual schedules.`; }
+  else if (ph === 'prefill') { sEl.dataset.p = 'prefill'; sEl.innerHTML = `<b>PRE-PEAK FILLING</b>Tanks ${Math.round(WB.st.fill * 100)}% → target ${Math.round(avgTarget * 100)}%. ${WB.st.active} pumps staggered under a 68% load ceiling.`; }
+  else if (ph === 'peak' || ph === 'surge') { sEl.dataset.p = 'peak'; sEl.innerHTML = `<b>${ph === 'surge' ? 'SURGE RESPONSE' : 'PEAK SHAVING'}</b>${WB.st.resched} pumps rescheduled. ${WB.st.emerg} farms topping up their ${Math.round(CFG.RESERVE * 100)}% minimum reserve.`; }
+  else if (ph === 'recovery') { sEl.dataset.p = 'recovery'; sEl.innerHTML = `<b>STAGGERED RECOVERY</b>Refilling tanks in priority order to avoid a post-peak rebound.`; }
+  else { sEl.dataset.p = 'prefill'; sEl.innerHTML = `<b>MONITORING</b>${App.t < 360 ? 'Night valley filling at low tariff.' : 'Normal operation — next pre-fill starts ' + fmtHM(App.win[0] - 360) + '.'}`; }
+  drawForecast();
+
+  // banner
+  const bp = $('banner');
+  if (!App.tameru) {
+    if (S.shedN) { bp.dataset.state = 'red'; $('bTitle').textContent = 'FEEDER OVERLOAD — SIMULATED LOAD SHEDDING'; $('bSub').textContent = `Demand ${Math.round(util * 100)}% of capacity · sector${S.shedN > 1 ? 's' : ''} ${SECT.filter((_, s) => W.shed[s]).map(s => s.n).join(', ')} disconnected · ${S.short} farms dry`; }
+    else if (util > 0.85) { bp.dataset.state = 'amber'; $('bTitle').textContent = 'GRID UNDER STRESS — UNMANAGED PUMPING'; $('bSub').textContent = `${S.active} pumps on · ${Math.round(util * 100)}% of capacity`; }
+    else { bp.dataset.state = 'neutral'; $('bTitle').textContent = 'WITHOUT TAMERU — UNMANAGED SCHEDULES'; $('bSub').textContent = `Pumps follow individual farm schedules · ${Math.round(util * 100)}% of capacity`; }
+  } else {
+    if (S.shedN) { bp.dataset.state = 'red'; $('bTitle').textContent = 'FEEDER OVERLOAD — SIMULATED LOAD SHEDDING'; $('bSub').textContent = 'Non-pump load alone exceeds capacity'; }
+    else {
+      bp.dataset.state = S.short ? 'amber' : 'green'; $('bTitle').textContent = 'TAMERU ACTIVE — GRID STABLE';
+      const tail = S.short ? ` · ${S.short} farms below reserve` : ' · irrigation uninterrupted';
+      $('bSub').textContent = (ph === 'peak' || ph === 'surge') ? `Peak shaving · ${S.resched} pumps rescheduled · ${Math.round(util * 100)}% of capacity${tail}` :
+        ph === 'prefill' ? `Pre-filling tanks ahead of the ${fmtHM(App.win[0])} peak · ${Math.round(util * 100)}% of capacity` : `${Math.round(util * 100)}% of capacity${tail}`;
+    }
+  }
+  $('alarm').classList.toggle('on', !!S.shedN);
+  if (S3.ok) updateLabels(true);
+  if (Sel.farm >= 0) updateInspector();
+}
+
+/* ---------- Inspector ---------- */
+const ST_LABEL = { pump: ['Pumping', 'var(--cyan)'], stored: ['Irrigating from tank', 'var(--green)'], resched: ['Pump rescheduled', 'var(--amber)'], emerg: ['Reserve top-up', '#ff7a2a'], short: ['Water shortage', 'var(--red)'], cut: ['Power cut', 'var(--red)'], idle: ['Idle', '#6b7680'] };
+function openInspector(i) {
+  Sel.farm = i; S3.select.visible = true; S3.hover.visible = false;
+  $('inspector').classList.remove('hidden'); updateInspector(); flyToFarm(i);
+}
+function closeInspector() { Sel.farm = -1; if (S3.ok) S3.select.visible = false; $('inspector').classList.add('hidden'); }
+function updateInspector() {
+  const i = Sel.farm, W = viewWorld(); if (i < 0) return;
+  const f = W.level[i] / F.cap[i], st = farmStatus(W, i), [lbl, c] = ST_LABEL[st];
+  $('iTitle').textContent = `Farm ${String(i + 1).padStart(3, '0')}`;
+  $('iSub').textContent = `Sector ${SECT[F.sec[i]].n} · ${App.tameru ? 'with' : 'without'} Tameru`;
+  $('iStatus').innerHTML = `<i style="background:${c};box-shadow:0 0 8px ${c}"></i><span>${lbl}</span>`;
+  $('iTank').textContent = `${W.level[i].toFixed(1)} / ${F.cap[i]} m³ · ${Math.round(f * 100)}%`;
+  const tb = $('iTankBar'); tb.style.width = (f * 100) + '%'; tb.style.background = f < CFG.RESERVE ? 'var(--amber)' : 'var(--water)';
+  $('iTarget').style.left = (App.target[i] * 100) + '%'; $('iTarget').style.display = App.tameru ? '' : 'none';
+  $('iMoist').textContent = Math.round(W.moist[i] * 100) + '%'; $('iMoistBar').style.width = (W.moist[i] * 100) + '%';
+  $('iPump').textContent = W.shed[F.sec[i]] ? 'No power' : W.pumpOn[i] ? `Running · ${F.kw[i].toFixed(1)} kW` : W.resched[i] ? 'Held by Tameru' : 'Off';
+  const dem = F.dem[i] * (App.heat ? 1.4 : 1);
+  $('iIrr').textContent = W.irrig[i] ? (W.short[i] ? 'Interrupted' : `${dem.toFixed(1)} m³/h`) : 'Not scheduled';
+  $('iTgt').textContent = App.tameru ? `${Math.round(App.target[i] * 100)}% by ${fmtHM(App.win[0])}` : '—';
+  const win = (s, d) => s < 0 ? '—' : `<b>${fmtHM(s)}–${fmtHM(s + d)}</b>`;
+  $('iSched').innerHTML = `Irrigation schedule: morning ${win(F.mS[i], F.mD[i])}, evening ${win(F.eS[i], F.eD[i])}${App.heat && F.hS[i] >= 0 ? `, heat ${win(F.hS[i], 110)}` : ''}.<br>Pump ${F.kw[i].toFixed(1)} kW · ${F.rate[i].toFixed(1)} m³/h.`;
+}
+
+/* =====================================================================
+   8. Demo mode (≈ 70 s guided presentation)
+   ===================================================================== */
+const Demo = { active: false, abort: false };
+const wait = ms => new Promise((res, rej) => { const t0 = performance.now(); const tick = () => { if (Demo.abort) return rej('abort'); if (performance.now() - t0 >= ms) return res(); requestAnimationFrame(tick); }; tick(); });
+function runUntil(cond, rate) {
+  const fn = typeof cond === 'number' ? () => App.t >= cond : cond;
+  App.demoRate = rate; setRunning(true);
+  $('speedSeg').querySelectorAll('button').forEach(b => b.classList.remove('on'));
+  return new Promise((res, rej) => App.waiters.push({ fn, res, rej }));
+}
+function checkWaiters() {
+  if (!App.waiters.length) return;
+  App.waiters = App.waiters.filter(w => { if (Demo.abort) { w.rej('abort'); return false; } if (w.fn()) { w.res(); return false; } return true; });
+}
+function caption(n, html) {
+  $('caption').classList.remove('hidden');
+  $('capTag').textContent = `DEMO · ${n} / 8`; $('capText').innerHTML = html;
+  [...$('capDots').children].forEach((d, i) => d.classList.toggle('done', i < n));
+}
+async function fadeSwap(fn) { $('fade').classList.add('on'); await wait(600); fn(); await wait(250); $('fade').classList.remove('on'); }
+async function runDemo() {
+  if (Demo.active) return;
+  Demo.active = true; Demo.abort = false; document.body.classList.add('demo');
+  closeInspector(); $('compare').classList.add('hidden');
+  try {
+    setRunning(false);
+    await fadeSwap(() => { App.heat = false; App.surges = []; computeForecast(); syncEventButtons(); setScenario(false, true); seek(13 * 60 + 30); flyHome(0); updateCharts(0, true); });
+    caption(1, '<b>200 farms on a 1,000 kW feeder.</b> Without Tameru, every pump simply follows its own irrigation schedule.');
+    await wait(4500);
+    caption(2, '<b>Late afternoon:</b> households come home and evening irrigation starts. Watch the demand curve climb toward the capacity line.');
+    await runUntil(17 * 60, 26);
+    await runUntil(() => WA.st.shedN > 0 || App.t >= 18 * 60, 7);
+    const s = Math.max(0, WA.shed.findIndex(v => v));
+    flyToSector(s, 1.8);
+    caption(3, `<b>${fmtHM(App.t)} — demand reaches ${Math.round(WA.st.req / WA.st.cap * 100)}% of capacity.</b> In this simulated feeder, the utility cuts power to Sector ${SECT[s].n}: rotating load shedding begins.`);
+    await runUntil(18 * 60 + 15, 7);
+    caption(4, `<b>Pumps stop. Small tanks run dry.</b> ${WA.day.ever} farms have already lost irrigation — and the outage rotates to the next sector.`);
+    await runUntil(19 * 60, 8);
+    setRunning(false);
+    await wait(900);
+    await fadeSwap(() => { setScenario(true, true); seek(10 * 60 + 30); flyHome(0); updateCharts(0, true); });
+    caption(5, '<b>Same day. Same farms. Same weather.</b> This time, Tameru is in control.');
+    await wait(3200);
+    flyToSector(0, 2.2, true);
+    caption(6, `<b>Tameru forecasts the ${fmtHM(App.win[0])}–${fmtHM(App.win[1])} peak</b> and fills tanks during off-peak hours — pumps are staggered under a safe load ceiling.`);
+    await runUntil(16 * 60 + 50, 34);
+    flyHome(2);
+    caption(7, '<b>Peak window: pumps pause.</b> Fields keep drinking from stored water while demand stays below capacity in this run.');
+    await runUntil(18 * 60 + 15, 8);
+    caption(8, `<b>Grid stable at ${Math.round(WB.st.req / WB.st.cap * 100)}% of capacity.</b> ${WB.st.resched} pumps rescheduled; ${WB.st.emerg} farms topping up their minimum reserve.`);
+    await runUntil(19 * 60 + 50, 8);
+    setRunning(false);
+    await wait(500);
+    showCompare();
+  } catch (e) { if (e !== 'abort') console.error(e); }
+  finally { endDemoUI(); }
+}
+function stopDemo() { if (!Demo.active) return; Demo.abort = true; checkWaiters(); }
+function endDemoUI() {
+  Demo.active = false; Demo.abort = false; App.demoRate = null; App.waiters = [];
+  document.body.classList.remove('demo'); $('caption').classList.add('hidden'); $('fade').classList.remove('on');
+  setSpeed(App.speed);
+}
+function showCompare() {
+  const A = WA.day, B = WB.day, cap = capacity();
+  const red = A.peakReq > 0 ? 1 - B.peakReq / A.peakReq : 0;
+  $('hRed').textContent = `−${(red * 100).toFixed(0)}%`;
+  $('hShed').textContent = `${Math.max(0, A.shedMin - B.shedMin)} min`;
+  $('hFarms').textContent = `${Math.max(0, A.ever - B.ever)}`;
+  $('cmpSub').textContent = `Results up to ${fmtHM(App.t)} · identical farms, schedules and weather · ${App.heat ? 'heatwave' : 'normal day'}.`;
+  const row = (l, a, b, d) => `<div>${l}</div><div class="num a">${a}</div><div class="num b">${b}</div><div class="d">${d}</div>`;
+  const pct = (a, b) => a > 0 ? `−${Math.round((1 - b / a) * 100)}%` : '—';
+  $('cmpGrid').innerHTML = `<div class="h">Metric</div><div class="h num">Without Tameru</div><div class="h num">With Tameru</div><div class="h d">Change</div>` +
+    row('Peak demand', `${fmtInt(A.peakReq)} kW · ${Math.round(A.peakReq / cap * 100)}%`, `${fmtInt(B.peakReq)} kW · ${Math.round(B.peakReq / cap * 100)}%`, pct(A.peakReq, B.peakReq)) +
+    row('Load-shedding time', `${A.shedMin} min`, `${B.shedMin} min`, A.shedMin ? pct(A.shedMin, B.shedMin) : '—') +
+    row('Farms with interrupted irrigation', A.ever, B.ever, pct(A.ever, B.ever)) +
+    row('Farm-hours without water', (A.shortFM / 60).toFixed(1), (B.shortFM / 60).toFixed(1), pct(A.shortFM, B.shortFM)) +
+    row('Pump energy in 17–20 h peak', `${fmtInt(A.peakKWh)} kWh`, `${fmtInt(B.peakKWh)} kWh`, pct(A.peakKWh, B.peakKWh)) +
+    row('Average tank reserve now', `${Math.round(WA.st.fill * 100)}%`, `${Math.round(WB.st.fill * 100)}%`, `+${Math.round((WB.st.fill - WA.st.fill) * 100)} pts`);
+  $('compare').classList.remove('hidden');
+}
+
+/* =====================================================================
+   9. Main loop, resize, boot
+   ===================================================================== */
+function resize() {
+  if (!S3.ok) return;
+  const cv = S3.canvas, w = cv.clientWidth, h = cv.clientHeight;
+  S3.renderer.setSize(w, h, false);
+  if (S3.composer) S3.composer.setSize(w, h);
+  S3.camera.aspect = w / h;
+  if (window.innerWidth > 980) {
+    const lw = $('left').getBoundingClientRect().right, rw = window.innerWidth - $('right').getBoundingClientRect().left;
+    const dx = Math.round((rw - lw) / 2 * 0.9), dy = Math.round((228 - 86) / 2);
+    S3.camera.setViewOffset(w, h, dx, dy, w, h);
+  } else S3.camera.clearViewOffset();
+  S3.camera.updateProjectionMatrix();
+}
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(0.1, (now - last) / 1000); last = now;
+  if (App.running) {
+    const rate = App.demoRate || App.speed * CFG.MIN_PER_SEC_1X;
+    App.acc += dt * rate;
+    let steps = 0;
+    while (App.acc >= 1 && steps < 200) {
+      simStep(); App.acc -= 1; steps++;
+      if (App.waiters.length) { checkWaiters(); if (!App.running) { App.acc = 0; break; } }
+      if (Demo.active && App.waiters.length === 0) { App.acc = 0; break; }
+    }
+  }
+  checkWaiters();
+  if (S3.ok) {
+    updateTween(dt); S3.controls.update(); processHover(); update3D(dt);
+    updateLabels(false);
+    if (S3.composer) S3.composer.render(); else S3.renderer.render(S3.scene, S3.camera);
+  }
+  updateUI(dt, now);
+  if (App.dirtyChart) updateCharts(now);
+  requestAnimationFrame(frame);
+}
+
+async function boot() {
+  setLoad(0.1, 'Generating 200 farms…'); await nextFrame();
+  computeForecast(); resetAll(360);
+  buildUI(); setSpeed(2); setScenario(false, true);
+  const gl = hasWebGL();
+  if (gl) {
+    setLoad(0.3, 'Building instanced geometry…'); await nextFrame();
+    try { buildScene(); buildLabels(); bindPicking(); }
+    catch (e) { console.error(e); S3.ok = false; }
+  }
+  if (!S3.ok) {
+    $('ldErr').style.display = 'block';
+    $('ldErr').innerHTML = '<b>WebGL is not available</b> in this browser, so the 3D district is disabled. The simulation, dashboard and charts still work. Enable hardware acceleration or try Chrome / Edge / Firefox.';
+    $('scene').style.display = 'none';
+  }
+  setLoad(0.65, 'Calibrating forecast module…'); await nextFrame();
+  buildCharts();
+  setLoad(0.85, 'Rendering district…'); await nextFrame();
+  if (S3.ok) {
+    flyHome(0); resize();
+    window.addEventListener('resize', resize);
+    // warm-up render (compiles shaders behind the loader)
+    update3D(0.016); if (S3.composer) S3.composer.render(); else S3.renderer.render(S3.scene, S3.camera);
+  }
+  updateCharts(0, true);
+  setLoad(1, 'Ready'); await new Promise(r => setTimeout(r, S3.ok ? 350 : 2600));
+  $('loader').classList.add('done');
+  setRunning(true);
+  last = performance.now();
+  requestAnimationFrame(frame);
+  // small camera intro
+  if (S3.ok) { S3.camera.position.set(HOME.pos.x + 40, HOME.pos.y + 40, HOME.pos.z + 50); flyHome(2.6); }
+  setTimeout(() => toast('Tip: press <b>Demo mode</b> for the guided story, or click any farm to inspect it'), 3000);
+}
+window.__tameru = { App, WA, WB, seek, runDemo, setScenario, setHeat, triggerSurge, S3, flyToSector };
+boot();
+</script>
+</body>
+</html>

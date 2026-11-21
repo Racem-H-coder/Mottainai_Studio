@@ -1,0 +1,207 @@
+{
+ "title": "Forecast band coverage by hour",
+ "caption": "Share of actual values under the p90 forecast (test period). The v2 experiment was not clearly better under a rule fixed in advance; the simpler calibrated model is used.",
+ "simulated": true,
+ "type": "line",
+ "data": {
+  "labels": [
+   "00h",
+   "01h",
+   "02h",
+   "03h",
+   "04h",
+   "05h",
+   "06h",
+   "07h",
+   "08h",
+   "09h",
+   "10h",
+   "11h",
+   "12h",
+   "13h",
+   "14h",
+   "15h",
+   "16h",
+   "17h",
+   "18h",
+   "19h",
+   "20h",
+   "21h",
+   "22h",
+   "23h"
+  ],
+  "datasets": [
+   {
+    "label": "Before calibration",
+    "data": [
+     91.8,
+     95.4,
+     96.6,
+     96.7,
+     93.8,
+     88.2,
+     91.8,
+     90.4,
+     87.7,
+     90.0,
+     87.3,
+     88.7,
+     90.4,
+     88.4,
+     86.8,
+     85.9,
+     89.5,
+     87.3,
+     80.9,
+     80.7,
+     83.8,
+     84.0,
+     88.9,
+     91.2
+    ],
+    "borderColor": "#eb6834",
+    "backgroundColor": "#eb6834",
+    "borderWidth": 2,
+    "pointRadius": 2,
+    "fill": false
+   },
+   {
+    "label": "v2 experiment (richer heat features)",
+    "data": [
+     94.6,
+     96.6,
+     97.2,
+     97.1,
+     95.9,
+     86.1,
+     93.0,
+     91.8,
+     93.0,
+     90.8,
+     88.9,
+     91.7,
+     92.8,
+     91.5,
+     92.3,
+     92.6,
+     94.8,
+     97.4,
+     95.3,
+     94.6,
+     89.2,
+     86.9,
+     88.6,
+     87.9
+    ],
+    "borderColor": "#1baf7a",
+    "backgroundColor": "#1baf7a",
+    "borderWidth": 2,
+    "pointRadius": 2,
+    "fill": false
+   },
+   {
+    "label": "In use: calibrated model",
+    "data": [
+     92.5,
+     95.3,
+     95.9,
+     95.3,
+     92.8,
+     85.9,
+     94.4,
+     95.4,
+     94.4,
+     95.9,
+     91.7,
+     94.8,
+     96.9,
+     95.6,
+     92.5,
+     93.8,
+     94.3,
+     97.4,
+     94.6,
+     94.9,
+     91.0,
+     88.7,
+     89.9,
+     87.4
+    ],
+    "borderColor": "#2a78d6",
+    "backgroundColor": "#2a78d6",
+    "borderWidth": 2,
+    "pointRadius": 2,
+    "fill": false
+   },
+   {
+    "label": "Target 90 %",
+    "data": [
+     90,
+     90,
+     90,
+     90,
+     90,
+     90,
+     90,
+     90,
+     90,
+     90,
+     90,
+     90,
+     90,
+     90,
+     90,
+     90,
+     90,
+     90,
+     90,
+     90,
+     90,
+     90,
+     90,
+     90
+    ],
+    "borderColor": "#52514e",
+    "backgroundColor": "#52514e",
+    "borderWidth": 2,
+    "pointRadius": 0,
+    "fill": false,
+    "borderDash": [
+     6,
+     4
+    ]
+   }
+  ]
+ },
+ "options": {
+  "responsive": true,
+  "interaction": {
+   "mode": "index",
+   "intersect": false
+  },
+  "plugins": {
+   "title": {
+    "display": true,
+    "text": "Forecast band coverage by hour"
+   },
+   "subtitle": {
+    "display": true,
+    "text": "Simulated: synthetic 200-farm district on real Open-Meteo weather. Not a field measurement."
+   }
+  },
+  "scales": {
+   "x": {
+    "title": {
+     "display": true,
+     "text": "hour of day"
+    }
+   },
+   "y": {
+    "title": {
+     "display": true,
+     "text": "p90 coverage (%)"
+    }
+   }
+  }
+ }
+}

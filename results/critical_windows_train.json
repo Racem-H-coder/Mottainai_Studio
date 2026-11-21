@@ -1,0 +1,50 @@
+{
+ "days": [
+  "2025-07-24",
+  "2025-07-21",
+  "2025-07-23",
+  "2025-06-23",
+  "2025-07-04",
+  "2025-07-09",
+  "2025-07-07",
+  "2025-07-15",
+  "2025-07-11",
+  "2025-07-01",
+  "2025-07-03",
+  "2025-07-22",
+  "2025-06-24",
+  "2025-06-17",
+  "2025-07-25",
+  "2025-07-17",
+  "2025-07-05",
+  "2025-07-14",
+  "2025-07-30",
+  "2025-06-30"
+ ],
+ "windows": [
+  [
+   "22:00",
+   "01:00"
+  ]
+ ],
+ "scenario": "closed loop 50 %, lp_round, no faults, budget off",
+ "note": "Training days (summer 2025) only. Simulated. Window 22:00-01:00 = the 2026 STEG national shedding window; mapped to 22:00-24:00 and 00:00-01:00 of each planning day.",
+ "without": {
+  "adopter_share_in_window": 0.1949,
+  "adopter_kwh_in_window": 10467.0,
+  "of_which_reserve_rule_kwh": 356.5,
+  "mean_peak_kw": 989.5,
+  "hours_over_capacity": 6.5,
+  "unmet_need_m3": 0.0,
+  "adopter_kwh": 53693.7
+ },
+ "with": {
+  "adopter_share_in_window": 0.0266,
+  "adopter_kwh_in_window": 1413.9,
+  "of_which_reserve_rule_kwh": 453.4,
+  "mean_peak_kw": 990.7,
+  "hours_over_capacity": 6.5,
+  "unmet_need_m3": 0.0,
+  "adopter_kwh": 53202.2
+ }
+}

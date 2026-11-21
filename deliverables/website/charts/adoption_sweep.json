@@ -1,0 +1,146 @@
+{
+ "title": "More farms equipped, lower peak",
+ "caption": "Open loop, 20 worst days. Zero overload from 70% of farms equipped.",
+ "simulated": true,
+ "type": "bar",
+ "data": {
+  "labels": [
+   "20%",
+   "30%",
+   "40%",
+   "50%",
+   "60%",
+   "70%",
+   "80%",
+   "90%",
+   "100%"
+  ],
+  "datasets": [
+   {
+    "label": "Mean daily peak (kW)",
+    "data": [
+     1122.0,
+     1085.0,
+     1035.0,
+     984.0,
+     937.0,
+     891.0,
+     833.0,
+     797.0,
+     752.0
+    ],
+    "borderColor": "#2a78d6",
+    "backgroundColor": "#2a78d6",
+    "type": "line",
+    "yAxisID": "y",
+    "borderWidth": 2,
+    "pointRadius": 0,
+    "fill": false
+   },
+   {
+    "label": "Worst daily peak (kW)",
+    "data": [
+     1210.0,
+     1177.0,
+     1126.0,
+     1082.0,
+     1033.0,
+     980.0,
+     949.0,
+     924.0,
+     871.0
+    ],
+    "borderColor": "#eb6834",
+    "backgroundColor": "#eb6834",
+    "type": "line",
+    "yAxisID": "y",
+    "borderWidth": 2,
+    "pointRadius": 0,
+    "fill": false
+   },
+   {
+    "label": "Feeder capacity (kW)",
+    "data": [
+     1000.0,
+     1000.0,
+     1000.0,
+     1000.0,
+     1000.0,
+     1000.0,
+     1000.0,
+     1000.0,
+     1000.0
+    ],
+    "borderColor": "#52514e",
+    "backgroundColor": "#52514e",
+    "type": "line",
+    "yAxisID": "y",
+    "borderWidth": 2,
+    "pointRadius": 0,
+    "fill": false,
+    "borderDash": [
+     6,
+     4
+    ]
+   },
+   {
+    "label": "Hours over capacity (20 days)",
+    "data": [
+     52.0,
+     43.5,
+     25.5,
+     6.8,
+     1.8,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "borderColor": "rgba(42,120,214,0.25)",
+    "backgroundColor": "rgba(42,120,214,0.25)",
+    "yAxisID": "y1"
+   }
+  ]
+ },
+ "options": {
+  "responsive": true,
+  "interaction": {
+   "mode": "index",
+   "intersect": false
+  },
+  "plugins": {
+   "title": {
+    "display": true,
+    "text": "More farms equipped, lower peak"
+   },
+   "subtitle": {
+    "display": true,
+    "text": "Simulated: synthetic 200-farm district on real Open-Meteo weather. Not a field measurement."
+   }
+  },
+  "scales": {
+   "x": {
+    "title": {
+     "display": true,
+     "text": "share of farms with Tameru"
+    }
+   },
+   "y": {
+    "title": {
+     "display": true,
+     "text": "kW"
+    }
+   },
+   "y1": {
+    "position": "right",
+    "title": {
+     "display": true,
+     "text": "hours over capacity"
+    },
+    "grid": {
+     "drawOnChartArea": false
+    }
+   }
+  }
+ }
+}

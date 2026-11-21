@@ -1,0 +1,281 @@
+{
+ "days": [
+  "2026-07-21",
+  "2026-06-23",
+  "2026-07-20",
+  "2026-07-22",
+  "2026-07-23",
+  "2026-07-15",
+  "2026-06-22",
+  "2026-06-19",
+  "2026-07-14",
+  "2026-07-12",
+  "2026-06-01",
+  "2026-07-17",
+  "2026-06-24",
+  "2026-07-18",
+  "2026-07-13",
+  "2026-06-03",
+  "2026-06-02",
+  "2026-08-03",
+  "2026-07-19",
+  "2026-07-24"
+ ],
+ "tariffs": {
+  "steg_bt_3p": {
+   "day": 140,
+   "peak": 391,
+   "night": 116,
+   "unit": "mill/kWh HT",
+   "as_of": "2022-05-01",
+   "hours_summer": "08-19/19-23/23-08",
+   "hours_winter": "06:30-17:30/17:30-21:30/21:30-06:30",
+   "ttc": "HT x 1.07 + 10 mill/kWh",
+   "simulated": false
+  },
+  "legacy_flat": {
+   "value": 184,
+   "unit": "mill/kWh HT",
+   "status": "closed to new contracts",
+   "simulated": false
+  },
+  "proposed_cpp": {
+   "adder_mill_per_kwh": 400,
+   "window": [
+    "17:00",
+    "20:00"
+   ],
+   "rebate_mill_per_kw": 1000,
+   "critical_day": "forecast p90 base load + usual pumping of all farms > feeder capacity in the window",
+   "baseline": "the farm's usual (habit) pumping on that day; a utility would use metered history",
+   "assumption": true,
+   "note": "not a STEG tariff: what STEG / the regulator could introduce"
+  }
+ },
+ "fixed_charges": "ignored (identical in every scenario)",
+ "comparisons": {
+  "closed_loop@0.5_vs_unmanaged": {
+   "steg_bt_3p_ht": {
+    "adopters": 94,
+    "saving_tnd_20_days_median": 13.9,
+    "p10": -0.31,
+    "p90": 57.97,
+    "farms_bill_up": 11,
+    "district_unmanaged_tnd": 25659.9,
+    "district_scenario_tnd": 23206.2
+   },
+   "steg_bt_3p_ttc": {
+    "adopters": 94,
+    "saving_tnd_20_days_median": 14.75,
+    "p10": -0.58,
+    "p90": 61.8,
+    "farms_bill_up": 12,
+    "district_unmanaged_tnd": 28592.2,
+    "district_scenario_tnd": 25995.5
+   },
+   "legacy_flat_ht": {
+    "adopters": 94,
+    "saving_tnd_20_days_median": -3.48,
+    "p10": -12.42,
+    "p90": -0.1,
+    "farms_bill_up": 84,
+    "district_unmanaged_tnd": 20903.1,
+    "district_scenario_tnd": 21432.3
+   },
+   "legacy_flat_ttc": {
+    "adopters": 94,
+    "saving_tnd_20_days_median": -3.91,
+    "p10": -13.96,
+    "p90": -0.11,
+    "farms_bill_up": 84,
+    "district_unmanaged_tnd": 23502.3,
+    "district_scenario_tnd": 24097.4
+   },
+   "proposed_cpp_ht": {
+    "adopters": 94,
+    "saving_tnd_20_days_median": 118.36,
+    "p10": 3.43,
+    "p90": 296.93,
+    "farms_bill_up": 4,
+    "district_unmanaged_tnd": 40680.5,
+    "district_scenario_tnd": 26353.6
+   },
+   "proposed_cpp_ttc": {
+    "adopters": 94,
+    "saving_tnd_20_days_median": 126.42,
+    "p10": 3.54,
+    "p90": 317.9,
+    "farms_bill_up": 4,
+    "district_unmanaged_tnd": 44664.2,
+    "district_scenario_tnd": 29363.1
+   },
+   "adopter_kwh_share": {
+    "19_23": {
+     "unmanaged": 0.345175,
+     "scenario": 0.174401
+    },
+    "23_08": {
+     "unmanaged": 0.163932,
+     "scenario": 0.596467
+    },
+    "22_01": {
+     "unmanaged": 0.112722,
+     "scenario": 0.204302
+    }
+   },
+   "adopter_kwh": {
+    "unmanaged": 55236.3,
+    "scenario": 58112.4
+   }
+  },
+  "closed_loop_enforced@0.5_vs_unmanaged": {
+   "steg_bt_3p_ht": {
+    "adopters": 94,
+    "saving_tnd_20_days_median": 25.28,
+    "p10": 5.63,
+    "p90": 95.59,
+    "farms_bill_up": 1,
+    "district_unmanaged_tnd": 25659.9,
+    "district_scenario_tnd": 22018.5
+   },
+   "steg_bt_3p_ttc": {
+    "adopters": 94,
+    "saving_tnd_20_days_median": 27.26,
+    "p10": 6.27,
+    "p90": 102.55,
+    "farms_bill_up": 1,
+    "district_unmanaged_tnd": 28592.2,
+    "district_scenario_tnd": 24672.1
+   },
+   "legacy_flat_ht": {
+    "adopters": 94,
+    "saving_tnd_20_days_median": 2.62,
+    "p10": -2.52,
+    "p90": 16.79,
+    "farms_bill_up": 26,
+    "district_unmanaged_tnd": 20903.1,
+    "district_scenario_tnd": 20465.7
+   },
+   "legacy_flat_ttc": {
+    "adopters": 94,
+    "saving_tnd_20_days_median": 2.95,
+    "p10": -2.84,
+    "p90": 18.88,
+    "farms_bill_up": 26,
+    "district_unmanaged_tnd": 23502.3,
+    "district_scenario_tnd": 23010.5
+   },
+   "proposed_cpp_ht": {
+    "adopters": 94,
+    "saving_tnd_20_days_median": 144.71,
+    "p10": 12.61,
+    "p90": 327.32,
+    "farms_bill_up": 1,
+    "district_unmanaged_tnd": 40680.5,
+    "district_scenario_tnd": 25020.2
+   },
+   "proposed_cpp_ttc": {
+    "adopters": 94,
+    "saving_tnd_20_days_median": 154.91,
+    "p10": 13.67,
+    "p90": 350.83,
+    "farms_bill_up": 1,
+    "district_unmanaged_tnd": 44664.2,
+    "district_scenario_tnd": 27883.9
+   },
+   "adopter_kwh_share": {
+    "19_23": {
+     "unmanaged": 0.345175,
+     "scenario": 0.155126
+    },
+    "23_08": {
+     "unmanaged": 0.163932,
+     "scenario": 0.629375
+    },
+    "22_01": {
+     "unmanaged": 0.112722,
+     "scenario": 0.189131
+    }
+   },
+   "adopter_kwh": {
+    "unmanaged": 55236.3,
+    "scenario": 52859.0
+   }
+  },
+  "closed_loop@0.7_vs_unmanaged": {
+   "steg_bt_3p_ht": {
+    "adopters": 136,
+    "saving_tnd_20_days_median": 12.04,
+    "p10": -0.85,
+    "p90": 56.41,
+    "farms_bill_up": 18,
+    "district_unmanaged_tnd": 25659.9,
+    "district_scenario_tnd": 22207.8
+   },
+   "steg_bt_3p_ttc": {
+    "adopters": 136,
+    "saving_tnd_20_days_median": 12.49,
+    "p10": -1.05,
+    "p90": 60.19,
+    "farms_bill_up": 20,
+    "district_unmanaged_tnd": 28592.2,
+    "district_scenario_tnd": 24942.3
+   },
+   "legacy_flat_ht": {
+    "adopters": 136,
+    "saving_tnd_20_days_median": -3.52,
+    "p10": -13.54,
+    "p90": -0.63,
+    "farms_bill_up": 127,
+    "district_unmanaged_tnd": 20903.1,
+    "district_scenario_tnd": 21711.5
+   },
+   "legacy_flat_ttc": {
+    "adopters": 136,
+    "saving_tnd_20_days_median": -3.96,
+    "p10": -15.22,
+    "p90": -0.71,
+    "farms_bill_up": 127,
+    "district_unmanaged_tnd": 23502.3,
+    "district_scenario_tnd": 24411.2
+   },
+   "proposed_cpp_ht": {
+    "adopters": 136,
+    "saving_tnd_20_days_median": 112.44,
+    "p10": 1.03,
+    "p90": 303.96,
+    "farms_bill_up": 9,
+    "district_unmanaged_tnd": 40680.5,
+    "district_scenario_tnd": 20640.5
+   },
+   "proposed_cpp_ttc": {
+    "adopters": 136,
+    "saving_tnd_20_days_median": 120.02,
+    "p10": 1.0,
+    "p90": 325.13,
+    "farms_bill_up": 10,
+    "district_unmanaged_tnd": 44664.2,
+    "district_scenario_tnd": 23265.3
+   },
+   "adopter_kwh_share": {
+    "19_23": {
+     "unmanaged": 0.348764,
+     "scenario": 0.171986
+    },
+    "23_08": {
+     "unmanaged": 0.164704,
+     "scenario": 0.578212
+    },
+    "22_01": {
+     "unmanaged": 0.110966,
+     "scenario": 0.197518
+    }
+   },
+   "adopter_kwh": {
+    "unmanaged": 77279.2,
+    "scenario": 81672.3
+   }
+  }
+ },
+ "note": "Simulated schedules (20 test days, summer hours), real STEG prices. Savings per adopting farm over the 20 days (unmanaged bill - scenario bill; negative = the bill goes up). proposed_cpp parameters are assumptions fixed in advance."
+}

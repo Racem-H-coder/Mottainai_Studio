@@ -1,0 +1,8 @@
+CLAUDE.md
+docs/
+.claude/
+.venv/
+__pycache__/
+*.db
+models/
+results/*.csv

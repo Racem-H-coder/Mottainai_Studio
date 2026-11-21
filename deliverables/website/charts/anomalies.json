@@ -1,0 +1,131 @@
+{
+ "title": "Anomaly detection on the test days",
+ "caption": "Physics-residual detector, 20 test days, faults injected at assumed rates, evaluated once. Observable = the fault could show up in telemetry. comm loss is 1.00 by construction (heartbeat rule).",
+ "simulated": true,
+ "type": "bar",
+ "data": {
+  "labels": [
+   "leak",
+   "dry run",
+   "pump failure",
+   "stuck sensor",
+   "comm loss"
+  ],
+  "datasets": [
+   {
+    "label": "Precision (%)",
+    "data": [
+     46.0,
+     100.0,
+     83.0,
+     100.0,
+     100.0
+    ],
+    "borderColor": "#2a78d6",
+    "backgroundColor": "#2a78d6"
+   },
+   {
+    "label": "Recall, observable faults (%)",
+    "data": [
+     33.0,
+     95.0,
+     100.0,
+     75.0,
+     100.0
+    ],
+    "borderColor": "#1baf7a",
+    "backgroundColor": "#1baf7a"
+   }
+  ]
+ },
+ "options": {
+  "responsive": true,
+  "interaction": {
+   "mode": "index",
+   "intersect": false
+  },
+  "plugins": {
+   "title": {
+    "display": true,
+    "text": "Anomaly detection on the test days"
+   },
+   "subtitle": {
+    "display": true,
+    "text": "Simulated: synthetic 200-farm district on real Open-Meteo weather. Not a field measurement."
+   }
+  },
+  "scales": {
+   "x": {
+    "title": {
+     "display": true,
+     "text": "fault type"
+    }
+   },
+   "y": {
+    "title": {
+     "display": true,
+     "text": "%"
+    }
+   }
+  }
+ },
+ "assumption": true,
+ "table": {
+  "columns": [
+   "Fault",
+   "Episodes",
+   "Observable",
+   "Precision",
+   "Recall (observable)",
+   "Recall (all)",
+   "Median delay min"
+  ],
+  "rows": [
+   [
+    "leak",
+    33,
+    33,
+    0.46,
+    0.33,
+    0.33,
+    660.0
+   ],
+   [
+    "dry_run",
+    34,
+    19,
+    1.0,
+    0.95,
+    0.53,
+    30.0
+   ],
+   [
+    "pump_failure",
+    23,
+    9,
+    0.83,
+    1.0,
+    0.39,
+    15.0
+   ],
+   [
+    "stuck_sensor",
+    17,
+    8,
+    1.0,
+    0.75,
+    0.35,
+    75.0
+   ],
+   [
+    "comm_loss",
+    44,
+    44,
+    1.0,
+    1.0,
+    1.0,
+    0.0
+   ]
+  ]
+ }
+}
