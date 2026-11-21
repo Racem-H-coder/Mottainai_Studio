@@ -1,0 +1,46 @@
+/* Design tokens (docs/DESIGN.md): one light palette for the Overview and the detail views.
+   Text tokens pass AAA (7:1) on --paper and --surface-l except --ink-3 (AA, captions). Series colours are for
+   marks; text in a series colour uses its -ink variant. Amber is only for "Assumption". */
+:root {
+  --paper: #F7F5F0;
+  --surface-l: #FFFFFF;
+  --ink: #15171B;
+  --ink-2: #43474F;
+  --ink-3: #585D66;
+  --line-l: #DEDAD1;
+  --grid-l: #E9E5DC;
+  --with: #1D64A8;
+  --with-ink: #124E8A;
+  --with-soft: #DCE8F4;
+  --with-mid: #8DB3DB;
+  --without: #C2410C;
+  --without-ink: #8A2E0E;
+  --without-soft: #F9E1D3;
+  --context: #7D838C;
+  --context-soft: #ECEAE4;
+  --assume-ink: #6E4A00;
+  --assume-soft: #FBEBC8;
+
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px; --sp-6: 32px; --sp-7: 48px; --sp-8: 64px; --sp-9: 96px;
+
+  /* Overview type, fluid: minimum at 1280 px wide, maximum at 1920 px. */
+  --j-headline: clamp(36px, calc(36px + (100vw - 1280px) * 0.025), 52px);
+  --j-big: clamp(64px, calc(64px + (100vw - 1280px) * 0.05), 96px);
+  --j-label: clamp(20px, calc(20px + (100vw - 1280px) * 0.009375), 26px);
+  --j-body: clamp(18px, calc(18px + (100vw - 1280px) * 0.009375), 24px);
+  --j-cap: clamp(18px, calc(18px + (100vw - 1280px) * 0.003125), 20px);
+  --j-pad: clamp(48px, calc(48px + (100vw - 1280px) * 0.075), 96px);
+
+  /* Detail views: denser (expert screens), same family and steps. */
+  --d-body: clamp(16px, calc(16px + (100vw - 1280px) * 0.003125), 18px);
+  --d-small: clamp(15px, calc(15px + (100vw - 1280px) * 0.0015625), 16px);
+  --d-title: clamp(19px, calc(19px + (100vw - 1280px) * 0.00625), 23px);
+  --d-page: clamp(26px, calc(26px + (100vw - 1280px) * 0.009375), 32px);
+  --d-big: clamp(40px, calc(40px + (100vw - 1280px) * 0.025), 56px);
+  --d-md: clamp(28px, calc(28px + (100vw - 1280px) * 0.0125), 36px);
+  --d-sm: clamp(22px, calc(22px + (100vw - 1280px) * 0.00625), 26px);
+  --d-pad: clamp(20px, calc(20px + (100vw - 1280px) * 0.04375), 48px);
+
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --arabic: "Segoe UI", Tahoma, "Noto Naskh Arabic", Arial, sans-serif;
+}

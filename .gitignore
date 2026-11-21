@@ -6,3 +6,7 @@ __pycache__/
 *.db
 models/
 results/*.csv
+node_modules/
+.env
+.env.*
+PROGRESS.md

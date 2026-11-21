@@ -1,0 +1,13 @@
+CLAUDE.md
+docs/
+.claude/
+node_modules/
+dist/
+dist-single/
+.venv/
+tools/.venv/
+__pycache__/
+e2e/screenshots/
+test-results/
+playwright-report/
+*.tsbuildinfo

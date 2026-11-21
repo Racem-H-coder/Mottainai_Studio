@@ -1,0 +1,226 @@
+/* The Overview (docs/DESIGN.md): one interactive screen, light and calm. Full viewport, no scrolling.
+   Rows: top bar, caption bar, main (chart + side column), district strip, footer line. */
+body.ov-on { background: var(--paper); color: var(--ink); }
+
+.ov {
+  --ov-pad: clamp(24px, calc(24px + (100vw - 1280px) * 0.0625), 64px);
+  --ov-cap: clamp(28px, calc(28px + (100vw - 1280px) * 0.025), 44px);
+  --ov-strip-h: clamp(100px, 13.5vh, 150px);
+  --ov-side-w: clamp(380px, 27vw, 520px);
+  --ov-side-wide: clamp(540px, 41vw, 780px);
+  position: fixed; inset: 0; display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+  background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: var(--j-body);
+  font-variant-numeric: tabular-nums; line-height: 1.35; overflow: hidden;
+}
+.ov :focus-visible { outline: 3px solid var(--with-ink); outline-offset: 3px; border-radius: 8px; }
+.ov h1, .ov h2, .ov p, .ov figure { margin: 0; }
+.ov button { font-family: var(--sans); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- top bar */
+.ov-top { display: flex; align-items: center; gap: var(--sp-5); padding: var(--sp-4) var(--ov-pad) 0; min-width: 0; }
+.ov-brand { display: flex; align-items: center; gap: var(--sp-2); color: var(--ink); flex: none; }
+.ov-brand h1 { font-size: var(--j-label); font-weight: 700; }
+.ov-brand svg { width: 1.5em; height: 1.5em; color: var(--with); }
+.ov-ctls { display: flex; align-items: center; gap: var(--sp-4); min-width: 0; }
+.ov-top-r { margin-left: auto; display: flex; align-items: center; gap: var(--sp-4); flex: none; }
+
+.ov-day select {
+  font: 600 var(--j-cap) var(--sans); color: var(--ink); background: var(--surface-l) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2315171B' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center / 12px 8px;
+  border: 1px solid var(--line-l); border-radius: 8px; padding: 8px 36px 8px 12px; appearance: none; cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+.ov-day select:hover { border-color: var(--ink-3); }
+
+.ov-seg { display: flex; align-items: center; border: 1px solid var(--line-l); border-radius: 8px; background: var(--surface-l); padding: 3px; gap: 2px; }
+.ov-seg button {
+  font: 600 var(--j-cap) var(--sans); color: var(--ink-2); background: transparent; border: 0; border-radius: 6px;
+  padding: 6px 12px; cursor: pointer; transition: background 0.2s, color 0.2s; white-space: nowrap;
+}
+.ov-seg button:hover { color: var(--ink); background: var(--context-soft); }
+.ov-seg button[aria-pressed="true"] { background: var(--with); color: #fff; }
+.ov-seg .s-off[aria-pressed="true"] { background: var(--without); color: #fff; }
+.ov-seg-l { font-size: var(--j-cap); font-weight: 500; color: var(--ink-2); padding: 0 6px 0 8px; white-space: nowrap; }
+.ov-eq.idle button[aria-pressed="true"] { background: transparent; color: var(--with-ink); box-shadow: inset 0 0 0 2px var(--with); }
+
+/* narrower screens (1280 px): same controls, tighter spacing; the row wraps rather than overlaps */
+@media (max-width: 1599px) {
+  .ov { --ov-pad: clamp(20px, calc(20px + (100vw - 1280px) * 0.0625), 64px); }
+  .ov-top { gap: var(--sp-2); flex-wrap: wrap; row-gap: var(--sp-2); }
+  .ov-ctls { gap: var(--sp-2); }
+  .ov-seg button { padding: 6px 9px; }
+  .ov-seg-l { padding: 0 4px 0 6px; }
+  .ov-seg-l .long { display: none; }
+  .ov-day select { padding: 8px 30px 8px 10px; background-position: right 10px center; }
+  .ov-top-r { gap: var(--sp-3); }
+  .ov-sim { padding: 2px 10px; }
+  .ov-explore { padding: 9px 13px; }
+}
+.ov-sim { font-size: var(--j-cap); font-weight: 600; color: var(--ink-2); border: 2px solid var(--line-l); border-radius: 999px; padding: 2px 12px; white-space: nowrap; }
+.ov-explore { font: 600 var(--j-cap) var(--sans); color: var(--paper); background: var(--ink); border: 0; border-radius: 8px; padding: 9px 16px; cursor: pointer; white-space: nowrap; }
+.ov-explore:hover { background: var(--ink-2); }
+.ov-clock { display: flex; align-items: center; gap: 8px; font-size: var(--j-cap); font-weight: 600; color: var(--without-ink); }
+.ov-clock i { width: 10px; height: 10px; border-radius: 50%; background: var(--without); }
+
+/* ---------- caption bar (guided tour) */
+.ov-capbar { display: flex; align-items: center; gap: var(--sp-5); padding: clamp(12px, 2vh, 24px) var(--ov-pad) 0; min-width: 0; }
+.ov-dots { display: flex; gap: var(--sp-2); flex: none; }
+.ov-dots button {
+  width: 2em; height: 2em; border-radius: 999px; border: 2px solid var(--line-l); background: transparent;
+  color: var(--ink-2); font: 600 var(--j-cap) var(--sans); cursor: pointer; transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.ov-dots button:hover { border-color: var(--ink-3); color: var(--ink); }
+.ov-dots button.on { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.ov-caption { font-size: var(--ov-cap); font-weight: 600; line-height: 1.15; letter-spacing: -0.01em; color: var(--ink); min-width: 0; animation: ov-in 0.35s ease-out; }
+.ov-caption.hint { font-size: var(--j-label); font-weight: 500; color: var(--ink-3); animation: none; }
+@keyframes ov-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* ---------- main */
+.ov-main {
+  min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) var(--ov-side-w); gap: var(--sp-6);
+  padding: clamp(8px, 1.6vh, 24px) var(--ov-pad) clamp(8px, 1.4vh, 20px); outline: none;
+  transition: grid-template-columns 0.35s ease;
+}
+.side-farm .ov-main, .side-money .ov-main { grid-template-columns: minmax(0, 1fr) var(--ov-side-wide); }
+.ov-visual { min-height: 0; min-width: 0; display: flex; }
+.ov-side { min-height: 0; min-width: 0; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: var(--sp-3); }
+.ov-side-in { min-height: 0; display: flex; flex-direction: column; animation: ov-in 0.3s ease-out; }
+.ov-tabs { display: flex; gap: var(--sp-2); align-items: center; }
+.ov-tabs button, .ov-tab-on {
+  font: 600 var(--j-cap) var(--sans); color: var(--ink-2); background: transparent; border: 1px solid var(--line-l);
+  border-radius: 999px; padding: 3px 14px; cursor: pointer;
+}
+.ov-tabs button:hover { border-color: var(--ink-3); color: var(--ink); }
+.ov-tabs button[aria-pressed="true"], .ov-tab-on { background: var(--ink); color: var(--paper); border-color: var(--ink); cursor: default; }
+@media (prefers-reduced-motion: reduce) { .ov-main { transition: none; } .ov-caption, .ov-side-in, .ov-figs { animation: none; } }
+
+/* ---------- figures */
+.ov-figs { display: grid; align-content: start; gap: clamp(12px, 2.4vh, 32px); animation: ov-figs 0.75s ease-out both; }
+/* the numbers settle with the curve (700 ms morph), so they never disagree with the chart for long */
+@keyframes ov-figs { 0%, 45% { opacity: 0.12; } 100% { opacity: 1; } }
+.ov-fig-g { display: grid; gap: clamp(8px, 1.6vh, 20px); }
+.ov-fig-h { font-size: var(--j-cap); font-weight: 600; color: var(--ink-3); border-bottom: 1px solid var(--line-l); padding-bottom: 4px; }
+.ov-fig-v { display: flex; align-items: baseline; flex-wrap: wrap; column-gap: 0.22em; line-height: 1; }
+.ov-fig-big { font-size: var(--j-big); font-weight: 600; letter-spacing: -0.02em; }
+.ov-fig-mid { font-size: calc(var(--j-big) * 0.72); font-weight: 600; letter-spacing: -0.02em; }
+.ov-fig-unit { font-size: calc(var(--j-big) * 0.36); font-weight: 600; }
+.ov-fig-from { font-size: calc(var(--j-big) * 0.42); font-weight: 500; color: var(--without-ink); }
+.ov-fig-l { margin-top: var(--sp-2); font-size: var(--j-label); font-weight: 500; color: var(--ink-2); }
+.t-with { color: var(--with-ink); }
+.t-without { color: var(--without-ink); }
+.t-ink { color: var(--ink); }
+
+/* ---------- side panels */
+.ov-panel { min-height: 0; flex: 1; display: flex; flex-direction: column; gap: var(--sp-3); }
+.ov-ph { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); }
+.ov-ph-t { font-size: var(--j-label); font-weight: 700; display: flex; align-items: baseline; gap: var(--sp-3); }
+.ov-ph-s { font-size: var(--j-cap); font-weight: 500; color: var(--ink-3); }
+.ov-close { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--line-l); background: var(--surface-l); cursor: pointer; display: grid; place-items: center; flex: none; }
+.ov-close svg { width: 14px; height: 14px; stroke: var(--ink); stroke-width: 2; }
+.ov-close:hover { border-color: var(--ink-3); }
+.ov-mini { position: relative; flex: 1; min-height: 0; min-width: 0; font-size: var(--j-cap); }
+.ov-mini svg { position: absolute; inset: 0; display: block; overflow: visible; }
+.ov-note { font-size: var(--j-cap); color: var(--ink-3); }
+.ov-grid-note { margin-top: var(--sp-2); }
+.ov-farm-day { display: grid; gap: var(--sp-4); align-content: start; flex: 1; }
+.ov-sms { background: var(--surface-l); border: 1px solid var(--line-l); border-radius: 12px; padding: var(--sp-3) var(--sp-5); flex: none; }
+.ov-sms-h { font-size: var(--j-cap); font-weight: 600; color: var(--ink-3); }
+.ov-sms-ar { font-family: var(--arabic); font-size: calc(var(--j-label) * 1.15); line-height: 1.5; font-weight: 600; color: var(--ink); margin-top: 4px; }
+.ov-sms-en { font-size: var(--j-cap); color: var(--ink-2); margin-top: 4px; }
+.ov-tariff { flex: 1.2; }
+.ov-money-figs { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-5); flex: none; }
+.ov-money-figs .ov-fig-l { font-size: var(--j-cap); }
+
+/* ---------- charts */
+.ov-chart { position: relative; flex: 1; min-width: 0; min-height: 0; font-size: var(--j-body); border-radius: 8px; touch-action: none; cursor: crosshair; }
+.ov-chart svg { position: absolute; inset: 0; display: block; overflow: visible; }
+.ov text { font-family: var(--sans); font-variant-numeric: tabular-nums; }
+:is(.ov, .dv) .tick { font-size: var(--j-cap); fill: var(--ink-3); }
+:is(.ov, .dv) .cap { font-size: var(--j-cap); fill: var(--ink-3); }
+:is(.ov, .dv) .lbl { font-size: var(--j-body); font-weight: 600; }
+/* paper halo so the time cursor and gridlines never run through a label */
+:is(.ov, .dv) .halo { paint-order: stroke; stroke: var(--paper); stroke-width: 6px; stroke-linejoin: round; }
+.ov-mini .lbl { font-size: var(--j-cap); }
+:is(.ov, .dv) .price { font-size: calc(var(--j-cap) * 1.3); font-weight: 700; }
+:is(.ov, .dv) .lbl-ink { fill: var(--ink); }
+:is(.ov, .dv) .lbl-ink2 { fill: var(--ink-2); font-weight: 500; }
+:is(.ov, .dv) .lbl-with, :is(.ov, .dv) .tick.lbl-with { fill: var(--with-ink); }
+:is(.ov, .dv) .lbl-without, :is(.ov, .dv) .tick.lbl-without { fill: var(--without-ink); }
+:is(.ov, .dv) .tick.lbl-ink { fill: var(--ink); }
+:is(.ov, .dv) .cursor-t { font-weight: 600; }
+:is(.ov, .dv) line.grid { stroke: var(--grid-l); stroke-width: 1; }
+:is(.ov, .dv) .axis { stroke: var(--ink-3); stroke-width: 2; }
+:is(.ov, .dv) .limit { stroke: var(--ink); stroke-width: 2.5; }
+:is(.ov, .dv) .s-without { fill: none; stroke: var(--without); stroke-width: 4; stroke-linejoin: round; stroke-linecap: round; transition: stroke-width 0.4s, opacity 0.4s; }
+:is(.ov, .dv) .s-without.thin { stroke-width: 2.5; opacity: 0.75; }
+:is(.ov, .dv) .s-with { fill: none; stroke: var(--with); stroke-width: 4; stroke-linejoin: round; stroke-linecap: round; transition: opacity 0.4s; }
+:is(.ov, .dv) .s-with.off { opacity: 0; }
+:is(.ov, .dv) .fade { transition: opacity 0.4s 0.3s; }
+:is(.ov, .dv) .fade.off { opacity: 0; transition-delay: 0s; }
+:is(.ov, .dv) .a-without { fill: var(--without-soft); stroke: none; }
+:is(.ov, .dv) .a-with { fill: var(--with-soft); stroke: none; }
+:is(.ov, .dv) .a-peak { fill: var(--context-soft); }
+:is(.ov, .dv) .track { fill: var(--context-soft); opacity: 0.6; }
+:is(.ov, .dv) .b-without { fill: var(--without); }
+:is(.ov, .dv) .b-with { fill: var(--with); }
+:is(.ov, .dv) .b-context { fill: var(--context); }
+:is(.ov, .dv) .blk-with { fill: var(--with-soft); stroke: var(--with); stroke-width: 2; }
+:is(.ov, .dv) .blk-context { fill: var(--context-soft); stroke: var(--context); stroke-width: 2; }
+:is(.ov, .dv) .blk-without { fill: var(--without-soft); stroke: var(--without); stroke-width: 2; }
+:is(.ov, .dv) .arrow { fill: none; stroke: var(--with); stroke-width: 3; }
+:is(.ov, .dv) .arrow-head { fill: var(--with); }
+:is(.ov, .dv) .cursor-l { stroke: var(--ink-3); stroke-width: 2; stroke-dasharray: 4 4; }
+:is(.ov, .dv) .dot-with { fill: var(--surface-l); stroke: var(--with); stroke-width: 3; }
+:is(.ov, .dv) .dot-without { fill: var(--surface-l); stroke: var(--without); stroke-width: 3; }
+:is(.ov, .dv) .band-tariff rect { fill: var(--context-soft); }
+:is(.ov, .dv) .band-shedding rect { fill: none; stroke: var(--context); stroke-width: 2; stroke-dasharray: 6 4; }
+:is(.ov, .dv) .band-l { fill: var(--ink-2); }
+:is(.ov, .dv) .a-fc { fill: var(--with-soft); opacity: 0.85; stroke: var(--with); stroke-width: 1; stroke-dasharray: 3 3; }
+:is(.ov, .dv) .hit { fill: transparent; }
+
+/* ---------- district strip */
+.ov-strip {
+  display: flex; align-items: stretch; gap: var(--sp-6); height: var(--ov-strip-h);
+  margin: 0 var(--ov-pad); padding: 8px var(--sp-4); border: 2px solid var(--line-l); border-radius: 12px; background: var(--surface-l);
+  transition: border-color 0.3s;
+  --tile: calc((var(--ov-strip-h) - 20px - 4 * 3px - 4px) / 5);
+}
+.ov-strip.over { border-color: var(--without); }
+.ov-sectors { display: flex; gap: var(--sp-5); align-items: stretch; }
+.ov-sector { display: flex; gap: var(--sp-2); align-items: center; }
+.ov-sector-l { font-size: var(--j-cap); font-weight: 600; color: var(--ink-3); width: 0.9em; }
+.ov-tiles { display: grid; grid-template-columns: repeat(10, var(--tile)); grid-template-rows: repeat(5, var(--tile)); gap: 3px; }
+.ov-tile {
+  width: var(--tile); height: var(--tile); padding: 0; border-radius: 3px; cursor: pointer;
+  background: var(--surface-l); border: 1.5px solid var(--context); transition: background 0.35s, border-color 0.35s;
+}
+.ov-tile.eq { background: var(--with); border-color: var(--with); }
+.ov-tile:hover { border-color: var(--ink); }
+.ov-tile.sel { outline: 3px solid var(--ink); outline-offset: 1px; }
+.ov-legend { display: flex; flex-direction: column; justify-content: center; gap: 4px; margin-left: auto; font-size: var(--j-cap); color: var(--ink-2); white-space: nowrap; }
+.ov-key { display: flex; align-items: center; gap: 8px; }
+.ov-key .sw { width: 16px; height: 16px; border-radius: 3px; border: 1.5px solid var(--context); background: var(--surface-l); }
+.ov-key .sw.eq { background: var(--with); border-color: var(--with); }
+.ov-status { font-weight: 600; }
+.ov-status .tick { color: inherit; }
+
+/* ---------- footer */
+.ov-foot {
+  display: flex; justify-content: space-between; gap: var(--sp-5); align-items: baseline;
+  padding: var(--sp-2) var(--ov-pad) var(--sp-3); font-size: var(--j-cap); color: var(--ink-3);
+}
+.ov-foot-r { display: flex; gap: var(--sp-5); white-space: nowrap; }
+@media (max-width: 1700px) { .ov-keys { display: none; } }
+
+/* short screens (720 px high): tighter vertical rhythm in the figure column */
+@media (max-height: 820px) {
+  .ov-figs { gap: 6px; }
+  .ov-fig-g { gap: 4px; }
+  .ov-fig-h { padding-bottom: 2px; }
+  .ov-grid-note { line-height: 1.2; }
+  .ov { --ov-strip-h: clamp(92px, 13vh, 150px); }
+  .ov-side { gap: var(--sp-2); }
+  .ov-fig-l { margin-top: 4px; }
+  .ov-tabs button, .ov-tab-on { padding: 1px 12px; }
+}
