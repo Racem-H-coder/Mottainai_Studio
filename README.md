@@ -4,8 +4,6 @@
 
 By **Mottainai Studio**, KIZUNA 2026 (Hackathon ESPRIT × Japan).
 
-**Links:** website [link] · demo video [link] · pitch deck [link]
-
 `KIZUNA 2026` · `MIT licence` · **All results in this repository are simulated** (a synthetic Cap Bon district
 on real weather). They are not field measurements. Real facts (the STEG shedding calendar, STEG tariffs, weather)
 are marked *real* and each one has a source link.
