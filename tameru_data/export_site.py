@@ -163,6 +163,103 @@ def phase6_items(add):
             "% of their kWh", "Training days (summer 2025) only; optional planner input, off in the test results.")
 
 
+SHED_SRC = "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+
+
+def shedding_items(add):
+    """site_data entries for the STEG rotating-shedding scenario (results/shedding.json). Calendar facts and g go
+    to shedding_items.facts (simulated: false, or assumption: true for g)."""
+    s = _j("shedding.json")
+    shedding_items.facts = []
+    if not s:
+        return
+    ds_ = s["design"]
+    cal = pd.read_csv(RESULTS / "shedding_calendar_2026.csv", dtype=str)
+    main = cal[cal.status == "main"]
+    lead = pd.to_numeric(main.lead_min, errors="coerce").dropna()
+    shedding_items.facts = [
+        {"id": "shed_documented_days", "label": "Documented STEG rotating-shedding days, summer 2026", "value": int(main.date.nunique()),
+         "unit": "days", "dates": sorted(main.date.unique().tolist()), "simulated": False, "source": SHED_SRC},
+        {"id": "shed_announced_windows", "label": "Announced shedding windows (Nabeul / Cap Bon listed on all but one)",
+         "value": int(len(main)), "unit": "windows", "simulated": False, "source": SHED_SRC},
+        {"id": "shed_notices_late", "label": "STEG notices published at or after the window had started",
+         "value": f"{int((lead <= 0).sum())} of {len(lead)}", "unit": "dated notices", "simulated": False, "source": SHED_SRC},
+    ] + [{"id": f"shed_gap_{k}", "label": f"National supply gap g ({k})", "value": round(100 * v), "unit": "%",
+          "explanation": ds_["g_sources"][k] + ". " + ds_["g_sources"]["note"] + ".", "simulated": False,
+          "assumption": True, "source": ds_["g_sources"][k]} for k, v in ds_["g"].items()]
+    t, w, fl = s["tables"], s["water_base_g"], s["flag_skill"]
+    note = ("Simulated. Documented 2026 STEG windows (sourced), national gap g = 14 % passed down to the feeder; "
+            "without Tameru the cut is g x window length (30-90 min, conservative vs the 4-6 h residents reported).")
+    a = t["all"]
+    for sc, lab in (("A38@50", "Tameru alone (no STEG input), 50 % of farms"), ("A38@70", "Tameru alone, 70 % of farms"),
+                    ("B@50", "Tameru + STEG notice, 50 %"), ("B@70", "Tameru + STEG notice, 70 %")):
+        r, lo, hi = a["base"][sc], a["low"][sc], a["high"][sc]
+        add(f"shed_outage_{sc.replace('@', '_')}", f"Feeder outage hours, without -> with {lab}",
+            f"{r['outage_h_without']:.2f} -> {r['outage_h_with']:.2f}", "hours",
+            f"{note} {r['windows']} windows on {r['days']} days; {r['windows_to_zero']} windows and {r['days_to_zero']} "
+            f"days brought to 0 h. Gap 10 % / 25 %: {lo['outage_h_without']:.2f} -> {lo['outage_h_with']:.2f} / "
+            f"{hi['outage_h_without']:.2f} -> {hi['outage_h_with']:.2f} h.",
+            assumption=True, source=SHED_SRC, source_g=ds_["g_sources"]["base"])
+    r = a["base"]["A38@50"]
+    add("shed_household_hours_avoided_A38_50", "Household-hours without power avoided (1,000 homes), Tameru alone 50 %",
+        round(r["household_hours_avoided"]), "household-hours", note, assumption=True, source=SHED_SRC)
+    for typ in ("daytime", "evening"):
+        x = t[typ]["base"]["A38@50"]
+        add(f"shed_outage_{typ}_A38_50", f"Outage hours in {typ} windows, without -> with Tameru alone 50 %",
+            f"{x['outage_h_without']:.2f} -> {x['outage_h_with']:.2f}", "hours",
+            f"{x['windows']} {typ} windows (start {'before' if typ == 'daytime' else 'from'} 17:00). " + note,
+            assumption=True, source=SHED_SRC)
+    k = fl["38"]
+    add("shed_flag_skill_38", "Day-ahead risk flag (forecast Tmax >= 38 C) vs documented shedding days",
+        f"{k['hits']} hits / {k['misses']} misses / {k['false_alarms']} false alarms", "days",
+        f"Over the {k['test_days']} test days (Jun-Oct 2026), {k['documented_days']} documented shedding days. "
+        "Tameru uses no STEG information for this flag.", source=SHED_SRC)
+    add("shed_unmet_need", "Unmet crop water need on shedding days, without -> with Tameru alone 50 %",
+        f"{w['without']['unmet_need_m3']:.0f} -> {w['A38@50']['unmet_need_m3']:.0f}", "m³",
+        f"Sum over the documented days; FAO-56 need {w['without']['need_m3']:.0f} m³. " + note, assumption=True)
+    add("shed_pump_kw_freed_per_1000_farms", "Pump power Tameru frees in the window, per 1,000 farms (illustrative)",
+        r["mean_pump_kw_freed_per_1000_farms"], "kW",
+        "ILLUSTRATIVE linear scaling of the 200-farm simulation (mean over the windows, 50 % adoption).",
+        assumption=True, illustrative=True)
+
+
+def shedding_charts(save):
+    """charts/shedding_day.json and charts/shedding_days.json."""
+    s = _j("shedding.json")
+    if not s:
+        return
+    rec = next(d_ for d_ in s["days"] if "curves" in d_)
+    c = rec["curves"]
+    cfg = chart("line", QUARTERS,
+                [ds("Without Tameru (no cut)", c["baseline"], INK2, **line(INK2)),
+                 ds("Without Tameru: STEG cut", c["without_cut"], ORANGE, **line(ORANGE)),
+                 ds("Tameru alone, 50 % (no STEG input)", c["tameru_cut"], AQUA, **line(AQUA)),
+                 ds("Feeder capacity", [CAP] * 96, INK2, **line(INK2, [6, 4]))],
+                f"{rec['date']}: STEG shedding {', '.join(rec['windows'])}", "Feeder load on the best-documented "
+                "evening shedding day. The cut comes from the national gap g = 14 %, not from local overload.",
+                "time", "kW")
+    cfg.update(windows=rec["windows"], cuts_without=c["cuts_without"], cuts_tameru=c["cuts_tameru"],
+               tank_pct={"without": c["tank_without_pct"], "tameru": c["tank_tameru_pct"]}, assumption=True,
+               source=SHED_SRC)
+    save("shedding_day", cfg)
+    rows = pd.read_csv(RESULTS / "shedding_windows.csv", dtype={"date": str})
+    rows = rows[rows.status == "main"]
+    days = sorted(rows.date.unique())
+
+    def h(sc, gl, col):
+        x = rows[(rows.scenario == sc) & (rows.g_label == gl)].groupby("date")[col].sum()
+        return [rnd(x.get(d_, 0), 2) for d_ in days]
+    series = [("Without Tameru", "A38@50", "D0_h", ORANGE), ("Tameru alone 50 %", "A38@50", "D1_h", AQUA),
+              ("Tameru + STEG notice 50 %", "B@50", "D1_h", BLUE), ("Tameru alone 70 %", "A38@70", "D1_h", "#0e7a54"),
+              ("Tameru + STEG notice 70 %", "B@70", "D1_h", "#1d4f91")]
+    cfg = chart("bar", days, [ds(lab, h(sc, "base", col), colr, low_g=h(sc, "low", col), high_g=h(sc, "high", col))
+                              for lab, sc, col, colr in series],
+                "Outage hours per documented 2026 shedding day", "Base gap g = 14 %; low_g / high_g = 10 % / 25 %.",
+                "day", "feeder outage hours")
+    cfg.update(assumption=True, source=SHED_SRC)
+    save("shedding_days", cfg)
+
+
 def phase6_charts(save):
     """charts/water_budget.json and charts/anomalies.json."""
     wb, am = _j("water_budget.json"), _j("anomaly_metrics.json")
@@ -362,10 +459,11 @@ def main():
         add(f"hours_over_faults_{id_}", f"Time over capacity with faults, {label}",
             rnd(wbf[key]["hours_over_capacity"], 2), "hours", f"{n_days} days. " + fault_note, assumption=True)
     phase6_items(add)
+    shedding_items(add)
     n_eq = sqlite3.connect(DB).execute("SELECT COUNT(*) FROM pumps WHERE adopt_u < ?", (MAIN_ADOPTION,)).fetchone()[0]
     add("equipped_farms_main", f"Farms with a relay box at {a50} adoption", n_eq, "farms",
         "Farms are drawn at random; at 50 % adoption this simulated district has this many equipped farms.")
-    items += getattr(phase6_items, "facts", [])
+    items += getattr(phase6_items, "facts", []) + getattr(shedding_items, "facts", [])
     (OUT / "site_data.json").write_text(json.dumps({"note": NOTE, "items": items}, indent=1, ensure_ascii=False),
                                        encoding="utf-8")
 
@@ -484,6 +582,7 @@ def main():
     save("faults", cfg)
 
     phase6_charts(save)
+    shedding_charts(save)
 
     # ------------------------------------------------------------------ figures
     fig = OUT / "figures"

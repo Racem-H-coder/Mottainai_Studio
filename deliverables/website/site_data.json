@@ -781,6 +781,108 @@
    "simulated": true
   },
   {
+   "id": "shed_outage_A38_50",
+   "label": "Feeder outage hours, without -> with Tameru alone (no STEG input), 50 % of farms",
+   "value": "20.25 -> 11.75",
+   "unit": "hours",
+   "explanation": "Simulated. Documented 2026 STEG windows (sourced), national gap g = 14 % passed down to the feeder; without Tameru the cut is g x window length (30-90 min, conservative vs the 4-6 h residents reported). 28 windows on 22 days; 4 windows and 2 days brought to 0 h. Gap 10 % / 25 %: 15.00 -> 7.00 / 37.25 -> 28.50 h.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)",
+   "source_g": "1 - 4,300/5,000: both figures in Le Temps 26 Jul 2026 (press, not STEG)"
+  },
+  {
+   "id": "shed_outage_A38_70",
+   "label": "Feeder outage hours, without -> with Tameru alone, 70 % of farms",
+   "value": "20.25 -> 7.25",
+   "unit": "hours",
+   "explanation": "Simulated. Documented 2026 STEG windows (sourced), national gap g = 14 % passed down to the feeder; without Tameru the cut is g x window length (30-90 min, conservative vs the 4-6 h residents reported). 28 windows on 22 days; 11 windows and 8 days brought to 0 h. Gap 10 % / 25 %: 15.00 -> 4.25 / 37.25 -> 22.50 h.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)",
+   "source_g": "1 - 4,300/5,000: both figures in Le Temps 26 Jul 2026 (press, not STEG)"
+  },
+  {
+   "id": "shed_outage_B_50",
+   "label": "Feeder outage hours, without -> with Tameru + STEG notice, 50 %",
+   "value": "20.25 -> 11.50",
+   "unit": "hours",
+   "explanation": "Simulated. Documented 2026 STEG windows (sourced), national gap g = 14 % passed down to the feeder; without Tameru the cut is g x window length (30-90 min, conservative vs the 4-6 h residents reported). 28 windows on 22 days; 4 windows and 2 days brought to 0 h. Gap 10 % / 25 %: 15.00 -> 7.00 / 37.25 -> 28.50 h.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)",
+   "source_g": "1 - 4,300/5,000: both figures in Le Temps 26 Jul 2026 (press, not STEG)"
+  },
+  {
+   "id": "shed_outage_B_70",
+   "label": "Feeder outage hours, without -> with Tameru + STEG notice, 70 %",
+   "value": "20.25 -> 6.75",
+   "unit": "hours",
+   "explanation": "Simulated. Documented 2026 STEG windows (sourced), national gap g = 14 % passed down to the feeder; without Tameru the cut is g x window length (30-90 min, conservative vs the 4-6 h residents reported). 28 windows on 22 days; 12 windows and 9 days brought to 0 h. Gap 10 % / 25 %: 15.00 -> 3.75 / 37.25 -> 21.75 h.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)",
+   "source_g": "1 - 4,300/5,000: both figures in Le Temps 26 Jul 2026 (press, not STEG)"
+  },
+  {
+   "id": "shed_household_hours_avoided_A38_50",
+   "label": "Household-hours without power avoided (1,000 homes), Tameru alone 50 %",
+   "value": 8500,
+   "unit": "household-hours",
+   "explanation": "Simulated. Documented 2026 STEG windows (sourced), national gap g = 14 % passed down to the feeder; without Tameru the cut is g x window length (30-90 min, conservative vs the 4-6 h residents reported).",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_daytime_A38_50",
+   "label": "Outage hours in daytime windows, without -> with Tameru alone 50 %",
+   "value": "16.00 -> 9.75",
+   "unit": "hours",
+   "explanation": "21 daytime windows (start before 17:00). Simulated. Documented 2026 STEG windows (sourced), national gap g = 14 % passed down to the feeder; without Tameru the cut is g x window length (30-90 min, conservative vs the 4-6 h residents reported).",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_evening_A38_50",
+   "label": "Outage hours in evening windows, without -> with Tameru alone 50 %",
+   "value": "4.25 -> 2.00",
+   "unit": "hours",
+   "explanation": "7 evening windows (start from 17:00). Simulated. Documented 2026 STEG windows (sourced), national gap g = 14 % passed down to the feeder; without Tameru the cut is g x window length (30-90 min, conservative vs the 4-6 h residents reported).",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_flag_skill_38",
+   "label": "Day-ahead risk flag (forecast Tmax >= 38 C) vs documented shedding days",
+   "value": "13 hits / 9 misses / 12 false alarms",
+   "unit": "days",
+   "explanation": "Over the 153 test days (Jun-Oct 2026), 22 documented shedding days. Tameru uses no STEG information for this flag.",
+   "simulated": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_unmet_need",
+   "label": "Unmet crop water need on shedding days, without -> with Tameru alone 50 %",
+   "value": "95 -> 0",
+   "unit": "m³",
+   "explanation": "Sum over the documented days; FAO-56 need 518175 m³. Simulated. Documented 2026 STEG windows (sourced), national gap g = 14 % passed down to the feeder; without Tameru the cut is g x window length (30-90 min, conservative vs the 4-6 h residents reported).",
+   "simulated": true,
+   "assumption": true
+  },
+  {
+   "id": "shed_pump_kw_freed_per_1000_farms",
+   "label": "Pump power Tameru frees in the window, per 1,000 farms (illustrative)",
+   "value": 306.0,
+   "unit": "kW",
+   "explanation": "ILLUSTRATIVE linear scaling of the 200-farm simulation (mean over the windows, 50 % adoption).",
+   "simulated": true,
+   "assumption": true,
+   "illustrative": true
+  },
+  {
    "id": "equipped_farms_main",
    "label": "Farms with a relay box at 50% adoption",
    "value": 94,
@@ -835,6 +937,84 @@
    "simulated": false,
    "as_of": "2019-07",
    "source": "IFI Dataset of Default Grid Factors v2.0 (IFI TWG, July 2019), hosted by UNFCCC"
+  },
+  {
+   "id": "shed_documented_days",
+   "label": "Documented STEG rotating-shedding days, summer 2026",
+   "value": 22,
+   "unit": "days",
+   "dates": [
+    "2026-07-16",
+    "2026-07-17",
+    "2026-07-18",
+    "2026-07-20",
+    "2026-07-21",
+    "2026-07-22",
+    "2026-07-23",
+    "2026-07-24",
+    "2026-08-03",
+    "2026-08-04",
+    "2026-08-05",
+    "2026-08-19",
+    "2026-08-20",
+    "2026-08-24",
+    "2026-08-25",
+    "2026-08-26",
+    "2026-08-27",
+    "2026-08-28",
+    "2026-08-31",
+    "2026-09-01",
+    "2026-09-02",
+    "2026-09-03"
+   ],
+   "simulated": false,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_announced_windows",
+   "label": "Announced shedding windows (Nabeul / Cap Bon listed on all but one)",
+   "value": 28,
+   "unit": "windows",
+   "simulated": false,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_notices_late",
+   "label": "STEG notices published at or after the window had started",
+   "value": "19 of 25",
+   "unit": "dated notices",
+   "simulated": false,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_gap_low",
+   "label": "National supply gap g (low)",
+   "value": 10,
+   "unit": "%",
+   "explanation": "1 - 4,500/5,000: 5,000 MW peak demand = STEG CEO (TAP, 16 Jul 2026); 4,500 MW capacity = deputy M. Ktari (webdo 28 Jul 2026). only the 5,000 MW demand is a STEG figure.",
+   "simulated": false,
+   "assumption": true,
+   "source": "1 - 4,500/5,000: 5,000 MW peak demand = STEG CEO (TAP, 16 Jul 2026); 4,500 MW capacity = deputy M. Ktari (webdo 28 Jul 2026)"
+  },
+  {
+   "id": "shed_gap_base",
+   "label": "National supply gap g (base)",
+   "value": 14,
+   "unit": "%",
+   "explanation": "1 - 4,300/5,000: both figures in Le Temps 26 Jul 2026 (press, not STEG). only the 5,000 MW demand is a STEG figure.",
+   "simulated": false,
+   "assumption": true,
+   "source": "1 - 4,300/5,000: both figures in Le Temps 26 Jul 2026 (press, not STEG)"
+  },
+  {
+   "id": "shed_gap_high",
+   "label": "National supply gap g (high)",
+   "value": 25,
+   "unit": "%",
+   "explanation": "1 - 4,500/6,000: deputy M. Ktari's pair (webdo 28 Jul 2026). only the 5,000 MW demand is a STEG figure.",
+   "simulated": false,
+   "assumption": true,
+   "source": "1 - 4,500/6,000: deputy M. Ktari's pair (webdo 28 Jul 2026)"
   }
  ]
 }
