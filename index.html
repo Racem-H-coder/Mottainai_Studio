@@ -411,7 +411,7 @@ body.demo #left .scroll,body.demo #scenarioSeg,body.demo #bottom .tl,body.demo #
       <dl class="kv">
         <dt>Overload risk</dt><dd id="fcRisk">—</dd>
         <dt>Predicted peak</dt><dd id="fcPeak">—</dd>
-        <dt>Managed window</dt><dd id="fcWin">17:00–20:00</dd>
+        <dt>Managed window</dt><dd id="fcWin">—</dd>
         <dt>Next peak in</dt><dd id="fcNext">—</dd>
       </dl>
       <div class="strategy" id="fcStrategy" data-p="off"><b>INACTIVE</b>Forecast available, scheduling disabled.</div>
@@ -435,7 +435,7 @@ body.demo #left .scroll,body.demo #scenarioSeg,body.demo #bottom .tl,body.demo #
         <li>200 farms in 4 sectors (A–D)</li>
         <li>Pumps 4–6 kW (avg ≈ 5 kW)</li>
         <li>Feeder capacity 1,000 kW (illustrative)</li>
-        <li>Feeder peak window 17:00–20:00 (STEG BT price peak is 19:00–23:00)</li>
+        <li>Peak window of this illustrative demo: 17:00–20:00. In the backtest (data v2) the simulated feeder peaks at 19:00–22:00, inside STEG's 19:00–23:00 price peak</li>
         <li>Tanks 35–90 m³, gravity-fed irrigation</li>
         <li>Crop demand 7–14 m³/h per farm</li>
         <li>Minimum reserve kept by Tameru: 15%</li>
@@ -1840,7 +1840,7 @@ function showCompare() {
     row('Load-shedding time', `${A.shedMin} min`, `${B.shedMin} min`, A.shedMin ? pct(A.shedMin, B.shedMin) : '—') +
     row('Farms with interrupted irrigation', A.ever, B.ever, pct(A.ever, B.ever)) +
     row('Farm-hours without water', (A.shortFM / 60).toFixed(1), (B.shortFM / 60).toFixed(1), pct(A.shortFM, B.shortFM)) +
-    row('Pump energy in 17–20 h peak', `${fmtInt(A.peakKWh)} kWh`, `${fmtInt(B.peakKWh)} kWh`, pct(A.peakKWh, B.peakKWh)) +
+    row('Pump energy in the demo peak window (17–20 h)',`${fmtInt(A.peakKWh)} kWh`, `${fmtInt(B.peakKWh)} kWh`, pct(A.peakKWh, B.peakKWh)) +
     row('Average tank reserve now', `${Math.round(WA.st.fill * 100)}%`, `${Math.round(WB.st.fill * 100)}%`, `+${Math.round((WB.st.fill - WA.st.fill) * 100)} pts`);
   $('compare').classList.remove('hidden');
 }

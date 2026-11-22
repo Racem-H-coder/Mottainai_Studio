@@ -1580,7 +1580,7 @@
    "label": "Feeder peak window (simulated)",
    "value": "19:00-22:00",
    "unit": "time",
-   "explanation": "Hours holding 98 % of the unmanaged overload quarters, training + validation days (results/peak_window.json).",
+   "explanation": "Hours holding 97.6 % of the unmanaged overload quarters, training + validation days (results/peak_window.json).",
    "simulated": true
   },
   {
@@ -1598,6 +1598,30 @@
    "unit": "%",
    "explanation": "20 highest-load test days; the same water is pumped at cheaper hours, and peak kWh are the costliest for STEG to supply.",
    "simulated": true
+  },
+  {
+   "id": "bills_up_steg_bt_3p",
+   "label": "Equipped farms whose bill goes up (STEG BT three-period), Tameru 50 %",
+   "value": 18,
+   "unit": "of 94 farms",
+   "explanation": "20 highest-load test days, tax included.",
+   "simulated": true
+  },
+  {
+   "id": "bills_up_steg_bt_3p_enforced",
+   "label": "Equipped farms whose bill goes up (STEG BT three-period), Tameru 50 %, budget enforced",
+   "value": 3,
+   "unit": "of 94 farms",
+   "explanation": "20 highest-load test days, tax included.",
+   "simulated": true
+  },
+  {
+   "id": "steg_peak_night_ratio",
+   "label": "STEG BT three-period: evening peak price / night price",
+   "value": 3.4,
+   "unit": "x",
+   "explanation": "391 vs 116 mill/kWh before tax (STEG, in force since 1 May 2022).",
+   "simulated": false
   },
   {
    "id": "adopter_share_19_23_none",
@@ -1747,14 +1771,15 @@
   },
   {
    "id": "steg_shedding_2026",
-   "label": "STEG national load-shedding windows, summer 2026",
+   "label": "STEG advance warning of 25 Aug 2026 (shedding from 26 Aug)",
    "values": [
     "13:00-17:00",
     "22:00-01:00"
    ],
    "unit": "local time",
    "simulated": false,
-   "as_of": "2026-08-26",
+   "as_of": "2026-08-25",
+   "note": "One notice only. The 26 Aug list then gave 11:30-18:00. All 28 announced windows of summer 2026: results/shedding_calendar_2026.csv (shed_documented_days, shed_announced_windows).",
    "source": "businessnews.com.tn 2026-08-25"
   },
   {

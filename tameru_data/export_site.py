@@ -68,8 +68,10 @@ def phase6_items(add):
         {"id": "legacy_flat", "label": "STEG BT flat irrigation tariff", "value": 184, "unit": "mill/kWh HT",
          "status": "closed to new contracts", "simulated": False, "as_of": "2022-05-01",
          "source": "STEG BT tariffs page; FIPA Jan 2025"},
-        {"id": "steg_shedding_2026", "label": "STEG national load-shedding windows, summer 2026",
-         "values": ["13:00-17:00", "22:00-01:00"], "unit": "local time", "simulated": False, "as_of": "2026-08-26",
+        {"id": "steg_shedding_2026", "label": "STEG advance warning of 25 Aug 2026 (shedding from 26 Aug)",
+         "values": ["13:00-17:00", "22:00-01:00"], "unit": "local time", "simulated": False, "as_of": "2026-08-25",
+         "note": "One notice only. The 26 Aug list then gave 11:30-18:00. All 28 announced windows of summer 2026: "
+                 "results/shedding_calendar_2026.csv (shed_documented_days, shed_announced_windows).",
          "source": "businessnews.com.tn 2026-08-25"},
         {"id": "grid_emission_factor", "label": "Grid emission factor, Tunisia", "value": 404, "unit": "gCO2/kWh",
          "explanation": "Combined margin, firm energy / energy-efficiency column; 2019 dataset. About 95 % of "
@@ -344,6 +346,13 @@ def story_items(add):
             round(100 * (x["district_scenario_tnd"] / x["district_unmanaged_tnd"] - 1), 1), "%",
             "20 highest-load test days; the same water is pumped at cheaper hours, and peak kWh are the costliest "
             "for STEG to supply.")
+    for k, tag in (("closed_loop@0.5_vs_unmanaged", ""), ("closed_loop_enforced@0.5_vs_unmanaged", "_enforced")):
+        x = b[k]["steg_bt_3p_ttc"]
+        add(f"bills_up_steg_bt_3p{tag}", "Equipped farms whose bill goes up (STEG BT three-period), Tameru 50 %"
+            + (", budget enforced" if tag else ""), x["farms_bill_up"], f"of {x['adopters']} farms",
+            "20 highest-load test days, tax included.")
+    add("steg_peak_night_ratio", "STEG BT three-period: evening peak price / night price", round(391 / 116, 1), "x",
+        "391 vs 116 mill/kWh before tax (STEG, in force since 1 May 2022).", simulated=False)
     sh_ = b["closed_loop@0.5_vs_unmanaged"]["adopter_kwh_share"]
     for per in ("19_23", "23_08"):
         for side in ("unmanaged", "scenario"):

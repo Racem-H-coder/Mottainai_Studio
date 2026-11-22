@@ -10,7 +10,7 @@ The files are produced by `tameru_data/dashboard_data.py`, written to `results/`
 `tameru_data/anomaly.py`). The same seed always gives the same files. They cover the 20 days with the highest
 feeder load in the test period (June–October 2026).
 
-**Version 2 (Phase 6).** All version 1 columns keep their names and units. This version adds:
+**Version 2 (water budget, faults, bills).** All version 1 columns keep their names and units. It added:
 
 - three new scenarios;
 - new columns at the end of `farm_metrics.csv`;
@@ -21,6 +21,8 @@ feeder load in the test period (June–October 2026).
 (`results/peak_window.json`). New columns at the end of `farm_metrics.csv`: `pump_kwh_feeder_peak`,
 `kwh_shifted_out_of_feeder_peak`, `pump_kwh_13_17`. `pump_kwh_17_20` and `kwh_shifted_out_of_peak` are
 deprecated (kept for one version). New file `results/showcase_days.json`.
+
+**Version 3: shedding scenario (2026-11-22).** No column changed. New read-only files for the STEG 2026 rotating-shedding scenario (last section). Showcase days: 22, 19 and 14 July 2026. Never read anything from `archive/`.
 
 ## Scenarios
 
@@ -55,9 +57,11 @@ deprecated (kept for one version). New file `results/showcase_days.json`.
 - `ts` is the start of a 15-minute interval. Power and flows are averages over `[ts, ts + 15 min)`; tank
   levels are the value at `ts`.
 - Peak window of the simulated feeder: 19:00–22:00 (quarters starting 19:00 through 21:45), in
-  `results/peak_window.json`. (Data v1: 17:00–20:00.)
-- STEG BT price peak (summer): 19:00–23:00. The 2026 national shedding windows were 13:00–17:00 and
-  22:00–01:00.
+  `results/peak_window.json`. Replace any hard-coded evening window in the dashboard with this file.
+- STEG BT price peak (summer): 19:00–23:00. STEG's 2026 rotating shedding: 28 announced windows on 22 days
+  (16 July – 3 September), daytime windows (between 09:00 and 18:30) and evening windows (between 17:00 and 02:00), in
+  `results/shedding_calendar_2026.csv`. The columns `pump_kwh_13_17` and `pump_kwh_22_01` use the two windows
+  of STEG's advance warning of 25 August 2026 (13:00–17:00 and 22:00–01:00).
 - Booleans are `True` / `False`. Lists are pipe-separated (`tomato|pepper`). An empty cell means "not
   applicable".
 - Units: water in m³, energy in kWh, power in kW, money in TND (1 TND = 1,000 millimes).
@@ -85,8 +89,8 @@ rows).
 | `unmet_need_m3` | m³ | Crop need the farmer asked for but did not get = max(0, min(water asked for, `crop_need_m3`) − `farmer_use_m3`). Should be ≈ 0. |
 | `curtailed_excess_m3` | m³ | Water saved by the budget: water asked for above the crop need that was not supplied. Non-zero only in `closed_loop_enforced` on connected farms. |
 | `pump_kwh` | kWh | Pump energy today. |
-| `pump_kwh_17_20` | kWh | **Deprecated** (data-v1 window, kept one version; use `pump_kwh_feeder_peak`). Pump energy in the 17:00–20:00 window. |
-| `kwh_shifted_out_of_peak` | kWh | **Deprecated** (use `kwh_shifted_out_of_feeder_peak`). `pump_kwh_17_20` of the same farm and day in `unmanaged` (or `unmanaged_faults` for `*_faults` scenarios) minus this row's. Positive means pumping moved out of the evening peak. 0 for unconnected farms. |
+| `pump_kwh_17_20` | kWh | **Deprecated** (kept one version; use `pump_kwh_feeder_peak`). Pump energy in the retired data-v1 evening window. |
+| `kwh_shifted_out_of_peak` | kWh | **Deprecated** (use `kwh_shifted_out_of_feeder_peak`). `pump_kwh_17_20` of the same farm and day in `unmanaged` (or `unmanaged_faults` for `*_faults` scenarios) minus this row's. Positive means pumping moved out of the retired data-v1 window. 0 for unconnected farms. |
 | `peak_contrib_kw` | kW | This pump's average power during the quarter when the feeder load was highest in this scenario. |
 | `kwh_per_m3` | kWh/m³ | `pump_kwh` / `pumped_m3`. Empty if nothing was pumped. Energy performance indicator, aligned with ISO 50006 vocabulary (not a compliance claim). |
 | `kwh_per_ha` | kWh/ha | `pump_kwh` / farm area in ha. Same family of indicators. |
@@ -102,14 +106,14 @@ rows).
 | `reserve_violation_q_before_need` | quarters | The reserve violations that matter: tank below 15 % while the field had not yet had its crop need. (With the budget enforced, the tank may run low once the crop need is met.) |
 | `pump_kwh_19_23` | kWh | Pump energy in 19:00–23:00 (STEG BT summer price peak). |
 | `pump_kwh_23_08` | kWh | Pump energy in 23:00–08:00 (STEG BT summer night). |
-| `pump_kwh_22_01` | kWh | Pump energy in 22:00–24:00 + 00:00–01:00 (2026 national shedding window, same planning day). |
+| `pump_kwh_22_01` | kWh | Pump energy in 22:00–24:00 + 00:00–01:00 (STEG advance warning of 25 Aug 2026, same planning day). |
 | `cpp_critical_day` | bool | The day is a forecast critical day for `proposed_cpp`: the p90 base load plus every farm's usual pumping exceeds capacity in the feeder peak window (19:00–22:00). |
 | `bill_steg_bt_3p_ht_tnd`, `bill_steg_bt_3p_ttc_tnd` | TND | Today's pump energy bill under the STEG BT three-period irrigation tariff, before tax / tax included. |
 | `bill_legacy_flat_ht_tnd`, `bill_legacy_flat_ttc_tnd` | TND | Same, under the legacy flat tariff (184 mill/kWh, closed to new contracts). |
 | `bill_proposed_cpp_ht_tnd`, `bill_proposed_cpp_ttc_tnd` | TND | Same, under `proposed_cpp`: a **proposal** (what STEG or the regulator could introduce), not a STEG tariff. |
 | `pump_kwh_feeder_peak` | kWh | Pump energy in the feeder peak window (19:00–22:00, `results/peak_window.json`). |
 | `kwh_shifted_out_of_feeder_peak` | kWh | `pump_kwh_feeder_peak` of the same farm and day in `unmanaged` (or `unmanaged_faults` for `*_faults` scenarios) minus this row's. |
-| `pump_kwh_13_17` | kWh | Pump energy in 13:00–17:00 (2026 national shedding window, afternoon). |
+| `pump_kwh_13_17` | kWh | Pump energy in 13:00–17:00 (STEG advance warning of 25 Aug 2026, afternoon). |
 
 Bill details:
 - Tax included = HT × 1.07 (VAT 7 % on energy) + 10 mill/kWh (5 municipal + 5 FTE).
@@ -148,7 +152,7 @@ This file has no `adoption` column: `closed_loop*` here always means 50 % adopti
 | Column | Unit | Meaning |
 |---|---|---|
 | `day`, `scenario`, `farm_id`, `ts` | | See above. |
-| `level_pct_true` | % of tank | True tank level at `ts`. On farms not connected to Tameru the pump feeds the field directly, so the tank is bypassed and the level stays flat. |
+| `level_pct_true` | % of tank | True tank level at `ts`. On farms not connected to Tameru the farmer's own pump fills the tank at the usual times and the field draws from it, so the level moves during the day too. |
 | `level_pct_measured` | % of tank | What the level sensor reports at `ts`. Equal to the true level without faults. With faults it carries ±3 % noise and freezes while the sensor is stuck. |
 | `pump_on` | bool | The pump ran during this quarter (possibly only part of it). |
 | `power_kw` | kW | Average pump power over the quarter. A dry-running pump draws power but delivers no water. |
@@ -163,7 +167,7 @@ This file has no `adoption` column: `closed_loop*` here always means 50 % adopti
 | `habit` | on | Pumping at the farmer's usual time (farm not connected to Tameru). |
 | `prefill` | on | Filling the tank ahead of time, while the feeder has spare capacity. |
 | `peak_shaving` | off | Paused: peak shaving, the tank covers the irrigation. |
-| `reserve_topup` | on | Pumping during the evening peak to keep the tank above its 15 % reserve. |
+| `reserve_topup` | on | Pumping inside the feeder peak window (19:00–22:00), or at any time to keep the tank above its 15 % reserve. |
 | `grid_safety_rule` | off | Stopped: the feeder is above 95 % of capacity and this tank has enough water. |
 | `farmer_override` | on | The farmer took manual control today. The pump follows the farmer's usual times. |
 | `comm_failsafe` | on/off | No link to the server: the box runs its local rule (on below 30 %, off at 90 %). |
@@ -220,3 +224,20 @@ It also holds:
   - the number of farms whose bill goes up;
   - district totals;
   - adopters' share of pump kWh in 19–23 h, 23–08 h, 22–01 h, 13–17 h and the feeder peak window (`feeder_peak`).
+
+## Shedding scenario (version 3, read-only, simulated)
+
+STEG's 2026 rotating cuts passed down to the feeder (national supply gap g = 14 %, range 10–25 %). Without Tameru
+the whole feeder is cut for g × window length in each announced window; with Tameru the cut shortens by the
+demand Tameru removes. Design: frozen before the test (tag `shed-pre-test`), evaluated once (tag `shed-test-eval`).
+
+| File | What it holds |
+|---|---|
+| `results/shedding_calendar_2026.csv` | REAL data, one row per announced window: `date`, `window_start`, `window_end`, `window_type` (daytime / evening), `nabeul_listed`, `announced_at`, `lead_min` (window start minus publication, minutes; negative = published after the start), `status` (main / uncertain / excluded), `source_urls`. |
+| `results/shedding_windows.csv` | SIMULATED, one row per window × scenario × g: `scenario` (`plain@50`, `A38@50`, `A36@50`, `A40@50`, `B@50`, `A38@70`, `B@70`), `g_label` (low / base / high), `D0_h` (cut without Tameru, h), `D1_h` (cut with Tameru, h), `R_kwh` (energy STEG must shed), `E_kwh` (Tameru's reduction), `hh_hours_without` / `hh_hours_with`, `reason_not_avoided`. Main results: `status == "main"`. |
+| `results/shedding.json` | Summary tables (`tables[type][g][scenario]`), water (`water_base_g`), local overload minutes, risk-flag skill, false-alarm days, and the 22 July 2026 curves used by the figure. |
+
+Scenario names: `A38@50` = Tameru alone (no STEG input), risk flag at forecast Tmax >= 38 °C, 50 % of farms;
+`B@50` = the same plus STEG's announced windows; `plain@50` = the normal live mode without the shedding mode.
+Numbers for the dashboard: `site_data.json` ids starting with `shed_`. Figures: `deliverables/website/figures/
+shedding_calendar`, `shedding_day`, `shedding_days`, `shedding_headline` (Chart.js versions in `charts/`).
