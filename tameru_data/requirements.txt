@@ -1,6 +1,0 @@
-numpy
-scipy
-pandas
-lightgbm
-joblib
-matplotlib

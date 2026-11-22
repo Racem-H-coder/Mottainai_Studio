@@ -1,9 +1,9 @@
 /**
  * Two outputs:
  *   npm run build          -> dist/ (served by `npm run preview`; /twin/ and /report/ map to the pipeline's
- *                             read-only files ../index.html and ../results/)
+ *                             read-only files ../twin/index.html and ../results/)
  *   npm run build:single   -> dist-single/dashboard.html, one self-contained file that opens by
- *                             double-click with no network (stage fallback). Links point to ../../index.html.
+ *                             double-click with no network (stage fallback). Links point to ../../twin/index.html.
  */
 import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
@@ -20,7 +20,7 @@ const TYPES: Record<string, string> = {
 function repoFiles(): Plugin {
   const map = (url: string): string | null => {
     const u = decodeURIComponent(url.split("?")[0] ?? "");
-    if (u === "/twin/" || u === "/twin/index.html") return resolve(ROOT, "index.html");
+    if (u === "/twin/" || u === "/twin/index.html") return resolve(ROOT, "twin", "index.html");
     if (u.startsWith("/report/")) {
       const p = resolve(ROOT, "results", u.slice("/report/".length) || "MODEL_REPORT.html");
       return p.startsWith(resolve(ROOT, "results")) ? p : null;
@@ -56,7 +56,7 @@ export default defineConfig(({ mode }) => {
     base: "./",
     plugins: [react(), repoFiles(), ...(single ? [viteSingleFile(), renameSingle()] : [])],
     define: {
-      __TWIN_URL__: JSON.stringify(single ? "../../index.html" : "/twin/"),
+      __TWIN_URL__: JSON.stringify(single ? "../../twin/index.html" : "/twin/"),
       __REPORT_URL__: JSON.stringify(single ? "../../results/MODEL_REPORT.html" : "/report/MODEL_REPORT.html"),
       __BUILD_KIND__: JSON.stringify(single ? "single-file" : "web"),
     },

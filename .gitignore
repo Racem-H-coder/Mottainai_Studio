@@ -1,19 +1,28 @@
+# local notes (never committed)
 CLAUDE.md
 docs/
 .claude/
+PROGRESS.md
+
+# environments and secrets
 .venv/
+venv/
 __pycache__/
+.env
+.env.*
+
+# generated data and models (rebuild with tameru_data/generate_db.py, forecast.py)
 *.db
 models/
 results/*.csv
-node_modules/
-.env
-.env.*
-PROGRESS.md
-results_v1/
 !results/shedding_calendar_2026.csv
 !results/shedding_windows.csv
 
-# archive/: moved originals that were ignored stay ignored
-archive/v1/results/*.csv
-archive/v1/models/
+# local-only copies of superseded material
+archive/
+results_v1/
+
+# dashboard builds and dependencies (dist-single is still the data-v1 build)
+node_modules/
+dist/
+dist-single/

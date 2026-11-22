@@ -8,7 +8,7 @@ Tameru - turns tameru.db into the inputs the AI core needs for one day.
 CLI:
     python features.py                        # hottest day in the DB, prints a summary
     python features.py --date 2026-07-15 --json day.json
-    python features.py --export-sim farms.json   # farm parameters for index.html
+    python features.py --export-sim farms.json   # farm parameters for twin/index.html
 """
 import argparse
 import json
@@ -202,7 +202,7 @@ def summary(d):
 
 
 def export_sim(db_path, out):
-    """Compact farm parameters that index.html can load instead of its random generator."""
+    """Compact farm parameters that twin/index.html can load instead of its random generator."""
     db = sqlite3.connect(db_path)
     rows = _rows(db, """
         SELECT f.farm_id, f.sector, t.volume_m3 AS cap, m.rated_kw AS kw, p.flow_m3h AS rate,
@@ -223,7 +223,7 @@ if __name__ == "__main__":
     ap.add_argument("--db", default=str(Path(__file__).parent / "tameru.db"))
     ap.add_argument("--date")
     ap.add_argument("--json", help="write the day's inputs to this file")
-    ap.add_argument("--export-sim", help="write farm parameters for index.html")
+    ap.add_argument("--export-sim", help="write farm parameters for twin/index.html")
     a = ap.parse_args()
     if a.export_sim:
         export_sim(a.db, a.export_sim)

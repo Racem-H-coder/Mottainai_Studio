@@ -23,7 +23,7 @@ npm run e2e           # screenshot checks (Microsoft Edge), after both builds ->
 ```
 
 The single file links the 3D twin and the model report relative to its location
-(`../../index.html`, `../../results/MODEL_REPORT.html`): keep it in `dashboard/dist-single/`.
+(`../../twin/index.html`, `../../results/MODEL_REPORT.html`): keep it in `dashboard/dist-single/`.
 
 A value the exported data does not contain shows a quiet "not in this dataset" line (the file name only with
 `?dev=1`); run `npm run data` again when new files arrive, then `npm test`.

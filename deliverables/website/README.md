@@ -11,7 +11,7 @@ Everything needed to build the Tameru website: text, numbers, live-chart data an
 >   emission factor) are real reference values: show their `source`.
 > - Peak numbers carry a `basis` (whole test period, 20 highest-load test days, or worst day): compare mean with
 >   mean and worst day with worst day.
-> - **Never integrate `archive/`** (repository root). It holds data-v1 and superseded material only; nothing on
+> - **Never integrate `archive/`** (kept locally, not in the published repository). It holds data-v1 and superseded material only; nothing on
 >   the site, the dashboard or the hackathon repo may come from it.
 
 ## Files
@@ -52,7 +52,7 @@ new Chart(document.getElementById("headline"), cfg);   // show cfg.caption under
 
 ## The 3D demo
 
-`index.html` (repository root) is the **illustrative** 3D digital twin with a guided demo. It runs its own
+`twin/index.html` is the **illustrative** 3D digital twin with a guided demo. It runs its own
 simplified simulation in the browser (its own peak window is 17:00–20:00); its on-screen numbers tell the story
 and are not the backtest results. Quote results from `site_data.json` only.
 

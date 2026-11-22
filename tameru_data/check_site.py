@@ -7,7 +7,7 @@
 3. Every key in pitch_numbers.md exists and the numbers of its row equal the site_data values.
 4. Every figure referenced by PROJECT_REPORT.md, MODEL_REPORT.md and figures/INDEX.md exists in
    deliverables/website/figures/ (PNG and SVG).
-5. v1-leftover strings in deliverables/, results/MODEL_REPORT.*, index.html, README files (archive/ and docs/ are
+5. v1-leftover strings in deliverables/, results/MODEL_REPORT.*, twin/index.html, README files (archive/ and docs/ are
    never scanned): listed for review (a deliberate, explained mention is allowed).
 """
 import json
@@ -86,8 +86,9 @@ def main():
 
     scan = [p for p in (ROOT / "deliverables").rglob("*") if p.suffix in (".md", ".json", ".html", ".txt")
             and "brand" not in p.parts]
-    scan += [ROOT / "results" / "MODEL_REPORT.md", ROOT / "results" / "MODEL_REPORT.html", ROOT / "index.html",
-             ROOT / "archive" / "README.md"]
+    scan += [ROOT / "results" / "MODEL_REPORT.md", ROOT / "results" / "MODEL_REPORT.html",
+             ROOT / "twin" / "index.html", ROOT / "README.md", ROOT / "hardware" / "README.md"]
+    scan = [p for p in scan if p.exists()]
     hits = []
     for p in scan:
         t = p.read_text(encoding="utf-8")

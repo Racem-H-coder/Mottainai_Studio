@@ -320,7 +320,7 @@ day 51.6 % → 26.8 % (figure `tariff_periods`).
 3. **The honest part.** Afternoon cuts are harder, the flag misses cooler shedding days, and at 50 % the shift
    can briefly overload the feeder; 70 % fixes the last point.
 
-The 3D digital twin (`index.html`) is an **illustrative** animation with its own simplified simulation. Its
+The 3D digital twin (`twin/index.html`) is an **illustrative** animation with its own simplified simulation. Its
 on-screen numbers are for the story only; all results above come from the backtest.
 
 ## 15. Limitations, stated plainly
