@@ -7,12 +7,12 @@
   "labels": [
    "load yesterday, same time",
    "load last week, same time",
-   "hour",
    "yesterday's mean load",
-   "day of week",
    "3-day temperature mean",
-   "holiday",
+   "hour",
+   "day of week",
    "temperature forecast",
+   "holiday",
    "Ramadan",
    "Eid",
    "minute"
@@ -21,17 +21,17 @@
    {
     "label": "Share of model gain (%)",
     "data": [
-     28741683.2,
-     5985564.1,
-     1728733.9,
-     1524942.6,
-     1105357.5,
-     906663.8,
-     421660.6,
-     266962.2,
-     160674.3,
-     92422.8,
-     13634.4
+     23604466.1,
+     3381071.7,
+     1414281.2,
+     1213062.2,
+     979431.9,
+     632218.4,
+     455119.3,
+     253927.7,
+     71077.7,
+     30960.5,
+     2273.8
     ],
     "borderColor": "#2a78d6",
     "backgroundColor": "#2a78d6"

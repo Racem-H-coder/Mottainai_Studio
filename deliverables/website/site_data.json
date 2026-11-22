@@ -52,7 +52,7 @@
   {
    "id": "unmanaged_worst_peak",
    "label": "Worst feeder peak without Tameru",
-   "value": 1363.0,
+   "value": 1156.0,
    "unit": "kW",
    "explanation": "Highest 15-min feeder load over the backtest days, every farm pumping at its usual time.",
    "simulated": true,
@@ -61,7 +61,7 @@
   {
    "id": "unmanaged_mean_peak",
    "label": "Mean daily peak without Tameru",
-   "value": 1285.0,
+   "value": 1055.0,
    "unit": "kW",
    "explanation": "Mean of the daily peaks over the 20 worst days.",
    "simulated": true,
@@ -70,7 +70,7 @@
   {
    "id": "unmanaged_hours_over",
    "label": "Time over capacity without Tameru",
-   "value": 75.2,
+   "value": 27.8,
    "unit": "hours",
    "explanation": "Total time the feeder is above 1,000 kW over 20 days (load-shedding risk).",
    "simulated": true
@@ -78,7 +78,7 @@
   {
    "id": "unmanaged_kwh_over",
    "label": "Energy above capacity without Tameru",
-   "value": 12955.0,
+   "value": 1646.0,
    "unit": "kWh",
    "explanation": "Energy above the feeder rating over 20 days.",
    "simulated": true
@@ -86,7 +86,7 @@
   {
    "id": "closed_mean_peak",
    "label": "Mean daily peak with Tameru, closed loop (live mode)",
-   "value": 975.0,
+   "value": 873.0,
    "unit": "kW",
    "explanation": "50% adoption, 20 worst days, replayed with actual load and actual farmer behaviour.",
    "simulated": true,
@@ -95,7 +95,7 @@
   {
    "id": "closed_worst_peak",
    "label": "Worst daily peak with Tameru, closed loop (live mode)",
-   "value": 1051.0,
+   "value": 978.0,
    "unit": "kW",
    "explanation": "50% adoption: the highest daily peak of the 20 days (compare with unmanaged_worst_peak).",
    "simulated": true,
@@ -104,7 +104,7 @@
   {
    "id": "closed_hours_over",
    "label": "Time over capacity with Tameru, closed loop (live mode)",
-   "value": 4.5,
+   "value": 0.0,
    "unit": "hours",
    "explanation": "Total over 20 days at 50% adoption.",
    "simulated": true
@@ -112,7 +112,7 @@
   {
    "id": "closed_kwh_over",
    "label": "Energy above capacity with Tameru, closed loop (live mode)",
-   "value": 117.0,
+   "value": 0.0,
    "unit": "kWh",
    "explanation": "Total over 20 days at 50% adoption.",
    "simulated": true
@@ -120,7 +120,7 @@
   {
    "id": "closed_peak_cut",
    "label": "Mean peak cut, closed loop (live mode)",
-   "value": 24.0,
+   "value": 17.0,
    "unit": "%",
    "explanation": "Mean reduction of the daily peak vs no Tameru, 50% adoption.",
    "simulated": true,
@@ -129,7 +129,7 @@
   {
    "id": "closed_days_over",
    "label": "Days still over capacity, closed loop (live mode)",
-   "value": 4,
+   "value": 0,
    "unit": "days",
    "explanation": "Out of 20 days, at 50% adoption.",
    "simulated": true
@@ -137,7 +137,7 @@
   {
    "id": "open_mean_peak",
    "label": "Mean daily peak with Tameru, open loop (one plan at midnight)",
-   "value": 984.0,
+   "value": 876.0,
    "unit": "kW",
    "explanation": "50% adoption, 20 worst days, replayed with actual load and actual farmer behaviour.",
    "simulated": true,
@@ -146,7 +146,7 @@
   {
    "id": "open_worst_peak",
    "label": "Worst daily peak with Tameru, open loop (one plan at midnight)",
-   "value": 1082.0,
+   "value": 986.0,
    "unit": "kW",
    "explanation": "50% adoption: the highest daily peak of the 20 days (compare with unmanaged_worst_peak).",
    "simulated": true,
@@ -155,7 +155,7 @@
   {
    "id": "open_hours_over",
    "label": "Time over capacity with Tameru, open loop (one plan at midnight)",
-   "value": 6.8,
+   "value": 0.0,
    "unit": "hours",
    "explanation": "Total over 20 days at 50% adoption.",
    "simulated": true
@@ -163,7 +163,7 @@
   {
    "id": "open_kwh_over",
    "label": "Energy above capacity with Tameru, open loop (one plan at midnight)",
-   "value": 180.0,
+   "value": 0.0,
    "unit": "kWh",
    "explanation": "Total over 20 days at 50% adoption.",
    "simulated": true
@@ -171,7 +171,7 @@
   {
    "id": "open_peak_cut",
    "label": "Mean peak cut, open loop (one plan at midnight)",
-   "value": 23.0,
+   "value": 17.0,
    "unit": "%",
    "explanation": "Mean reduction of the daily peak vs no Tameru, 50% adoption.",
    "simulated": true,
@@ -180,7 +180,7 @@
   {
    "id": "open_days_over",
    "label": "Days still over capacity, open loop (one plan at midnight)",
-   "value": 5,
+   "value": 0,
    "unit": "days",
    "explanation": "Out of 20 days, at 50% adoption.",
    "simulated": true
@@ -188,15 +188,15 @@
   {
    "id": "hours_over_reduction",
    "label": "Reduction of time over capacity (closed loop)",
-   "value": 94.0,
+   "value": 100.0,
    "unit": "%",
-   "explanation": "75.2 h -> 4.5 h at 50% adoption.",
+   "explanation": "27.8 h -> 0.0 h at 50% adoption.",
    "simulated": true
   },
   {
    "id": "oracle_mean_peak",
    "label": "Mean daily peak with a perfect forecast",
-   "value": 983.0,
+   "value": 873.0,
    "unit": "kW",
    "explanation": "Open loop where the planner is given the actual base load. Close to the real-forecast result, so forecast error costs little; the hourly re-plan (closed loop) does better still.",
    "simulated": true,
@@ -205,7 +205,7 @@
   {
    "id": "min_adoption_zero_overload",
    "label": "Minimum adoption for zero overload",
-   "value": 70,
+   "value": 50,
    "unit": "%",
    "explanation": "Smallest share of farms with Tameru for which none of the 20 worst days goes over capacity (open loop, every higher level also overload-free).",
    "simulated": true
@@ -213,7 +213,7 @@
   {
    "id": "peak_at_70",
    "label": "Mean daily peak at 70% adoption",
-   "value": 891.0,
+   "value": 811.0,
    "unit": "kW",
    "explanation": "Open loop, 20 worst days.",
    "simulated": true,
@@ -222,7 +222,7 @@
   {
    "id": "peak_at_100",
    "label": "Mean daily peak at 100% adoption",
-   "value": 752.0,
+   "value": 739.0,
    "unit": "kW",
    "explanation": "Open loop, 20 worst days.",
    "simulated": true,
@@ -231,7 +231,7 @@
   {
    "id": "solve_time_live",
    "label": "Planning time per re-plan (live mode)",
-   "value": 0.9,
+   "value": 0.6,
    "unit": "s",
    "explanation": "lp_round planner for the whole district from midnight; the closed loop re-plans every hour.",
    "simulated": true
@@ -239,23 +239,15 @@
   {
    "id": "solve_time_milp",
    "label": "Planning time, exact MILP reference",
-   "value": 20.8,
+   "value": 16.9,
    "unit": "s",
    "explanation": "Binary on/off optimisation with HiGHS; used as the reference, too slow to re-plan often.",
    "simulated": true
   },
   {
-   "id": "autostop_reduction",
-   "label": "Fewer pump commands into full tanks",
-   "value": 74.0,
-   "unit": "%",
-   "explanation": "Planner fix: minutes where a pump was told to run but the float switch stopped it, before vs after.",
-   "simulated": true
-  },
-  {
    "id": "forecast_mae",
    "label": "Forecast error (MAE)",
-   "value": 20.1,
+   "value": 26.2,
    "unit": "kW",
    "explanation": "Day-ahead p50 forecast of the non-pump load, 15-min steps, issued at midnight, test period.",
    "simulated": true
@@ -263,23 +255,23 @@
   {
    "id": "forecast_mape",
    "label": "Forecast error (MAPE)",
-   "value": 6.3,
+   "value": 7.6,
    "unit": "%",
    "explanation": "Mean absolute percentage error, test.",
    "simulated": true
   },
   {
    "id": "forecast_mape_evening",
-   "label": "Forecast error 17-20 h (MAPE)",
-   "value": 6.5,
+   "label": "Forecast error in the feeder peak window 19-22 h (MAPE)",
+   "value": 7.1,
    "unit": "%",
-   "explanation": "Error during the evening peak hours, test period.",
+   "explanation": "Error during the feeder's peak hours, test period.",
    "simulated": true
   },
   {
    "id": "baseline_yesterday_mae",
    "label": "Error of 'same as yesterday'",
-   "value": 24.5,
+   "value": 28.2,
    "unit": "kW",
    "explanation": "Simple baseline: tomorrow = today.",
    "simulated": true
@@ -287,7 +279,7 @@
   {
    "id": "baseline_last_week_mae",
    "label": "Error of 'same day last week'",
-   "value": 32.2,
+   "value": 45.7,
    "unit": "kW",
    "explanation": "Simple baseline: tomorrow = same weekday last week.",
    "simulated": true
@@ -295,7 +287,7 @@
   {
    "id": "skill_vs_yesterday",
    "label": "Better than 'same as yesterday'",
-   "value": 18.0,
+   "value": 7.0,
    "unit": "%",
    "explanation": "1 - model error / baseline error.",
    "simulated": true
@@ -303,7 +295,7 @@
   {
    "id": "skill_vs_last_week",
    "label": "Better than 'same day last week'",
-   "value": 38.0,
+   "value": 43.0,
    "unit": "%",
    "explanation": "1 - model error / baseline error.",
    "simulated": true
@@ -311,7 +303,7 @@
   {
    "id": "daily_peak_error",
    "label": "Daily peak error",
-   "value": 40.5,
+   "value": 39.0,
    "unit": "kW",
    "explanation": "Gap between forecast and actual daily maximum, test period.",
    "simulated": true
@@ -319,7 +311,7 @@
   {
    "id": "p90_coverage",
    "label": "p90 band coverage",
-   "value": 93.4,
+   "value": 89.4,
    "unit": "%",
    "explanation": "Share of actual values below the p90 forecast (target 90 %), test period, after calibration.",
    "simulated": true
@@ -327,23 +319,31 @@
   {
    "id": "p90_coverage_evening_before",
    "label": "p90 coverage 18-19 h before calibration",
-   "value": 80.8,
+   "value": 75.7,
    "unit": "%",
-   "explanation": "Raw model, test period.",
+   "explanation": "Raw model, cross-validation folds (training + validation).",
    "simulated": true
   },
   {
    "id": "p90_coverage_evening_after",
    "label": "p90 coverage 18-19 h after calibration",
-   "value": 94.8,
+   "value": 92.4,
    "unit": "%",
-   "explanation": "Per-hour conformal offsets learned on cross-validation folds (not on the test period).",
+   "explanation": "Per-hour conformal offsets, cross-validation folds (training + validation).",
+   "simulated": true
+  },
+  {
+   "id": "p90_coverage_hot_window",
+   "label": "p90 coverage on hot days in the feeder peak window 19-22 h",
+   "value": 99.5,
+   "unit": "%",
+   "explanation": "Calibrated model, test period, days with Tmax >= 35 C.",
    "simulated": true
   },
   {
    "id": "v1_cv_mae",
    "label": "Model in use, cross-validation error",
-   "value": 20.91,
+   "value": 25.09,
    "unit": "kW",
    "explanation": "Out-of-fold error on rolling-origin folds inside the training period (comparison with the v2 experiment).",
    "simulated": true
@@ -351,15 +351,15 @@
   {
    "id": "v2_cv_mae",
    "label": "v2 experiment, cross-validation error",
-   "value": 20.28,
+   "value": 25.21,
    "unit": "kW",
-   "explanation": "Richer heat features; v1 had 20.91 kW. Not clearly better under the rule fixed in advance, so the simpler calibrated v1 was kept.",
+   "explanation": "Richer heat features; v1 had 25.09 kW. Not clearly better under the rule fixed in advance, so the simpler calibrated v1 was kept.",
    "simulated": true
   },
   {
    "id": "intraday_gain_17h",
    "label": "Error cut by intraday correction at 17:00",
-   "value": 19.0,
+   "value": 0.0,
    "unit": "%",
    "explanation": "Rest-of-day forecast rescaled with the last hour of measurements.",
    "simulated": true
@@ -367,7 +367,7 @@
   {
    "id": "margin_effect_70",
    "label": "Effect of a +10 % planning margin at 70 % adoption",
-   "value": 2.2,
+   "value": 1.1,
    "unit": "kW",
    "explanation": "Change of mean peak; the p90 forecast already acts as the safety margin, so none is added.",
    "simulated": true,
@@ -421,7 +421,7 @@
   {
    "id": "unmet_water_faults_unmanaged",
    "label": "Unmet irrigation water with faults, without Tameru",
-   "value": 3613.0,
+   "value": 1303.0,
    "unit": "m³",
    "explanation": "20 days, total. ASSUMED fault rates per farm per day: pump failure 1%, stuck tank sensor 1%, communication loss 2%, leak 2%, dry run 2%; sensor noise ±3%. Same faults in every scenario.",
    "simulated": true,
@@ -430,7 +430,7 @@
   {
    "id": "hours_over_faults_unmanaged",
    "label": "Time over capacity with faults, without Tameru",
-   "value": 75.0,
+   "value": 27.75,
    "unit": "hours",
    "explanation": "20 days. ASSUMED fault rates per farm per day: pump failure 1%, stuck tank sensor 1%, communication loss 2%, leak 2%, dry run 2%; sensor noise ±3%. Same faults in every scenario.",
    "simulated": true,
@@ -439,7 +439,7 @@
   {
    "id": "unmet_water_faults_tameru",
    "label": "Unmet irrigation water with faults, with Tameru (50%)",
-   "value": 2200.0,
+   "value": 754.0,
    "unit": "m³",
    "explanation": "20 days, total. ASSUMED fault rates per farm per day: pump failure 1%, stuck tank sensor 1%, communication loss 2%, leak 2%, dry run 2%; sensor noise ±3%. Same faults in every scenario.",
    "simulated": true,
@@ -448,7 +448,7 @@
   {
    "id": "hours_over_faults_tameru",
    "label": "Time over capacity with faults, with Tameru (50%)",
-   "value": 4.75,
+   "value": 0.0,
    "unit": "hours",
    "explanation": "20 days. ASSUMED fault rates per farm per day: pump failure 1%, stuck tank sensor 1%, communication loss 2%, leak 2%, dry run 2%; sensor noise ±3%. Same faults in every scenario.",
    "simulated": true,
@@ -457,7 +457,7 @@
   {
    "id": "unmet_water_faults_tameru_70",
    "label": "Unmet irrigation water with faults, with Tameru (70 %)",
-   "value": 1569.0,
+   "value": 612.0,
    "unit": "m³",
    "explanation": "20 days, total. ASSUMED fault rates per farm per day: pump failure 1%, stuck tank sensor 1%, communication loss 2%, leak 2%, dry run 2%; sensor noise ±3%. Same faults in every scenario.",
    "simulated": true,
@@ -475,7 +475,7 @@
   {
    "id": "wb_water_saved",
    "label": "Water saved with the budget enforced (50 %)",
-   "value": 469.0,
+   "value": 395.0,
    "unit": "m³/day",
    "explanation": "Conservative: water asked for above the crop need that was not supplied; mean over the 20 test days.",
    "simulated": true,
@@ -484,7 +484,7 @@
   {
    "id": "wb_water_saved_upper",
    "label": "Water saved, upper bound (50 %)",
-   "value": 1630.0,
+   "value": 1418.0,
    "unit": "m³/day",
    "explanation": "Pumping cut vs budget off; includes tank drawdown, so the true saving lies between the two values.",
    "simulated": true,
@@ -493,7 +493,7 @@
   {
    "id": "wb_pumping_vs_unmanaged_off",
    "label": "Pumping vs no Tameru, budget off (50 %)",
-   "value": 2.5,
+   "value": -0.5,
    "unit": "%",
    "explanation": "Reserve top-ups and end-of-day refill.",
    "simulated": true
@@ -501,7 +501,7 @@
   {
    "id": "wb_pumping_vs_unmanaged_enforced",
    "label": "Pumping vs no Tameru, budget enforced (50 %)",
-   "value": -2.3,
+   "value": -4.6,
    "unit": "%",
    "explanation": "Daily pumping capped at 110 % of the FAO-56 crop need, never below the need.",
    "simulated": true
@@ -517,7 +517,7 @@
   {
    "id": "wb_energy_saved",
    "label": "Energy saved by the budget (50 %)",
-   "value": 76.0,
+   "value": 66.0,
    "unit": "kWh/day",
    "explanation": "Energy of the water not pumped (curtailed excess x each pump's kWh/m³).",
    "simulated": true
@@ -525,7 +525,7 @@
   {
    "id": "wb_co2_avoided",
    "label": "CO₂ avoided by the budget (50 %)",
-   "value": 31.0,
+   "value": 27.0,
    "unit": "kg/day",
    "explanation": "Energy saved x grid factor. Moving pumping in time is not counted.",
    "simulated": true,
@@ -534,7 +534,7 @@
   {
    "id": "wb_co2_footprint",
    "label": "Pump CO₂ footprint, budget enforced (50 %)",
-   "value": 2247.0,
+   "value": 2232.0,
    "unit": "kg/day",
    "explanation": "Pump energy x grid factor.",
    "simulated": true,
@@ -543,7 +543,7 @@
   {
    "id": "ipe_kwh_per_m3",
    "label": "Energy performance indicator kWh/m³, district (enforced 50 %)",
-   "value": 0.166,
+   "value": 0.167,
    "unit": "kWh/m³",
    "explanation": "Aligned with ISO 50006 vocabulary (not a compliance claim).",
    "simulated": true
@@ -551,7 +551,7 @@
   {
    "id": "ipe_kwh_per_ha",
    "label": "Energy performance indicator kWh/ha, district (enforced 50 %)",
-   "value": 11.442,
+   "value": 11.369,
    "unit": "kWh/ha",
    "explanation": "Aligned with ISO 50006 vocabulary (not a compliance claim).",
    "simulated": true
@@ -559,7 +559,7 @@
   {
    "id": "wb_farm_days_over_budget_off",
    "label": "Farm-days pumping above the budget, budget off (50 %)",
-   "value": 51.6,
+   "value": 46.6,
    "unit": "%",
    "explanation": "Share of farm-days with pumping > 110 % of crop need.",
    "simulated": true
@@ -567,7 +567,7 @@
   {
    "id": "wb_farm_days_over_budget_enforced",
    "label": "Farm-days pumping above the budget, enforced (50 %)",
-   "value": 26.6,
+   "value": 25.7,
    "unit": "%",
    "explanation": "Remaining over-budget pumping: 96 % from farms not connected (calibration days).",
    "simulated": true
@@ -575,7 +575,7 @@
   {
    "id": "anomaly_precision",
    "label": "Anomaly detection precision (excl. comm_loss)",
-   "value": 76.0,
+   "value": 81.0,
    "unit": "%",
    "explanation": "Faults injected at assumed rates; thresholds calibrated on summer-2025 days; test days evaluated once.",
    "simulated": true,
@@ -593,7 +593,7 @@
   {
    "id": "anomaly_f1",
    "label": "Anomaly detection F1 (excl. comm_loss)",
-   "value": 0.69,
+   "value": 0.72,
    "unit": "",
    "explanation": "Faults injected at assumed rates; thresholds calibrated on summer-2025 days; test days evaluated once.",
    "simulated": true,
@@ -602,7 +602,7 @@
   {
    "id": "anomaly_false_alarms",
    "label": "False alarms",
-   "value": 0.67,
+   "value": 0.44,
    "unit": "per 100 farm-days",
    "explanation": "Faults injected at assumed rates; thresholds calibrated on summer-2025 days; test days evaluated once.",
    "simulated": true,
@@ -620,7 +620,7 @@
   {
    "id": "anomaly_leak_delay",
    "label": "Median detection delay, leak",
-   "value": 660.0,
+   "value": 398.0,
    "unit": "min",
    "explanation": "Faults injected at assumed rates; thresholds calibrated on summer-2025 days; test days evaluated once.",
    "simulated": true,
@@ -629,7 +629,7 @@
   {
    "id": "anomaly_dry_run_recall_observable",
    "label": "Recall, dry run (observable)",
-   "value": 95.0,
+   "value": 78.0,
    "unit": "%",
    "explanation": "Observable = the fault could show up in telemetry (e.g. a pump failure while the pump was never commanded cannot be seen).",
    "simulated": true,
@@ -638,7 +638,7 @@
   {
    "id": "anomaly_dry_run_delay",
    "label": "Median detection delay, dry run",
-   "value": 30.0,
+   "value": 45.0,
    "unit": "min",
    "explanation": "Faults injected at assumed rates; thresholds calibrated on summer-2025 days; test days evaluated once.",
    "simulated": true,
@@ -656,7 +656,7 @@
   {
    "id": "anomaly_pump_failure_delay",
    "label": "Median detection delay, pump failure",
-   "value": 15.0,
+   "value": 105.0,
    "unit": "min",
    "explanation": "Faults injected at assumed rates; thresholds calibrated on summer-2025 days; test days evaluated once.",
    "simulated": true,
@@ -665,7 +665,7 @@
   {
    "id": "anomaly_stuck_sensor_recall_observable",
    "label": "Recall, stuck sensor (observable)",
-   "value": 75.0,
+   "value": 90.0,
    "unit": "%",
    "explanation": "Observable = the fault could show up in telemetry (e.g. a pump failure while the pump was never commanded cannot be seen).",
    "simulated": true,
@@ -674,7 +674,7 @@
   {
    "id": "anomaly_stuck_sensor_delay",
    "label": "Median detection delay, stuck sensor",
-   "value": 75.0,
+   "value": 180.0,
    "unit": "min",
    "explanation": "Faults injected at assumed rates; thresholds calibrated on summer-2025 days; test days evaluated once.",
    "simulated": true,
@@ -683,9 +683,9 @@
   {
    "id": "anomaly_dry_run_energy_cut",
    "label": "Dry-run energy cut by the safety loop",
-   "value": 21.0,
+   "value": 31.0,
    "unit": "%",
-   "explanation": "Trade-off: unmet water +35 m³ over 20 days (1-h lockout, false pump-failure stops).",
+   "explanation": "Trade-off: unmet water +2 m³ over 20 days (1-h lockout, false pump-failure stops).",
    "simulated": true,
    "assumption": true
   },
@@ -701,57 +701,57 @@
   {
    "id": "bill_saving_steg_bt_3p_ttc",
    "label": "Median bill saving per adopting farm, STEG BT three-period, budget off",
-   "value": 14.75,
+   "value": 21.75,
    "unit": "TND / 20 days",
-   "explanation": "Closed loop 50 % vs no Tameru, tax included, median per farm over the 20 test days (modest); p10 -0.58, p90 61.8; 12 of 94 adopting farms see their bill go up.",
+   "explanation": "Closed loop 50 % vs no Tameru, tax included, median per farm over the 20 test days (modest); p10 -3.89, p90 109.83; 18 of 94 adopting farms see their bill go up.",
    "simulated": true
   },
   {
    "id": "bill_saving_legacy_flat_ttc",
    "label": "Median bill saving per adopting farm, legacy flat tariff, budget off",
-   "value": -3.91,
+   "value": -3.39,
    "unit": "TND / 20 days",
-   "explanation": "Closed loop 50 % vs no Tameru, tax included, median per farm over the 20 test days (modest); p10 -13.96, p90 -0.11; 84 of 94 adopting farms see their bill go up.",
+   "explanation": "Closed loop 50 % vs no Tameru, tax included, median per farm over the 20 test days (modest); p10 -13.11, p90 19.22; 68 of 94 adopting farms see their bill go up.",
    "simulated": true
   },
   {
    "id": "bill_saving_proposed_cpp_ttc",
    "label": "Median bill saving per adopting farm, proposed critical-peak tariff, budget off",
-   "value": 126.42,
+   "value": 83.43,
    "unit": "TND / 20 days",
-   "explanation": "Closed loop 50 % vs no Tameru, tax included, median per farm over the 20 test days (modest); p10 3.54, p90 317.9; 4 of 94 adopting farms see their bill go up.",
+   "explanation": "Closed loop 50 % vs no Tameru, tax included, median per farm over the 20 test days (modest); p10 -3.25, p90 327.3; 16 of 94 adopting farms see their bill go up.",
    "simulated": true,
    "assumption": true
   },
   {
    "id": "bill_saving_steg_bt_3p_ttc_enforced",
    "label": "Median bill saving per adopting farm, STEG BT three-period, budget enforced (recommended setting)",
-   "value": 27.26,
+   "value": 32.05,
    "unit": "TND / 20 days",
-   "explanation": "Closed loop 50 % vs no Tameru, tax included, median per farm over the 20 test days (modest); p10 6.27, p90 102.55; 1 of 94 adopting farms see their bill go up.",
+   "explanation": "Closed loop 50 % vs no Tameru, tax included, median per farm over the 20 test days (modest); p10 2.37, p90 113.58; 3 of 94 adopting farms see their bill go up.",
    "simulated": true
   },
   {
    "id": "bill_saving_legacy_flat_ttc_enforced",
    "label": "Median bill saving per adopting farm, legacy flat tariff, budget enforced (recommended setting)",
-   "value": 2.95,
+   "value": 4.33,
    "unit": "TND / 20 days",
-   "explanation": "Closed loop 50 % vs no Tameru, tax included, median per farm over the 20 test days (modest); p10 -2.84, p90 18.88; 26 of 94 adopting farms see their bill go up.",
+   "explanation": "Closed loop 50 % vs no Tameru, tax included, median per farm over the 20 test days (modest); p10 -4.79, p90 33.25; 22 of 94 adopting farms see their bill go up.",
    "simulated": true
   },
   {
    "id": "bill_saving_proposed_cpp_ttc_enforced",
    "label": "Median bill saving per adopting farm, proposed critical-peak tariff, budget enforced (recommended setting)",
-   "value": 154.91,
+   "value": 88.88,
    "unit": "TND / 20 days",
-   "explanation": "Closed loop 50 % vs no Tameru, tax included, median per farm over the 20 test days (modest); p10 13.67, p90 350.83; 1 of 94 adopting farms see their bill go up.",
+   "explanation": "Closed loop 50 % vs no Tameru, tax included, median per farm over the 20 test days (modest); p10 2.68, p90 331.46; 3 of 94 adopting farms see their bill go up.",
    "simulated": true,
    "assumption": true
   },
   {
    "id": "adopter_share_19_23",
    "label": "Adopters' pumping in 19-23 h: no Tameru -> Tameru",
-   "value": "34.5 -> 17.4",
+   "value": "26.5 -> 7.9",
    "unit": "% of their kWh",
    "explanation": "Closed loop 50 %, 20 test days.",
    "simulated": true
@@ -759,7 +759,7 @@
   {
    "id": "adopter_share_23_08",
    "label": "Adopters' pumping in 23-08 h: no Tameru -> Tameru",
-   "value": "16.4 -> 59.6",
+   "value": "21.9 -> 65.3",
    "unit": "% of their kWh",
    "explanation": "Closed loop 50 %, 20 test days.",
    "simulated": true
@@ -767,7 +767,7 @@
   {
    "id": "adopter_share_22_01",
    "label": "Adopters' pumping in 22-01 h: no Tameru -> Tameru",
-   "value": "11.3 -> 20.4",
+   "value": "10.1 -> 20.0",
    "unit": "% of their kWh",
    "explanation": "Closed loop 50 %, 20 test days.",
    "simulated": true
@@ -775,7 +775,7 @@
   {
    "id": "critical_window_share",
    "label": "Adopters' pumping in 22-01 h without -> with a STEG-alert window",
-   "value": "19.5 -> 2.7",
+   "value": "21.2 -> 1.2",
    "unit": "% of their kWh",
    "explanation": "Training days (summer 2025) only; optional planner input, off in the test results.",
    "simulated": true

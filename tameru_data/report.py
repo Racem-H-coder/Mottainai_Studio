@@ -597,7 +597,10 @@ def main():
     # ---- A2. v1 vs v2 (Phase 4)
     cal = cmp["calibration"]
     best = cvr["best"]
-    crow = (("MAE kW", "MAE", "{:.1f}"), ("MAPE", "MAPE", "{:.1%}"), ("MAPE 17-20 h", "MAPE_17_20", "{:.1%}"),
+    crow = (("MAE kW", "MAE", "{:.1f}"), ("MAPE", "MAPE", "{:.1%}"),
+            ("MAPE feeder peak window", "MAPE_peak_window", "{:.1%}"),
+            ("p90 coverage hot peak window", "p90_coverage_hot_window", "{:.1%}"),
+            ("p90 coverage peak hour", "p90_coverage_peak_hour", "{:.1%}"), ("MAPE 17-20 h", "MAPE_17_20", "{:.1%}"),
             ("MAPE heatwave days", "MAPE_heatwave", "{:.1%}"), ("Hot-evening bias kW", "hot_eve_bias_kw", "{:+.1f}"),
             ("Worst hot-evening peak error kW", "worst_hot_eve_peak_err_kw", "{:+.1f}"),
             ("Daily peak error kW", "peak_err_kw", "{:.1f}"), ("p90 coverage", "p90_coverage", "{:.1%}"),
@@ -607,7 +610,11 @@ def main():
     cname = {"v1": "v1", "v2": "v2", "v1_cal": "v1 + conformal"}
     rule_txt = {"cv_MAE_lower": "CV MAE lower", "cv_hot_eve_coverage_ok": "CV hot-evening p90 coverage >= 85 %",
                 "test_17_20_not_worse": "test MAPE 17-20 h not worse", "test_heatwave_not_worse":
-                "test heatwave MAPE not worse"}
+                "test heatwave MAPE not worse",
+                # data v2 rule (all on CV out-of-fold predictions)
+                "cv_hot_window_coverage_ok": "CV hot-window p90 coverage >= 85 %",
+                "cv_peak_window_MAPE_not_worse": "CV peak-window MAPE not worse",
+                "cv_heatwave_MAPE_not_worse": "CV heatwave MAPE not worse"}
     adj = cal.get("p90_adj") or {}
     B += [("h3", "Phase 4: forecaster v1 vs v2"),
           ("p", "v2 adds features that describe temperature CHANGES, all known at 00:00: forecast Tmax of the day, "
@@ -624,7 +631,7 @@ def main():
                 "held out from training; acceptance rules were fixed before evaluation. It was viewed a second time "
                 "here, only for the comparison below."),
           ("table", ["Metric"] + [f"{s.upper()} {cname[v]}" for s, v in ccols],
-           [[label] + [fmt.format(cmp[s][v][k]) if cmp[s][v][k] is not None else "-" for s, v in ccols]
+           [[label] + [fmt.format(cmp[s][v][k]) if cmp[s][v].get(k) is not None else "-" for s, v in ccols]
             for label, k, fmt in crow]),
           ("p", "Acceptance rule, fixed before the test was viewed: " +
                 "; ".join(f"{rule_txt[k]}: {'yes' if v else 'NO'}" for k, v in cmp["rule"].items()) +

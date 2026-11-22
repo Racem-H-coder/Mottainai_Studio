@@ -13,9 +13,9 @@
    {
     "label": "70% adoption, mean peak (kW)",
     "data": [
-     891.0,
-     892.0,
-     893.0
+     811.0,
+     811.0,
+     812.0
     ],
     "borderColor": "#2a78d6",
     "backgroundColor": "#2a78d6"
@@ -23,9 +23,9 @@
    {
     "label": "80% adoption, mean peak (kW)",
     "data": [
-     833.0,
-     834.0,
-     837.0
+     772.0,
+     771.0,
+     773.0
     ],
     "borderColor": "#1baf7a",
     "backgroundColor": "#1baf7a"

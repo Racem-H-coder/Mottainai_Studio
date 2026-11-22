@@ -17,6 +17,11 @@ feeder load in the test period (June–October 2026).
 - two more fault types;
 - the files `water_budget.json`, `bills.json` and `anomalies.csv`.
 
+**Data v2 update (2026-11-22).** All numbers regenerated on load model v2. Feeder peak window 19:00–22:00
+(`results/peak_window.json`). New columns at the end of `farm_metrics.csv`: `pump_kwh_feeder_peak`,
+`kwh_shifted_out_of_feeder_peak`, `pump_kwh_13_17`. `pump_kwh_17_20` and `kwh_shifted_out_of_peak` are
+deprecated (kept for one version). New file `results/showcase_days.json`.
+
 ## Scenarios
 
 | `scenario` | `adoption` | Meaning |
@@ -49,7 +54,8 @@ feeder load in the test period (June–October 2026).
 - `day`: `YYYY-MM-DD`. `ts`: `YYYY-MM-DD HH:MM`, local time (Tunisia, UTC+1, no daylight saving).
 - `ts` is the start of a 15-minute interval. Power and flows are averages over `[ts, ts + 15 min)`; tank
   levels are the value at `ts`.
-- Evening peak window of the simulated feeder: 17:00–20:00 (quarters starting 17:00 through 19:45).
+- Peak window of the simulated feeder: 19:00–22:00 (quarters starting 19:00 through 21:45), in
+  `results/peak_window.json`. (Data v1: 17:00–20:00.)
 - STEG BT price peak (summer): 19:00–23:00. The 2026 national shedding windows were 13:00–17:00 and
   22:00–01:00.
 - Booleans are `True` / `False`. Lists are pipe-separated (`tomato|pepper`). An empty cell means "not
@@ -79,8 +85,8 @@ rows).
 | `unmet_need_m3` | m³ | Crop need the farmer asked for but did not get = max(0, min(water asked for, `crop_need_m3`) − `farmer_use_m3`). Should be ≈ 0. |
 | `curtailed_excess_m3` | m³ | Water saved by the budget: water asked for above the crop need that was not supplied. Non-zero only in `closed_loop_enforced` on connected farms. |
 | `pump_kwh` | kWh | Pump energy today. |
-| `pump_kwh_17_20` | kWh | Pump energy in the 17:00–20:00 window. |
-| `kwh_shifted_out_of_peak` | kWh | `pump_kwh_17_20` of the same farm and day in `unmanaged` (or `unmanaged_faults` for `*_faults` scenarios) minus this row's. Positive means pumping moved out of the evening peak. 0 for unconnected farms. |
+| `pump_kwh_17_20` | kWh | **Deprecated** (data-v1 window, kept one version; use `pump_kwh_feeder_peak`). Pump energy in the 17:00–20:00 window. |
+| `kwh_shifted_out_of_peak` | kWh | **Deprecated** (use `kwh_shifted_out_of_feeder_peak`). `pump_kwh_17_20` of the same farm and day in `unmanaged` (or `unmanaged_faults` for `*_faults` scenarios) minus this row's. Positive means pumping moved out of the evening peak. 0 for unconnected farms. |
 | `peak_contrib_kw` | kW | This pump's average power during the quarter when the feeder load was highest in this scenario. |
 | `kwh_per_m3` | kWh/m³ | `pump_kwh` / `pumped_m3`. Empty if nothing was pumped. Energy performance indicator, aligned with ISO 50006 vocabulary (not a compliance claim). |
 | `kwh_per_ha` | kWh/ha | `pump_kwh` / farm area in ha. Same family of indicators. |
@@ -97,15 +103,18 @@ rows).
 | `pump_kwh_19_23` | kWh | Pump energy in 19:00–23:00 (STEG BT summer price peak). |
 | `pump_kwh_23_08` | kWh | Pump energy in 23:00–08:00 (STEG BT summer night). |
 | `pump_kwh_22_01` | kWh | Pump energy in 22:00–24:00 + 00:00–01:00 (2026 national shedding window, same planning day). |
-| `cpp_critical_day` | bool | The day is a forecast critical day for `proposed_cpp`: the p90 base load plus every farm's usual pumping exceeds capacity in 17:00–20:00. |
+| `cpp_critical_day` | bool | The day is a forecast critical day for `proposed_cpp`: the p90 base load plus every farm's usual pumping exceeds capacity in the feeder peak window (19:00–22:00). |
 | `bill_steg_bt_3p_ht_tnd`, `bill_steg_bt_3p_ttc_tnd` | TND | Today's pump energy bill under the STEG BT three-period irrigation tariff, before tax / tax included. |
 | `bill_legacy_flat_ht_tnd`, `bill_legacy_flat_ttc_tnd` | TND | Same, under the legacy flat tariff (184 mill/kWh, closed to new contracts). |
 | `bill_proposed_cpp_ht_tnd`, `bill_proposed_cpp_ttc_tnd` | TND | Same, under `proposed_cpp`: a **proposal** (what STEG or the regulator could introduce), not a STEG tariff. |
+| `pump_kwh_feeder_peak` | kWh | Pump energy in the feeder peak window (19:00–22:00, `results/peak_window.json`). |
+| `kwh_shifted_out_of_feeder_peak` | kWh | `pump_kwh_feeder_peak` of the same farm and day in `unmanaged` (or `unmanaged_faults` for `*_faults` scenarios) minus this row's. |
+| `pump_kwh_13_17` | kWh | Pump energy in 13:00–17:00 (2026 national shedding window, afternoon). |
 
 Bill details:
 - Tax included = HT × 1.07 (VAT 7 % on energy) + 10 mill/kWh (5 municipal + 5 FTE).
 - Fixed charges are ignored, because they are the same in every scenario.
-- `proposed_cpp` = steg_bt_3p + 400 mill/kWh in 17:00–20:00 on critical days − 1,000 mill per kW shaved vs
+- `proposed_cpp` = steg_bt_3p + 400 mill/kWh in the feeder peak window (19:00–22:00) on critical days − 1,000 mill per kW shaved vs
   the farm's usual pumping. Reserve-rule top-ups are exempt from the adder. These parameters are
   assumptions.
 
@@ -128,9 +137,9 @@ One row per day × scenario × adoption × 15 minutes (20 × 10 × 96 = 19,200 r
 
 One row per showcase day × scenario × farm × 15 minutes (3 × 5 × 200 × 96 = 288,000 rows).
 
-Showcase days (unchanged from version 1):
-- **2026-07-21**: the worst-load day;
-- **2026-06-01**: the median of the 20 days by load;
+Showcase days (data v2, same rules, `results/showcase_days.json`):
+- **2026-07-22**: the worst-load day;
+- **2026-07-19**: the median of the 20 days by load;
 - **2026-07-14**: the day with the most injected faults (25 episodes, all five types).
 
 Scenarios: `unmanaged`, `unmanaged_faults`, `closed_loop`, `closed_loop_enforced`, `closed_loop_faults`.
@@ -210,4 +219,4 @@ It also holds:
   - median, p10 and p90 bill saving (TND);
   - the number of farms whose bill goes up;
   - district totals;
-  - adopters' share of pump kWh in 19–23 h, 23–08 h and 22–01 h.
+  - adopters' share of pump kWh in 19–23 h, 23–08 h, 22–01 h, 13–17 h and the feeder peak window (`feeder_peak`).

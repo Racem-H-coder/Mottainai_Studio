@@ -223,7 +223,9 @@ def main():
     p, o = m["overall"]["p50"], m["overall"]
     solve = main50.groupby("scenario").solve_s.mean()
     auto = main50.groupby("scenario").auto_stop_min.sum()
-    old = pd.read_csv(RESULTS / "backtest_v1.csv") if (RESULTS / "backtest_v1.csv").exists() else None
+    v2 = _j("forecast_metrics.json").get("data_version") == "v2"
+    # backtest_v1.csv = Phase 3 planner on DATA v1: only comparable on data v1 (autostop_reduction dropped on v2)
+    old = pd.read_csv(RESULTS / "backtest_v1.csv") if (RESULTS / "backtest_v1.csv").exists() and not v2 else None
     old_auto = old[old.adoption == MAIN_ADOPTION].groupby("scenario").auto_stop_min.sum() if old is not None else None
     a50 = f"{MAIN_ADOPTION:.0%}"
 
@@ -294,8 +296,9 @@ def main():
     add("forecast_mae", "Forecast error (MAE)", rnd(p["MAE"]), "kW", "Day-ahead p50 forecast of the non-pump "
         "load, 15-min steps, issued at midnight, test period.")
     add("forecast_mape", "Forecast error (MAPE)", rnd(100 * p["MAPE"]), "%", "Mean absolute percentage error, test.")
-    add("forecast_mape_evening", "Forecast error 17-20 h (MAPE)", rnd(100 * p["peak_MAPE"]), "%",
-        "Error during the evening peak hours, test period.")
+    pw = "-".join(f"{a[:2]}-{b[:2]} h" for a, b in _j("peak_window.json")["windows"]) if v2 else "17-20 h"
+    add("forecast_mape_evening", f"Forecast error in the feeder peak window {pw} (MAPE)", rnd(100 * p["peak_MAPE"]), "%",
+        "Error during the feeder's peak hours, test period.")
     add("baseline_yesterday_mae", "Error of 'same as yesterday'", rnd(o["yesterday"]["MAE"]), "kW",
         "Simple baseline: tomorrow = today.")
     add("baseline_last_week_mae", "Error of 'same day last week'", rnd(o["last_week"]["MAE"]), "kW",
@@ -309,11 +312,22 @@ def main():
     add("p90_coverage", "p90 band coverage", rnd(100 * p["p90_coverage"]), "%",
         "Share of actual values below the p90 forecast (target 90 %), test period, after calibration.")
     t = cmp["test"]
-    add("p90_coverage_evening_before", "p90 coverage 18-19 h before calibration",
-        rnd(100 * t["v1"]["p90_coverage_18_19"]), "%", "Raw model, test period.")
-    add("p90_coverage_evening_after", "p90 coverage 18-19 h after calibration",
-        rnd(100 * t["v1_cal"]["p90_coverage_18_19"]), "%",
-        "Per-hour conformal offsets learned on cross-validation folds (not on the test period).")
+    if v2:      # data v2: raw vs calibrated only on the cross-validation folds (the test scored the adopted model once)
+        c = cmp["cv"]
+        add("p90_coverage_evening_before", "p90 coverage 18-19 h before calibration",
+            rnd(100 * c["v1"]["p90_coverage_18_19"]), "%", "Raw model, cross-validation folds (training + validation).")
+        add("p90_coverage_evening_after", "p90 coverage 18-19 h after calibration",
+            rnd(100 * c["v1_cal"]["p90_coverage_18_19"]), "%",
+            "Per-hour conformal offsets, cross-validation folds (training + validation).")
+        add("p90_coverage_hot_window", f"p90 coverage on hot days in the feeder peak window {pw}",
+            rnd(100 * t[cmp["adopted"]]["p90_coverage_hot_window"]), "%",
+            "Calibrated model, test period, days with Tmax >= 35 C.")
+    else:
+        add("p90_coverage_evening_before", "p90 coverage 18-19 h before calibration",
+            rnd(100 * t["v1"]["p90_coverage_18_19"]), "%", "Raw model, test period.")
+        add("p90_coverage_evening_after", "p90 coverage 18-19 h after calibration",
+            rnd(100 * t["v1_cal"]["p90_coverage_18_19"]), "%",
+            "Per-hour conformal offsets learned on cross-validation folds (not on the test period).")
     add("v1_cv_mae", "Model in use, cross-validation error", rnd(cmp["cv"]["v1"]["MAE"], 2), "kW",
         "Out-of-fold error on rolling-origin folds inside the training period (comparison with the v2 experiment).")
     add("v2_cv_mae", "v2 experiment, cross-validation error", rnd(cmp["cv"]["v2"]["MAE"], 2), "kW",
@@ -436,10 +450,11 @@ def main():
     h24 = list(range(24))
     save("forecaster_v1_v2", chart(
         "line", [f"{h:02d}h" for h in h24],
-        [ds("Before calibration", [rnd(100 * cov["v1"][str(h)]) for h in h24], ORANGE, **line(ORANGE, pointRadius=2)),
-         ds("v2 experiment (richer heat features)", [rnd(100 * cov["v2"][str(h)]) for h in h24], AQUA,
+        ([] if v2 else [ds("Before calibration", [rnd(100 * cov["v1"][str(h)]) for h in h24], ORANGE,
+                           **line(ORANGE, pointRadius=2))]) +
+        [ds("v2 experiment (richer heat features)", [rnd(100 * cov["v2"][str(h)]) for h in h24], AQUA,
             **line(AQUA, pointRadius=2)),
-         ds("In use: calibrated model", [rnd(100 * cov["v1c"][str(h)]) for h in h24], BLUE,
+         ds("In use: calibrated model", [rnd(100 * cov["v1" if v2 else "v1c"][str(h)]) for h in h24], BLUE,
             **line(BLUE, pointRadius=2)),
          ds("Target 90 %", [90] * 24, INK2, **line(INK2, [6, 4]))],
         "Forecast band coverage by hour", "Share of actual values under the p90 forecast (test period). The v2 "
