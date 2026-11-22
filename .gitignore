@@ -13,3 +13,7 @@ PROGRESS.md
 results_v1/
 !results/shedding_calendar_2026.csv
 !results/shedding_windows.csv
+
+# archive/: moved originals that were ignored stay ignored
+archive/v1/results/*.csv
+archive/v1/models/
