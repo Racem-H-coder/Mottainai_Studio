@@ -1,6 +1,6 @@
 {
- "title": "Worst day 2026-07-22: feeder load",
- "caption": "Feeder load every 15 minutes on the hardest test day, 50% of farms equipped.",
+ "title": "Local overload, worst test day 22 Jul 2026: 1,156 kW -> 978 kW, under capacity",
+ "caption": "Worst of the 20 highest-load test days. Shade 19-22 h = feeder peak window.",
  "simulated": true,
  "type": "line",
  "data": {
@@ -104,7 +104,7 @@
   ],
   "datasets": [
    {
-    "label": "No Tameru",
+    "label": "Without Tameru",
     "data": [
      428.4,
      428.6,
@@ -210,113 +210,7 @@
     "fill": false
    },
    {
-    "label": "Tameru, open loop",
-    "data": [
-     624.6,
-     613.8,
-     635.1,
-     644.9,
-     637.6,
-     652.2,
-     640.4,
-     648.2,
-     640.7,
-     643.4,
-     643.7,
-     630.1,
-     647.7,
-     651.7,
-     655.1,
-     652.3,
-     662.3,
-     628.1,
-     632.4,
-     631.9,
-     607.7,
-     618.0,
-     597.7,
-     626.4,
-     604.2,
-     627.5,
-     665.3,
-     702.2,
-     727.6,
-     736.5,
-     733.9,
-     738.4,
-     731.5,
-     727.6,
-     716.3,
-     719.6,
-     743.8,
-     758.3,
-     774.9,
-     777.7,
-     760.5,
-     731.4,
-     723.5,
-     719.1,
-     703.9,
-     688.6,
-     676.3,
-     715.5,
-     731.9,
-     761.5,
-     766.2,
-     802.5,
-     806.0,
-     807.1,
-     802.6,
-     779.3,
-     760.3,
-     741.4,
-     698.5,
-     690.5,
-     682.6,
-     685.6,
-     673.1,
-     673.3,
-     684.1,
-     672.9,
-     697.8,
-     669.4,
-     684.5,
-     686.0,
-     705.3,
-     745.0,
-     784.3,
-     796.8,
-     830.1,
-     846.6,
-     856.6,
-     918.8,
-     931.9,
-     948.5,
-     963.4,
-     974.0,
-     970.8,
-     951.7,
-     970.1,
-     985.9,
-     944.8,
-     922.7,
-     905.1,
-     871.4,
-     825.7,
-     785.0,
-     771.4,
-     718.1,
-     734.4,
-     706.8
-    ],
-    "borderColor": "#2a78d6",
-    "backgroundColor": "#2a78d6",
-    "borderWidth": 2,
-    "pointRadius": 0,
-    "fill": false
-   },
-   {
-    "label": "Tameru, closed loop (live)",
+    "label": "Tameru 50 %, live mode",
     "data": [
      624.6,
      613.8,
@@ -521,8 +415,8 @@
      1000.0,
      1000.0
     ],
-    "borderColor": "#52514e",
-    "backgroundColor": "#52514e",
+    "borderColor": "#0b0b0b",
+    "backgroundColor": "#0b0b0b",
     "borderWidth": 2,
     "pointRadius": 0,
     "fill": false,
@@ -542,7 +436,7 @@
   "plugins": {
    "title": {
     "display": true,
-    "text": "Worst day 2026-07-22: feeder load"
+    "text": "Local overload, worst test day 22 Jul 2026: 1,156 kW -> 978 kW, under capacity"
    },
    "subtitle": {
     "display": true,
@@ -553,13 +447,13 @@
    "x": {
     "title": {
      "display": true,
-     "text": "time of day"
+     "text": "time"
     }
    },
    "y": {
     "title": {
      "display": true,
-     "text": "feeder load (kW)"
+     "text": "kW"
     }
    }
   }

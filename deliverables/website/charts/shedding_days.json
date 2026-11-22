@@ -1,32 +1,32 @@
 {
- "title": "Outage hours per documented 2026 shedding day",
+ "title": "Outage hours on each 2026 shedding day: Tameru removes most of the July cuts, fewer in Aug-Sep",
  "caption": "Base gap g = 14 %; low_g / high_g = 10 % / 25 %.",
  "simulated": true,
  "type": "bar",
  "data": {
   "labels": [
-   "2026-07-16",
-   "2026-07-17",
-   "2026-07-18",
-   "2026-07-20",
-   "2026-07-21",
-   "2026-07-22",
-   "2026-07-23",
-   "2026-07-24",
-   "2026-08-03",
-   "2026-08-04",
-   "2026-08-05",
-   "2026-08-19",
-   "2026-08-20",
-   "2026-08-24",
-   "2026-08-25",
-   "2026-08-26",
-   "2026-08-27",
-   "2026-08-28",
-   "2026-08-31",
-   "2026-09-01",
-   "2026-09-02",
-   "2026-09-03"
+   "16 Jul",
+   "17 Jul",
+   "18 Jul",
+   "20 Jul",
+   "21 Jul",
+   "22 Jul",
+   "23 Jul",
+   "24 Jul",
+   "03 Aug",
+   "04 Aug",
+   "05 Aug",
+   "19 Aug",
+   "20 Aug",
+   "24 Aug",
+   "25 Aug",
+   "26 Aug",
+   "27 Aug",
+   "28 Aug",
+   "31 Aug",
+   "01 Sep",
+   "02 Sep",
+   "03 Sep"
   ],
   "datasets": [
    {
@@ -107,7 +107,7 @@
     ]
    },
    {
-    "label": "Tameru alone 50 %",
+    "label": "Tameru alone, 50 %",
     "data": [
      0.25,
      0.0,
@@ -184,84 +184,7 @@
     ]
    },
    {
-    "label": "Tameru + STEG notice 50 %",
-    "data": [
-     0.25,
-     0.0,
-     0.25,
-     0.5,
-     0.0,
-     0.25,
-     0.25,
-     0.25,
-     0.5,
-     0.25,
-     0.5,
-     0.5,
-     0.5,
-     0.5,
-     0.5,
-     0.75,
-     0.75,
-     1.25,
-     1.25,
-     0.75,
-     1.25,
-     0.5
-    ],
-    "borderColor": "#2a78d6",
-    "backgroundColor": "#2a78d6",
-    "low_g": [
-     0.25,
-     0.0,
-     0.0,
-     0.0,
-     0.0,
-     0.0,
-     0.0,
-     0.0,
-     0.25,
-     0.25,
-     0.25,
-     0.25,
-     0.25,
-     0.5,
-     0.5,
-     0.5,
-     0.5,
-     0.75,
-     1.0,
-     0.5,
-     1.0,
-     0.25
-    ],
-    "high_g": [
-     1.0,
-     0.5,
-     0.75,
-     2.0,
-     1.25,
-     1.25,
-     1.0,
-     1.0,
-     1.0,
-     1.0,
-     1.0,
-     1.0,
-     1.0,
-     1.0,
-     1.0,
-     1.5,
-     1.75,
-     2.5,
-     2.5,
-     1.25,
-     2.25,
-     1.0
-    ]
-   },
-   {
-    "label": "Tameru alone 70 %",
+    "label": "Tameru alone, 70 %",
     "data": [
      0.0,
      0.0,
@@ -336,83 +259,6 @@
      2.0,
      1.0
     ]
-   },
-   {
-    "label": "Tameru + STEG notice 70 %",
-    "data": [
-     0.0,
-     0.0,
-     0.0,
-     0.0,
-     0.0,
-     0.0,
-     0.0,
-     0.0,
-     0.25,
-     0.0,
-     0.25,
-     0.5,
-     0.25,
-     0.5,
-     0.25,
-     0.5,
-     0.5,
-     0.75,
-     0.75,
-     0.75,
-     1.0,
-     0.5
-    ],
-    "borderColor": "#1d4f91",
-    "backgroundColor": "#1d4f91",
-    "low_g": [
-     0.0,
-     0.0,
-     0.0,
-     0.0,
-     0.0,
-     0.0,
-     0.0,
-     0.0,
-     0.0,
-     0.0,
-     0.0,
-     0.25,
-     0.25,
-     0.25,
-     0.25,
-     0.25,
-     0.25,
-     0.25,
-     0.5,
-     0.5,
-     0.75,
-     0.25
-    ],
-    "high_g": [
-     0.75,
-     0.25,
-     0.5,
-     1.0,
-     0.75,
-     0.75,
-     0.5,
-     0.75,
-     0.75,
-     0.75,
-     0.75,
-     0.75,
-     0.75,
-     0.75,
-     0.75,
-     1.25,
-     1.5,
-     2.25,
-     2.0,
-     1.25,
-     2.0,
-     1.0
-    ]
    }
   ]
  },
@@ -425,7 +271,7 @@
   "plugins": {
    "title": {
     "display": true,
-    "text": "Outage hours per documented 2026 shedding day"
+    "text": "Outage hours on each 2026 shedding day: Tameru removes most of the July cuts, fewer in Aug-Sep"
    },
    "subtitle": {
     "display": true,
@@ -442,11 +288,10 @@
    "y": {
     "title": {
      "display": true,
-     "text": "feeder outage hours"
+     "text": "feeder outage, hours"
     }
    }
   }
  },
- "assumption": true,
- "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+ "assumption": true
 }

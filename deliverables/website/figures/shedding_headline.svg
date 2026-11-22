@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="648pt" height="388.8pt" viewBox="0 0 648 388.8" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-22T08:22:59.044468</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 388.8 
+L 648 388.8 
+L 648 0 
+L 0 0 
+z
+" style="fill: #fcfcfb"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 45.082344 313.395898 
+L 637.2 313.395898 
+L 637.2 58.725 
+L 45.082344 58.725 
+z
+" style="fill: #fcfcfb"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 71.996783 313.395898 
+L 193.007438 313.395898 
+L 193.007438 117.495207 
+L 71.996783 117.495207 
+z
+" clip-path="url(#p3a3300abbc)" style="fill: #eb6834"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 280.635844 313.395898 
+L 401.6465 313.395898 
+L 401.6465 199.725127 
+L 280.635844 199.725127 
+z
+" clip-path="url(#p3a3300abbc)" style="fill: #1baf7a"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 489.274905 313.395898 
+L 610.285561 313.395898 
+L 610.285561 243.258614 
+L 489.274905 243.258614 
+z
+" clip-path="url(#p3a3300abbc)" style="fill: #0e7a54"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="m6892580bb5" d="M 0 0 
+L 0 3.5 
+" style="stroke: #52514e; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m6892580bb5" x="132.50211" y="313.395898" style="fill: #52514e; stroke: #52514e; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #52514e" x="132.50211" y="328.374258" transform="rotate(-0 132.50211 328.374258)">Without Tameru</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#m6892580bb5" x="341.141172" y="313.395898" style="fill: #52514e; stroke: #52514e; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; fill: #52514e" transform="translate(305.642148 329.425283)">Tameru alone</text>
+      <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; fill: #52514e" transform="translate(304.425625 342.028154)">50 % of farms</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#m6892580bb5" x="549.780233" y="313.395898" style="fill: #52514e; stroke: #52514e; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; fill: #52514e" transform="translate(514.28121 329.425283)">Tameru alone</text>
+      <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; fill: #52514e" transform="translate(491.336249 342.028154)">70 % of farms (target)</text>
+     </g>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_4">
+      <path d="M 45.082344 313.395898 
+L 637.2 313.395898 
+" clip-path="url(#p3a3300abbc)" style="fill: none; stroke: #e4e3df; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_5">
+      <defs>
+       <path id="m83357f349b" d="M 0 0 
+L -3.5 0 
+" style="stroke: #52514e; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m83357f349b" x="45.082344" y="313.395898" style="fill: #52514e; stroke: #52514e; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #52514e" x="38.082344" y="317.194727" transform="rotate(-0 38.082344 317.194727)">0</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_6">
+      <path d="M 45.082344 265.025357 
+L 637.2 265.025357 
+" clip-path="url(#p3a3300abbc)" style="fill: none; stroke: #e4e3df; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_7">
+      <g>
+       <use xlink:href="#m83357f349b" x="45.082344" y="265.025357" style="fill: #52514e; stroke: #52514e; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_5">
+      <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #52514e" x="38.082344" y="268.824186" transform="rotate(-0 38.082344 268.824186)">5</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_8">
+      <path d="M 45.082344 216.654816 
+L 637.2 216.654816 
+" clip-path="url(#p3a3300abbc)" style="fill: none; stroke: #e4e3df; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_9">
+      <g>
+       <use xlink:href="#m83357f349b" x="45.082344" y="216.654816" style="fill: #52514e; stroke: #52514e; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #52514e" x="38.082344" y="220.453645" transform="rotate(-0 38.082344 220.453645)">10</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_10">
+      <path d="M 45.082344 168.284275 
+L 637.2 168.284275 
+" clip-path="url(#p3a3300abbc)" style="fill: none; stroke: #e4e3df; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_11">
+      <g>
+       <use xlink:href="#m83357f349b" x="45.082344" y="168.284275" style="fill: #52514e; stroke: #52514e; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #52514e" x="38.082344" y="172.083104" transform="rotate(-0 38.082344 172.083104)">15</text>
+     </g>
+    </g>
+    <g id="ytick_5">
+     <g id="line2d_12">
+      <path d="M 45.082344 119.913734 
+L 637.2 119.913734 
+" clip-path="url(#p3a3300abbc)" style="fill: none; stroke: #e4e3df; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_13">
+      <g>
+       <use xlink:href="#m83357f349b" x="45.082344" y="119.913734" style="fill: #52514e; stroke: #52514e; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_8">
+      <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #52514e" x="38.082344" y="123.712563" transform="rotate(-0 38.082344 123.712563)">20</text>
+     </g>
+    </g>
+    <g id="ytick_6">
+     <g id="line2d_14">
+      <path d="M 45.082344 71.543193 
+L 637.2 71.543193 
+" clip-path="url(#p3a3300abbc)" style="fill: none; stroke: #e4e3df; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_15">
+      <g>
+       <use xlink:href="#m83357f349b" x="45.082344" y="71.543193" style="fill: #52514e; stroke: #52514e; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_9">
+      <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #52514e" x="38.082344" y="75.342021" transform="rotate(-0 38.082344 75.342021)">25</text>
+     </g>
+    </g>
+    <g id="text_10">
+     <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #52514e" x="18.955" y="186.060449" transform="rotate(-90 18.955 186.060449)">feeder outage on the 22 shedding days, hours</text>
+    </g>
+   </g>
+   <g id="patch_6">
+    <path d="M 45.082344 313.395898 
+L 45.082344 58.725 
+" style="fill: none; stroke: #52514e; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 45.082344 313.395898 
+L 637.2 313.395898 
+" style="fill: none; stroke: #52514e; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #0b0b0b" x="132.50211" y="110.742752" transform="rotate(-0 132.50211 110.742752)">20.25 h</text>
+   </g>
+   <g id="text_12">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; fill: #0b0b0b" transform="translate(315.803359 177.369156)">11.75 h</text>
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; fill: #0b0b0b" transform="translate(316.716484 191.771499)">(-42 %)</text>
+   </g>
+   <g id="text_13">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; fill: #0b0b0b" transform="translate(528.617108 220.902643)">7.25 h</text>
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; fill: #0b0b0b" transform="translate(525.355546 235.304986)">(-64 %)</text>
+   </g>
+  </g>
+  <g id="text_14">
+   <text style="font-weight: 700; font-size: 13.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #0b0b0b" x="6.48" y="17.194922" transform="rotate(-0 6.48 17.194922)">Feeder outage on the 22 shedding days of 2026</text>
+  </g>
+  <g id="text_15">
+   <g id="patch_8">
+    <path d="M 590.119609 17.235 
+L 644.76 17.235 
+Q 647.735 17.235 647.735 14.26 
+L 647.735 5.76 
+Q 647.735 2.785 644.76 2.785 
+L 590.119609 2.785 
+Q 587.144609 2.785 587.144609 5.76 
+L 587.144609 14.26 
+Q 587.144609 17.235 590.119609 17.235 
+z
+" style="fill: #eb6834"/>
+   </g>
+   <text style="font-weight: 700; font-size: 8.5px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #fcfcfb" x="644.76" y="12.218008" transform="rotate(-0 644.76 12.218008)">SIMULATED</text>
+  </g>
+  <g id="text_16">
+   <text style="font-size: 8.5px; font-family: 'DejaVu Sans'; fill: #52514e" transform="translate(6.48 370.250469)">Simulated: synthetic 200-farm district on a 1,000 kW feeder, real Cap Bon weather (Open-Meteo, CC BY 4.0). Not a field</text>
+   <text style="font-size: 8.5px; font-family: 'DejaVu Sans'; fill: #52514e" transform="translate(6.48 381.300469)">measurement. Base gap g = 14 % (range at 10-25 %: 15.00-37.25 h without, 4.25-22.50 h at 70 %).</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p3a3300abbc">
+   <rect x="45.082344" y="58.725" width="592.117656" height="254.670898"/>
+  </clipPath>
+ </defs>
+</svg>

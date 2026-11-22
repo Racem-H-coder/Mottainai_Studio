@@ -883,6 +883,835 @@
    "illustrative": true
   },
   {
+   "id": "shed_outage_h_none",
+   "label": "Feeder outage hours without Tameru, g base",
+   "value": 20.25,
+   "unit": "hours",
+   "explanation": "28 windows on 22 days. Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_A50",
+   "label": "Feeder outage hours, Tameru alone, 50 %, g base",
+   "value": 11.75,
+   "unit": "hours",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_A70",
+   "label": "Feeder outage hours, Tameru alone, 70 %, g base",
+   "value": 7.25,
+   "unit": "hours",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_B50",
+   "label": "Feeder outage hours, Tameru + STEG notice, 50 %, g base",
+   "value": 11.5,
+   "unit": "hours",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_B70",
+   "label": "Feeder outage hours, Tameru + STEG notice, 70 %, g base",
+   "value": 6.75,
+   "unit": "hours",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_plain50",
+   "label": "Feeder outage hours, normal Tameru loop without shedding mode, 50 %, g base",
+   "value": 12.75,
+   "unit": "hours",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_none_low",
+   "label": "Feeder outage hours without Tameru, g low",
+   "value": 15.0,
+   "unit": "hours",
+   "explanation": "28 windows on 22 days. Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_A50_low",
+   "label": "Feeder outage hours, Tameru alone, 50 %, g low",
+   "value": 7.0,
+   "unit": "hours",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_A70_low",
+   "label": "Feeder outage hours, Tameru alone, 70 %, g low",
+   "value": 4.25,
+   "unit": "hours",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_B50_low",
+   "label": "Feeder outage hours, Tameru + STEG notice, 50 %, g low",
+   "value": 7.0,
+   "unit": "hours",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_B70_low",
+   "label": "Feeder outage hours, Tameru + STEG notice, 70 %, g low",
+   "value": 3.75,
+   "unit": "hours",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_plain50_low",
+   "label": "Feeder outage hours, normal Tameru loop without shedding mode, 50 %, g low",
+   "value": 6.75,
+   "unit": "hours",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_none_high",
+   "label": "Feeder outage hours without Tameru, g high",
+   "value": 37.25,
+   "unit": "hours",
+   "explanation": "28 windows on 22 days. Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_A50_high",
+   "label": "Feeder outage hours, Tameru alone, 50 %, g high",
+   "value": 28.5,
+   "unit": "hours",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_A70_high",
+   "label": "Feeder outage hours, Tameru alone, 70 %, g high",
+   "value": 22.5,
+   "unit": "hours",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_B50_high",
+   "label": "Feeder outage hours, Tameru + STEG notice, 50 %, g high",
+   "value": 28.5,
+   "unit": "hours",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_B70_high",
+   "label": "Feeder outage hours, Tameru + STEG notice, 70 %, g high",
+   "value": 21.75,
+   "unit": "hours",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_plain50_high",
+   "label": "Feeder outage hours, normal Tameru loop without shedding mode, 50 %, g high",
+   "value": 29.25,
+   "unit": "hours",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_cut_pct_A50",
+   "label": "Cut in feeder outage hours, Tameru alone 50 %",
+   "value": 42,
+   "unit": "%",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_windows_zero_A50",
+   "label": "Shedding windows with no cut left, Tameru alone 50 %",
+   "value": 4,
+   "unit": "windows",
+   "explanation": "Of 28. Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_days_zero_A50",
+   "label": "Shedding days with no cut left, Tameru alone 50 %",
+   "value": 2,
+   "unit": "days",
+   "explanation": "Of 22. Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_household_hours_A50",
+   "label": "Household-hours without power avoided, Tameru alone 50 %",
+   "value": 8500,
+   "unit": "household-hours",
+   "explanation": "1,000 homes on the feeder. Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_pump_kw_freed_A50",
+   "label": "Pump power freed in the windows per 1,000 farms, 50 % (illustrative)",
+   "value": 306.0,
+   "unit": "kW",
+   "explanation": "ILLUSTRATIVE linear scaling of the 200-farm simulation.",
+   "simulated": true,
+   "illustrative": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_cut_pct_A70",
+   "label": "Cut in feeder outage hours, Tameru alone 70 %",
+   "value": 64,
+   "unit": "%",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_windows_zero_A70",
+   "label": "Shedding windows with no cut left, Tameru alone 70 %",
+   "value": 11,
+   "unit": "windows",
+   "explanation": "Of 28. Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_days_zero_A70",
+   "label": "Shedding days with no cut left, Tameru alone 70 %",
+   "value": 8,
+   "unit": "days",
+   "explanation": "Of 22. Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_household_hours_A70",
+   "label": "Household-hours without power avoided, Tameru alone 70 %",
+   "value": 13000,
+   "unit": "household-hours",
+   "explanation": "1,000 homes on the feeder. Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_pump_kw_freed_A70",
+   "label": "Pump power freed in the windows per 1,000 farms, 70 % (illustrative)",
+   "value": 452.0,
+   "unit": "kW",
+   "explanation": "ILLUSTRATIVE linear scaling of the 200-farm simulation.",
+   "simulated": true,
+   "illustrative": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_modeA_share_of_B_50",
+   "label": "Share of the STEG-notice benefit Tameru gets alone, 50 %",
+   "value": 97,
+   "unit": "%",
+   "explanation": "Outage hours avoided by mode A / by mode B (A + STEG's announced windows). Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_modeA_share_of_B_70",
+   "label": "Share of the STEG-notice benefit Tameru gets alone, 70 %",
+   "value": 96,
+   "unit": "%",
+   "explanation": "Outage hours avoided by mode A / by mode B (A + STEG's announced windows). Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_plain_avoided_h_50",
+   "label": "Outage hours avoided by the normal Tameru loop (no shedding mode), 50 %",
+   "value": 7.5,
+   "unit": "hours",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_modeA_avoided_h_50",
+   "label": "Outage hours avoided by Tameru alone (mode A), 50 %",
+   "value": 8.5,
+   "unit": "hours",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_mode_gain_h_50",
+   "label": "Extra outage hours avoided by the shedding mode on top of the normal loop, 50 %",
+   "value": 1.0,
+   "unit": "hours",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_daytime_none",
+   "label": "Outage hours in daytime windows without Tameru",
+   "value": 16.0,
+   "unit": "hours",
+   "explanation": "21 daytime windows. Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_daytime_A50",
+   "label": "Outage hours in daytime windows, Tameru alone 50 %",
+   "value": 9.75,
+   "unit": "hours",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_daytime_A70",
+   "label": "Outage hours in daytime windows, Tameru alone 70 %",
+   "value": 6.25,
+   "unit": "hours",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_evening_none",
+   "label": "Outage hours in evening windows without Tameru",
+   "value": 4.25,
+   "unit": "hours",
+   "explanation": "7 evening windows. Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_evening_A50",
+   "label": "Outage hours in evening windows, Tameru alone 50 %",
+   "value": 2.0,
+   "unit": "hours",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_outage_h_evening_A70",
+   "label": "Outage hours in evening windows, Tameru alone 70 %",
+   "value": 1.0,
+   "unit": "hours",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_overload_min_A50",
+   "label": "Local overload created inside shedding windows, Tameru alone 50 %",
+   "value": 105,
+   "unit": "minutes",
+   "explanation": "Feeder above 1,000 kW (no cut applied) on 20-22 Jul 2026; the normal loop has none. Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_overload_max_kw_A50",
+   "label": "Highest feeder load on those days, Tameru alone 50 %",
+   "value": 1019.0,
+   "unit": "kW",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_overload_min_A70",
+   "label": "Local overload created inside shedding windows, Tameru alone 70 %",
+   "value": 0,
+   "unit": "minutes",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_flag_hits_36",
+   "label": "Risk flag (forecast Tmax >= 36 C): hits",
+   "value": 18,
+   "unit": "days",
+   "explanation": "22 documented shedding days among 153 test days.",
+   "simulated": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_flag_misses_36",
+   "label": "Risk flag (forecast Tmax >= 36 C): misses",
+   "value": 4,
+   "unit": "days",
+   "explanation": "22 documented shedding days among 153 test days.",
+   "simulated": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_flag_false_alarms_36",
+   "label": "Risk flag (forecast Tmax >= 36 C): false alarms",
+   "value": 19,
+   "unit": "days",
+   "explanation": "22 documented shedding days among 153 test days.",
+   "simulated": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_flag_hits_38",
+   "label": "Risk flag (forecast Tmax >= 38 C): hits",
+   "value": 13,
+   "unit": "days",
+   "explanation": "22 documented shedding days among 153 test days.",
+   "simulated": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_flag_misses_38",
+   "label": "Risk flag (forecast Tmax >= 38 C): misses",
+   "value": 9,
+   "unit": "days",
+   "explanation": "22 documented shedding days among 153 test days.",
+   "simulated": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_flag_false_alarms_38",
+   "label": "Risk flag (forecast Tmax >= 38 C): false alarms",
+   "value": 12,
+   "unit": "days",
+   "explanation": "22 documented shedding days among 153 test days.",
+   "simulated": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_flag_hits_40",
+   "label": "Risk flag (forecast Tmax >= 40 C): hits",
+   "value": 10,
+   "unit": "days",
+   "explanation": "22 documented shedding days among 153 test days.",
+   "simulated": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_flag_misses_40",
+   "label": "Risk flag (forecast Tmax >= 40 C): misses",
+   "value": 12,
+   "unit": "days",
+   "explanation": "22 documented shedding days among 153 test days.",
+   "simulated": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_flag_false_alarms_40",
+   "label": "Risk flag (forecast Tmax >= 40 C): false alarms",
+   "value": 5,
+   "unit": "days",
+   "explanation": "22 documented shedding days among 153 test days.",
+   "simulated": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_fa_days_38",
+   "label": "False-alarm days (flag at 38 C, no documented shedding)",
+   "value": 12,
+   "unit": "days",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true
+  },
+  {
+   "id": "shed_fa_extra_kwh_38",
+   "label": "Extra pumping on false-alarm days, 50 %, total",
+   "value": 6.4,
+   "unit": "kWh",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true
+  },
+  {
+   "id": "shed_fa_bill_tnd_38",
+   "label": "Extra adopters' bill on false-alarm days, 50 %, total (STEG BT three-period)",
+   "value": 214,
+   "unit": "TND",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true
+  },
+  {
+   "id": "shed_fa_peak_kw_38",
+   "label": "Mean extra daily peak on false-alarm days, 50 %",
+   "value": 28.7,
+   "unit": "kW",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true
+  },
+  {
+   "id": "shed_unmet_need_m3_none",
+   "label": "Unmet crop water need on shedding days (none)",
+   "value": 95,
+   "unit": "m³",
+   "explanation": "Sum over the 22 days; FAO-56 need 518,175 m³. Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true
+  },
+  {
+   "id": "shed_unmet_need_m3_A50",
+   "label": "Unmet crop water need on shedding days (A50)",
+   "value": 0,
+   "unit": "m³",
+   "explanation": "Sum over the 22 days; FAO-56 need 518,175 m³. Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true
+  },
+  {
+   "id": "shed_unmet_need_m3_A70",
+   "label": "Unmet crop water need on shedding days (A70)",
+   "value": 0,
+   "unit": "m³",
+   "explanation": "Sum over the 22 days; FAO-56 need 518,175 m³. Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true
+  },
+  {
+   "id": "shed_cut_min_without",
+   "label": "Shortest no-Tameru cut per window (base g)",
+   "value": 30,
+   "unit": "min",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_cut_max_without",
+   "label": "Longest no-Tameru cut per window (base g)",
+   "value": 90,
+   "unit": "min",
+   "explanation": "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated. Residents reported 4-6 h cuts; ours are conservative.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "shed_clipped_hours",
+   "label": "Window hours dropped after midnight (31 Aug, 2 Sep)",
+   "value": 3.0,
+   "unit": "hours",
+   "explanation": "Single-day replay: windows are cut at 24:00.",
+   "simulated": true,
+   "assumption": true,
+   "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+  },
+  {
+   "id": "whole_overload_days_unmanaged",
+   "label": "Overload days, whole test period, unmanaged",
+   "value": 16,
+   "unit": "days",
+   "explanation": "All 153 test days (Jun-Oct 2026); Tameru = closed loop 50 %.",
+   "simulated": true,
+   "basis": "whole test period"
+  },
+  {
+   "id": "whole_overload_hours_unmanaged",
+   "label": "Hours above feeder capacity, whole test period, unmanaged",
+   "value": 27.75,
+   "unit": "hours",
+   "explanation": "All 153 test days.",
+   "simulated": true,
+   "basis": "whole test period"
+  },
+  {
+   "id": "whole_kwh_over_unmanaged",
+   "label": "Energy above capacity, whole test period, unmanaged",
+   "value": 1646,
+   "unit": "kWh",
+   "explanation": "All 153 test days.",
+   "simulated": true,
+   "basis": "whole test period"
+  },
+  {
+   "id": "whole_overload_days_tameru",
+   "label": "Overload days, whole test period, tameru",
+   "value": 0,
+   "unit": "days",
+   "explanation": "All 153 test days (Jun-Oct 2026); Tameru = closed loop 50 %.",
+   "simulated": true,
+   "basis": "whole test period"
+  },
+  {
+   "id": "whole_overload_hours_tameru",
+   "label": "Hours above feeder capacity, whole test period, tameru",
+   "value": 0.0,
+   "unit": "hours",
+   "explanation": "All 153 test days.",
+   "simulated": true,
+   "basis": "whole test period"
+  },
+  {
+   "id": "whole_kwh_over_tameru",
+   "label": "Energy above capacity, whole test period, tameru",
+   "value": 0,
+   "unit": "kWh",
+   "explanation": "All 153 test days.",
+   "simulated": true,
+   "basis": "whole test period"
+  },
+  {
+   "id": "closed_mean_peak_70",
+   "label": "Mean daily peak, closed loop, 70%",
+   "value": 814,
+   "unit": "kW",
+   "explanation": "20 highest-load test days.",
+   "simulated": true,
+   "basis": "mean of 20 highest-load test days"
+  },
+  {
+   "id": "closed_hours_over_70",
+   "label": "Hours above capacity, closed loop, 70%",
+   "value": 0.0,
+   "unit": "hours",
+   "explanation": "20 highest-load test days.",
+   "simulated": true,
+   "basis": "20 highest-load test days"
+  },
+  {
+   "id": "closed_mean_peak_100",
+   "label": "Mean daily peak, closed loop, 100%",
+   "value": 761,
+   "unit": "kW",
+   "explanation": "20 highest-load test days.",
+   "simulated": true,
+   "basis": "mean of 20 highest-load test days"
+  },
+  {
+   "id": "closed_hours_over_100",
+   "label": "Hours above capacity, closed loop, 100%",
+   "value": 0.0,
+   "unit": "hours",
+   "explanation": "20 highest-load test days.",
+   "simulated": true,
+   "basis": "20 highest-load test days"
+  },
+  {
+   "id": "worst_day_date",
+   "label": "Worst test day (highest unmanaged peak)",
+   "value": "2026-07-22",
+   "unit": "date",
+   "explanation": "Of the 20 highest-load test days.",
+   "simulated": true
+  },
+  {
+   "id": "feeder_peak_window",
+   "label": "Feeder peak window (simulated)",
+   "value": "19:00-22:00",
+   "unit": "time",
+   "explanation": "Hours holding 98 % of the unmanaged overload quarters, training + validation days (results/peak_window.json).",
+   "simulated": true
+  },
+  {
+   "id": "steg_revenue_change_pct",
+   "label": "STEG revenue on the equipped farms (BT three-period), Tameru 50 %",
+   "value": -13.7,
+   "unit": "%",
+   "explanation": "20 highest-load test days; the same water is pumped at cheaper hours, and peak kWh are the costliest for STEG to supply.",
+   "simulated": true
+  },
+  {
+   "id": "steg_revenue_change_pct_enforced",
+   "label": "STEG revenue on the equipped farms (BT three-period), Tameru 50 %, budget enforced",
+   "value": -17.1,
+   "unit": "%",
+   "explanation": "20 highest-load test days; the same water is pumped at cheaper hours, and peak kWh are the costliest for STEG to supply.",
+   "simulated": true
+  },
+  {
+   "id": "adopter_share_19_23_none",
+   "label": "Equipped farms' pumping in 19-23 h (none)",
+   "value": 26.5,
+   "unit": "% of their kWh",
+   "explanation": "20 highest-load test days; Tameru 50 %.",
+   "simulated": true
+  },
+  {
+   "id": "adopter_share_19_23_tameru",
+   "label": "Equipped farms' pumping in 19-23 h (tameru)",
+   "value": 7.9,
+   "unit": "% of their kWh",
+   "explanation": "20 highest-load test days; Tameru 50 %.",
+   "simulated": true
+  },
+  {
+   "id": "adopter_share_23_08_none",
+   "label": "Equipped farms' pumping in 23-08 h (none)",
+   "value": 21.9,
+   "unit": "% of their kWh",
+   "explanation": "20 highest-load test days; Tameru 50 %.",
+   "simulated": true
+  },
+  {
+   "id": "adopter_share_23_08_tameru",
+   "label": "Equipped farms' pumping in 23-08 h (tameru)",
+   "value": 65.3,
+   "unit": "% of their kWh",
+   "explanation": "20 highest-load test days; Tameru 50 %.",
+   "simulated": true
+  },
+  {
+   "id": "adopter_share_08_19_none",
+   "label": "Equipped farms' pumping in 08-19 h (none)",
+   "value": 51.6,
+   "unit": "% of their kWh",
+   "explanation": "The rest of the day (BT day rate); 20 highest-load test days; Tameru 50 %.",
+   "simulated": true
+  },
+  {
+   "id": "adopter_share_08_19_tameru",
+   "label": "Equipped farms' pumping in 08-19 h (tameru)",
+   "value": 26.8,
+   "unit": "% of their kWh",
+   "explanation": "The rest of the day (BT day rate); 20 highest-load test days; Tameru 50 %.",
+   "simulated": true
+  },
+  {
+   "id": "wb_crop_need_m3_day",
+   "label": "FAO-56 crop need, district",
+   "value": 32935,
+   "unit": "m³/day",
+   "explanation": "Mean over the 20 highest-load test days.",
+   "simulated": true
+  },
+  {
+   "id": "wb_budget_m3_day",
+   "label": "Water budget (110 % of crop need), district",
+   "value": 36229,
+   "unit": "m³/day",
+   "explanation": "Mean over the 20 highest-load test days.",
+   "simulated": true
+  },
+  {
+   "id": "wb_pumped_m3_day_none",
+   "label": "Water pumped, district (none)",
+   "value": 34676,
+   "unit": "m³/day",
+   "explanation": "Mean over the 20 highest-load test days; Tameru 50 %.",
+   "simulated": true
+  },
+  {
+   "id": "wb_pumped_m3_day_off",
+   "label": "Water pumped, district (off)",
+   "value": 34496,
+   "unit": "m³/day",
+   "explanation": "Mean over the 20 highest-load test days; Tameru 50 %.",
+   "simulated": true
+  },
+  {
+   "id": "wb_pumped_m3_day_enforced",
+   "label": "Water pumped, district (enforced)",
+   "value": 33079,
+   "unit": "m³/day",
+   "explanation": "Mean over the 20 highest-load test days; Tameru 50 %.",
+   "simulated": true
+  },
+  {
+   "id": "planner_objective_gap_pct",
+   "label": "Fast planner (lp_round) vs exact MILP, objective gap",
+   "value": "2.3-8.0",
+   "unit": "%",
+   "explanation": "5 training days; the gap is the end-of-day tank level, not the peak (planned peaks within 1 %).",
+   "simulated": true
+  },
+  {
+   "id": "planner_end_level_gap_m3",
+   "label": "lp_round ends the day with less water in the tanks than MILP (district)",
+   "value": "22-38",
+   "unit": "m³",
+   "explanation": "R3 planner diagnostic, 5 training days (log only, not stored in a results file). Known limitation.",
+   "simulated": true
+  },
+  {
+   "id": "ramadan_evening_max_kw",
+   "label": "Highest unmanaged feeder load Nov-Mar (a Ramadan evening, 14 Mar 2025)",
+   "value": 994.5,
+   "unit": "kW",
+   "explanation": "Within 0.5 % of capacity; data figure (unmanaged load), no model.",
+   "simulated": true
+  },
+  {
    "id": "equipped_farms_main",
    "label": "Farms with a relay box at 50% adoption",
    "value": 94,

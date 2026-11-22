@@ -1,6 +1,6 @@
 {
- "title": "2026-07-22: STEG shedding 10:00-16:00, 18:00-22:00",
- "caption": "Feeder load on the best-documented evening shedding day. The cut comes from the national gap g = 14 %, not from local overload.",
+ "title": "A shedding day, 22 Jul 2026: 1.25 h of outage without Tameru -> 0.25 h with Tameru alone (50 %)",
+ "caption": "STEG windows shaded; the cut comes from the national gap (g = 14 %), not local overload.",
  "simulated": true,
  "type": "line",
  "data": {
@@ -104,7 +104,7 @@
   ],
   "datasets": [
    {
-    "label": "Without Tameru (no cut)",
+    "label": "Without Tameru, no cut",
     "data": [
      428.4,
      428.6,
@@ -207,7 +207,11 @@
     "backgroundColor": "#52514e",
     "borderWidth": 2,
     "pointRadius": 0,
-    "fill": false
+    "fill": false,
+    "borderDash": [
+     3,
+     2
+    ]
    },
    {
     "label": "Without Tameru: STEG cut",
@@ -316,7 +320,7 @@
     "fill": false
    },
    {
-    "label": "Tameru alone, 50 % (no STEG input)",
+    "label": "Tameru alone, 50 %",
     "data": [
      627.0,
      616.2,
@@ -521,8 +525,8 @@
      1000.0,
      1000.0
     ],
-    "borderColor": "#52514e",
-    "backgroundColor": "#52514e",
+    "borderColor": "#0b0b0b",
+    "backgroundColor": "#0b0b0b",
     "borderWidth": 2,
     "pointRadius": 0,
     "fill": false,
@@ -542,7 +546,7 @@
   "plugins": {
    "title": {
     "display": true,
-    "text": "2026-07-22: STEG shedding 10:00-16:00, 18:00-22:00"
+    "text": "A shedding day, 22 Jul 2026: 1.25 h of outage without Tameru -> 0.25 h with Tameru alone (50 %)"
    },
    "subtitle": {
     "display": true,
@@ -564,11 +568,12 @@
    }
   }
  },
+ "assumption": true,
  "windows": [
   "10:00-16:00",
   "18:00-22:00"
  ],
- "cuts_without": [
+ "cuts_without_min": [
   [
    855,
    45
@@ -578,7 +583,7 @@
    30
   ]
  ],
- "cuts_tameru": [
+ "cuts_tameru_min": [
   [
    855,
    15
@@ -785,7 +790,5 @@
    32.0,
    31.8
   ]
- },
- "assumption": true,
- "source": "results/shedding_calendar_2026.csv (one source URL per window: Business News, webdo, La Presse, Mosaique FM, ...)"
+ }
 }

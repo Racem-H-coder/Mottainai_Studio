@@ -1,0 +1,82 @@
+{
+ "title": "More farms equipped: local overload is gone from 50 %, shedding outage keeps falling to 70 %",
+ "caption": "Live mode. Shedding: base gap g = 14 % (low_g / high_g = 10 % / 25 %); 100 % not run.",
+ "simulated": true,
+ "type": "bar",
+ "data": {
+  "labels": [
+   "0 %",
+   "50 %",
+   "70 %",
+   "100 %"
+  ],
+  "datasets": [
+   {
+    "label": "Hours above capacity, 20 highest-load test days",
+    "data": [
+     27.8,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "borderColor": "#eb6834",
+    "backgroundColor": "#eb6834"
+   },
+   {
+    "label": "Shedding outage hours, 22 days (Tameru alone)",
+    "data": [
+     20.25,
+     11.75,
+     7.25,
+     null
+    ],
+    "borderColor": "#1baf7a",
+    "backgroundColor": "#1baf7a",
+    "low_g": [
+     15.0,
+     7.0,
+     4.25,
+     null
+    ],
+    "high_g": [
+     37.25,
+     28.5,
+     22.5,
+     null
+    ]
+   }
+  ]
+ },
+ "options": {
+  "responsive": true,
+  "interaction": {
+   "mode": "index",
+   "intersect": false
+  },
+  "plugins": {
+   "title": {
+    "display": true,
+    "text": "More farms equipped: local overload is gone from 50 %, shedding outage keeps falling to 70 %"
+   },
+   "subtitle": {
+    "display": true,
+    "text": "Simulated: synthetic 200-farm district on real Open-Meteo weather. Not a field measurement."
+   }
+  },
+  "scales": {
+   "x": {
+    "title": {
+     "display": true,
+     "text": "share of farms equipped"
+    }
+   },
+   "y": {
+    "title": {
+     "display": true,
+     "text": "hours"
+    }
+   }
+  }
+ },
+ "assumption": true
+}

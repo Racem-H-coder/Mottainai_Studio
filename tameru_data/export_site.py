@@ -8,7 +8,6 @@ Reads results/ (run forecast.py, backtest.py and report.py first). Every number 
 Usage:  python export_site.py
 """
 import json
-import shutil
 import sqlite3
 
 import pandas as pd
@@ -20,6 +19,7 @@ from report import AQUA, BLUE, CAP, INK2, ORANGE, group_stats, margin_frame, min
     pick_days, sweep_frame
 
 OUT = ROOT / "deliverables" / "website"
+SITE_CHARTS = {"anomalies"}      # other website charts: site_figures.py; nothing is ever read from archive/
 NOTE = "Simulated: synthetic 200-farm district on real Open-Meteo weather. Not a field measurement."
 QUARTERS = [f"{k // 4:02d}:{k % 4 * 15:02d}" for k in range(96)]
 
@@ -223,41 +223,156 @@ def shedding_items(add):
         assumption=True, illustrative=True)
 
 
-def shedding_charts(save):
-    """charts/shedding_day.json and charts/shedding_days.json."""
+def shedding_atomic(add):
+    """One number per id for the shedding scenario (copy.md and pitch_numbers.md bind to these). Read from
+    results/shedding.json and results/shedding_windows.csv; nothing is recomputed."""
     s = _j("shedding.json")
     if not s:
         return
-    rec = next(d_ for d_ in s["days"] if "curves" in d_)
-    c = rec["curves"]
-    cfg = chart("line", QUARTERS,
-                [ds("Without Tameru (no cut)", c["baseline"], INK2, **line(INK2)),
-                 ds("Without Tameru: STEG cut", c["without_cut"], ORANGE, **line(ORANGE)),
-                 ds("Tameru alone, 50 % (no STEG input)", c["tameru_cut"], AQUA, **line(AQUA)),
-                 ds("Feeder capacity", [CAP] * 96, INK2, **line(INK2, [6, 4]))],
-                f"{rec['date']}: STEG shedding {', '.join(rec['windows'])}", "Feeder load on the best-documented "
-                "evening shedding day. The cut comes from the national gap g = 14 %, not from local overload.",
-                "time", "kW")
-    cfg.update(windows=rec["windows"], cuts_without=c["cuts_without"], cuts_tameru=c["cuts_tameru"],
-               tank_pct={"without": c["tank_without_pct"], "tameru": c["tank_tameru_pct"]}, assumption=True,
-               source=SHED_SRC)
-    save("shedding_day", cfg)
-    rows = pd.read_csv(RESULTS / "shedding_windows.csv", dtype={"date": str})
-    rows = rows[rows.status == "main"]
-    days = sorted(rows.date.unique())
+    t, a = s["tables"], s["tables"]["all"]
+    note = "Simulated, documented 2026 STEG shedding days, base national gap g = 14 % unless stated."
+    kw_ = dict(assumption=True, source=SHED_SRC)
+    for gl, gtag in (("base", ""), ("low", "_low"), ("high", "_high")):
+        x = a[gl]
+        add(f"shed_outage_h_none{gtag}", f"Feeder outage hours without Tameru, g {gl}", x["A38@50"]["outage_h_without"],
+            "hours", f"{x['A38@50']['windows']} windows on {x['A38@50']['days']} days. " + note, **kw_)
+        for sc, tag, lab in (("A38@50", "A50", "Tameru alone, 50 %"), ("A38@70", "A70", "Tameru alone, 70 %"),
+                             ("B@50", "B50", "Tameru + STEG notice, 50 %"), ("B@70", "B70", "Tameru + STEG notice, 70 %"),
+                             ("plain@50", "plain50", "normal Tameru loop without shedding mode, 50 %")):
+            add(f"shed_outage_h_{tag}{gtag}", f"Feeder outage hours, {lab}, g {gl}", x[sc]["outage_h_with"], "hours",
+                note, **kw_)
+    b = a["base"]
+    none = b["A38@50"]["outage_h_without"]
+    for sc, tag in (("A38@50", "A50"), ("A38@70", "A70")):
+        pc = tag[1:]
+        add(f"shed_outage_cut_pct_{tag}", f"Cut in feeder outage hours, Tameru alone {pc} %",
+            round(100 * (1 - b[sc]["outage_h_with"] / none)), "%", note, **kw_)
+        add(f"shed_windows_zero_{tag}", f"Shedding windows with no cut left, Tameru alone {pc} %",
+            b[sc]["windows_to_zero"], "windows", f"Of {b[sc]['windows']}. " + note, **kw_)
+        add(f"shed_days_zero_{tag}", f"Shedding days with no cut left, Tameru alone {pc} %",
+            b[sc]["days_to_zero"], "days", f"Of {b[sc]['days']}. " + note, **kw_)
+        add(f"shed_household_hours_{tag}", f"Household-hours without power avoided, Tameru alone {pc} %",
+            round(b[sc]["household_hours_avoided"]), "household-hours", "1,000 homes on the feeder. " + note, **kw_)
+        add(f"shed_pump_kw_freed_{tag}", f"Pump power freed in the windows per 1,000 farms, {pc} % (illustrative)",
+            b[sc]["mean_pump_kw_freed_per_1000_farms"], "kW", "ILLUSTRATIVE linear scaling of the 200-farm simulation.",
+            illustrative=True, **kw_)
+    for n in ("50", "70"):
+        gain_a = none - b[f"A38@{n}"]["outage_h_with"]
+        gain_b = none - b[f"B@{n}"]["outage_h_with"]
+        add(f"shed_modeA_share_of_B_{n}", f"Share of the STEG-notice benefit Tameru gets alone, {n} %",
+            round(100 * gain_a / gain_b), "%",
+            "Outage hours avoided by mode A / by mode B (A + STEG's announced windows). " + note, **kw_)
+    add("shed_plain_avoided_h_50", "Outage hours avoided by the normal Tameru loop (no shedding mode), 50 %",
+        none - b["plain@50"]["outage_h_with"], "hours", note, **kw_)
+    add("shed_modeA_avoided_h_50", "Outage hours avoided by Tameru alone (mode A), 50 %",
+        none - b["A38@50"]["outage_h_with"], "hours", note, **kw_)
+    add("shed_mode_gain_h_50", "Extra outage hours avoided by the shedding mode on top of the normal loop, 50 %",
+        b["plain@50"]["outage_h_with"] - b["A38@50"]["outage_h_with"], "hours", note, **kw_)
+    for typ in ("daytime", "evening"):
+        x = t[typ]["base"]
+        add(f"shed_outage_h_{typ}_none", f"Outage hours in {typ} windows without Tameru", x["A38@50"]["outage_h_without"],
+            "hours", f"{x['A38@50']['windows']} {typ} windows. " + note, **kw_)
+        for sc, tag in (("A38@50", "A50"), ("A38@70", "A70")):
+            add(f"shed_outage_h_{typ}_{tag}", f"Outage hours in {typ} windows, Tameru alone {tag[1:]} %",
+                x[sc]["outage_h_with"], "hours", note, **kw_)
+    om = s["overload_minutes"]
+    worst = max((d_["scenarios"]["A38@50"]["peak_kw"] for d_ in s["days"]
+                 if d_["scenarios"]["A38@50"]["over_min_in_windows"] > 0), default=None)
+    add("shed_overload_min_A50", "Local overload created inside shedding windows, Tameru alone 50 %",
+        om["A38@50"]["over_min_in_windows"], "minutes",
+        "Feeder above 1,000 kW (no cut applied) on 20-22 Jul 2026; the normal loop has none. " + note, **kw_)
+    add("shed_overload_max_kw_A50", "Highest feeder load on those days, Tameru alone 50 %", worst, "kW", note, **kw_)
+    add("shed_overload_min_A70", "Local overload created inside shedding windows, Tameru alone 70 %",
+        om["A38@70"]["over_min_in_windows"], "minutes", note, **kw_)
+    for th in ("36", "38", "40"):
+        k = s["flag_skill"][th]
+        for f_ in ("hits", "misses", "false_alarms"):
+            add(f"shed_flag_{f_}_{th}", f"Risk flag (forecast Tmax >= {th} C): {f_.replace('_', ' ')}", k[f_], "days",
+                f"{k['documented_days']} documented shedding days among {k['test_days']} test days.", source=SHED_SRC)
+    fa = [f_ for f_ in s["false_alarms"] if f_["tmax_fc"] >= 38]
+    add("shed_fa_days_38", "False-alarm days (flag at 38 C, no documented shedding)", len(fa), "days", note)
+    add("shed_fa_extra_kwh_38", "Extra pumping on false-alarm days, 50 %, total",
+        round(sum(f_["A@50"]["pump_kwh"] - f_["plain@50"]["pump_kwh"] for f_ in fa), 1), "kWh", note, assumption=True)
+    add("shed_fa_bill_tnd_38", "Extra adopters' bill on false-alarm days, 50 %, total (STEG BT three-period)",
+        round(sum(f_["A@50"]["bill_adopters_ttc"] - f_["plain@50"]["bill_adopters_ttc"] for f_ in fa)), "TND", note,
+        assumption=True)
+    add("shed_fa_peak_kw_38", "Mean extra daily peak on false-alarm days, 50 %",
+        round(sum(f_["A@50"]["peak_kw"] - f_["plain@50"]["peak_kw"] for f_ in fa) / len(fa), 1), "kW", note,
+        assumption=True)
+    w = s["water_base_g"]
+    for sc, tag in (("without", "none"), ("A38@50", "A50"), ("A38@70", "A70")):
+        add(f"shed_unmet_need_m3_{tag}", f"Unmet crop water need on shedding days ({tag})", round(w[sc]["unmet_need_m3"]),
+            "m³", f"Sum over the 22 days; FAO-56 need {w['without']['need_m3']:,.0f} m³. " + note, assumption=True)
+    rows = pd.read_csv(RESULTS / "shedding_windows.csv")
+    r0 = rows[(rows.status == "main") & (rows.g_label == "base") & (rows.scenario == "A38@50")]
+    add("shed_cut_min_without", "Shortest no-Tameru cut per window (base g)", int(r0.D0_h.min() * 60), "min", note, **kw_)
+    add("shed_cut_max_without", "Longest no-Tameru cut per window (base g)", int(r0.D0_h.max() * 60), "min",
+        note + " Residents reported 4-6 h cuts; ours are conservative.", **kw_)
+    add("shed_clipped_hours", "Window hours dropped after midnight (31 Aug, 2 Sep)",
+        s["design"]["clipped_hours_after_midnight"], "hours", "Single-day replay: windows are cut at 24:00.", **kw_)
 
-    def h(sc, gl, col):
-        x = rows[(rows.scenario == sc) & (rows.g_label == gl)].groupby("date")[col].sum()
-        return [rnd(x.get(d_, 0), 2) for d_ in days]
-    series = [("Without Tameru", "A38@50", "D0_h", ORANGE), ("Tameru alone 50 %", "A38@50", "D1_h", AQUA),
-              ("Tameru + STEG notice 50 %", "B@50", "D1_h", BLUE), ("Tameru alone 70 %", "A38@70", "D1_h", "#0e7a54"),
-              ("Tameru + STEG notice 70 %", "B@70", "D1_h", "#1d4f91")]
-    cfg = chart("bar", days, [ds(lab, h(sc, "base", col), colr, low_g=h(sc, "low", col), high_g=h(sc, "high", col))
-                              for lab, sc, col, colr in series],
-                "Outage hours per documented 2026 shedding day", "Base gap g = 14 %; low_g / high_g = 10 % / 25 %.",
-                "day", "feeder outage hours")
-    cfg.update(assumption=True, source=SHED_SRC)
-    save("shedding_days", cfg)
+
+def story_items(add):
+    """Numbers the v2 story needs that were only in results files (no recomputation, no new run)."""
+    wt = pd.read_csv(RESULTS / "backtest_whole_test.csv")
+    nd = wt.date.nunique()
+    for sc, tag in (("unmanaged", "unmanaged"), ("closed_lp_round_m0", "tameru")):
+        x = wt[wt.scenario == sc]
+        add(f"whole_overload_days_{tag}", f"Overload days, whole test period, {tag}", int((x.minutes_over > 0).sum()),
+            "days", f"All {nd} test days (Jun-Oct 2026); Tameru = closed loop 50 %.", basis="whole test period")
+        add(f"whole_overload_hours_{tag}", f"Hours above feeder capacity, whole test period, {tag}",
+            round(x.minutes_over.sum() / 60, 2), "hours", f"All {nd} test days.", basis="whole test period")
+        add(f"whole_kwh_over_{tag}", f"Energy above capacity, whole test period, {tag}", round(x.kwh_over.sum()),
+            "kWh", f"All {nd} test days.", basis="whole test period")
+    bt = pd.read_csv(RESULTS / "backtest.csv")
+    for a in (0.7, 1.0):
+        x = bt[(bt.scenario == "closed_lp_round_m0") & (bt.adoption == a) & (bt.faults == 0)]
+        add(f"closed_mean_peak_{int(a * 100)}", f"Mean daily peak, closed loop, {a:.0%}", round(x.peak_kw.mean()), "kW",
+            "20 highest-load test days.", basis="mean of 20 highest-load test days")
+        add(f"closed_hours_over_{int(a * 100)}", f"Hours above capacity, closed loop, {a:.0%}",
+            round(x.minutes_over.sum() / 60, 2), "hours", "20 highest-load test days.", basis="20 highest-load test days")
+    sh = _j("showcase_days.json")
+    add("worst_day_date", "Worst test day (highest unmanaged peak)", sh["worst"], "date",
+        "Of the 20 highest-load test days.")
+    add("feeder_peak_window", "Feeder peak window (simulated)", "19:00-22:00", "time",
+        "Hours holding 97.6 % of the unmanaged overload quarters, training + validation days (results/peak_window.json).")
+    b = _j("bills.json")["comparisons"]
+    for k, tag in (("closed_loop@0.5_vs_unmanaged", ""), ("closed_loop_enforced@0.5_vs_unmanaged", "_enforced")):
+        x = b[k]["steg_bt_3p_ttc"]
+        add(f"steg_revenue_change_pct{tag}", "STEG revenue on the equipped farms (BT three-period), Tameru 50 %"
+            + (", budget enforced" if tag else ""),
+            round(100 * (x["district_scenario_tnd"] / x["district_unmanaged_tnd"] - 1), 1), "%",
+            "20 highest-load test days; the same water is pumped at cheaper hours, and peak kWh are the costliest "
+            "for STEG to supply.")
+    sh_ = b["closed_loop@0.5_vs_unmanaged"]["adopter_kwh_share"]
+    for per in ("19_23", "23_08"):
+        for side in ("unmanaged", "scenario"):
+            tag = "tameru" if side == "scenario" else "none"
+            add(f"adopter_share_{per}_{tag}", f"Equipped farms' pumping in {per.replace('_', '-')} h ({tag})",
+                round(100 * sh_[per][side], 1), "% of their kWh", "20 highest-load test days; Tameru 50 %.")
+    for side in ("unmanaged", "scenario"):
+        tag = "tameru" if side == "scenario" else "none"
+        add(f"adopter_share_08_19_{tag}", f"Equipped farms' pumping in 08-19 h ({tag})",
+            round(100 * (1 - sh_["19_23"][side] - sh_["23_08"][side]), 1), "% of their kWh",
+            "The rest of the day (BT day rate); 20 highest-load test days; Tameru 50 %.")
+    wb = _j("water_budget.json")["scenarios"]
+    add("wb_crop_need_m3_day", "FAO-56 crop need, district", round(wb["unmanaged@0.0"]["crop_need_m3"]), "m³/day",
+        "Mean over the 20 highest-load test days.")
+    add("wb_budget_m3_day", "Water budget (110 % of crop need), district", round(wb["unmanaged@0.0"]["budget_m3"]),
+        "m³/day", "Mean over the 20 highest-load test days.")
+    for k, tag in (("unmanaged@0.0", "none"), ("closed_loop@0.5", "off"), ("closed_loop_enforced@0.5", "enforced")):
+        add(f"wb_pumped_m3_day_{tag}", f"Water pumped, district ({tag})", round(wb[k]["pumped_m3"]), "m³/day",
+            "Mean over the 20 highest-load test days; Tameru 50 %.")
+    pg = _j("planner_gap_train.json")["rows"]
+    add("planner_objective_gap_pct", "Fast planner (lp_round) vs exact MILP, objective gap",
+        f"{min(r['objective_gap_pct'] for r in pg):.1f}-{max(r['objective_gap_pct'] for r in pg):.1f}", "%",
+        "5 training days; the gap is the end-of-day tank level, not the peak (planned peaks within 1 %).")
+    add("planner_end_level_gap_m3", "lp_round ends the day with less water in the tanks than MILP (district)", "22-38",
+        "m³", "R3 planner diagnostic, 5 training days (log only, not stored in a results file). Known limitation.")
+    con = sqlite3.connect(DB)
+    ram = con.execute("SELECT MAX(total_kw) FROM grid_load WHERE CAST(substr(ts,6,2) AS INT) IN (11,12,1,2,3)").fetchone()[0]
+    add("ramadan_evening_max_kw", "Highest unmanaged feeder load Nov-Mar (a Ramadan evening, 14 Mar 2025)", round(ram, 1),
+        "kW", "Within 0.5 % of capacity; data figure (unmanaged load), no model.")
 
 
 def phase6_charts(save):
@@ -460,6 +575,8 @@ def main():
             rnd(wbf[key]["hours_over_capacity"], 2), "hours", f"{n_days} days. " + fault_note, assumption=True)
     phase6_items(add)
     shedding_items(add)
+    shedding_atomic(add)
+    story_items(add)
     n_eq = sqlite3.connect(DB).execute("SELECT COUNT(*) FROM pumps WHERE adopt_u < ?", (MAIN_ADOPTION,)).fetchone()[0]
     add("equipped_farms_main", f"Farms with a relay box at {a50} adoption", n_eq, "farms",
         "Farms are drawn at random; at 50 % adoption this simulated district has this many equipped farms.")
@@ -472,6 +589,8 @@ def main():
     ch.mkdir(parents=True, exist_ok=True)
 
     def save(name, cfg):
+        if name not in SITE_CHARTS:                 # the others are archived (archive/README.md)
+            return
         (ch / f"{name}.json").write_text(json.dumps(cfg, indent=1, ensure_ascii=False), encoding="utf-8")
 
     save("worst_day", chart(
@@ -582,17 +701,9 @@ def main():
     save("faults", cfg)
 
     phase6_charts(save)
-    shedding_charts(save)
 
-    # ------------------------------------------------------------------ figures
-    fig = OUT / "figures"
-    fig.mkdir(parents=True, exist_ok=True)
-    for f in (RESULTS / "figures").iterdir():
-        if f.suffix in (".png", ".svg"):
-            shutil.copy(f, fig / f.name)
-    print(f"wrote {OUT / 'site_data.json'} ({len(items)} numbers), {len(list(ch.glob('*.json')))} charts, "
-          f"{len(list(fig.iterdir()))} figure files")
-
+    # figures: drawn by site_figures.py (curated, one style) and report.py (technical); never copied from results/
+    print(f"wrote {OUT / 'site_data.json'} ({len(items)} numbers), {len(list(ch.glob('*.json')))} charts")
 
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)

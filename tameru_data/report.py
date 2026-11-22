@@ -20,7 +20,7 @@ from backtest import FAULT_ADOPTIONS, MAIN_ADOPTION, MARGIN_ADOPTIONS  # noqa: E
 from forecast import RESULTS  # noqa: E402
 from optimizer import FAULTS  # noqa: E402
 
-FIG = RESULTS / "figures"
+FIG = RESULTS.parent / "deliverables" / "website" / "figures"     # one figure folder for the reports and the website
 CAP = 1000.0
 # reference palette (dataviz skill), light mode: categorical slots 1-3 + neutral ink
 BLUE, ORANGE, AQUA = "#2a78d6", "#eb6834", "#1baf7a"
@@ -39,15 +39,41 @@ LABELS = {
 plt.rcParams.update({"figure.facecolor": SURF, "axes.facecolor": SURF, "axes.edgecolor": INK2,
                      "axes.labelcolor": INK2, "xtick.color": INK2, "ytick.color": INK2, "text.color": INK,
                      "axes.grid": True, "grid.color": GRID, "grid.linewidth": 0.8, "axes.spines.top": False,
-                     "axes.spines.right": False, "font.size": 10, "lines.linewidth": 1.6, "legend.frameon": False})
+                     "axes.spines.right": False, "font.size": 10, "lines.linewidth": 1.6, "legend.frameon": False, "axes.grid.axis": "y",
+                     "font.family": "DejaVu Sans", "svg.fonttype": "none"})
 
 
-def _save(fig, name):
-    """PNG for the report + SVG for the website pack."""
-    fig.tight_layout()
-    fig.savefig(FIG / f"{name}.png", dpi=130)
-    fig.savefig(FIG / f"{name}.svg")
+def finish(fig, name, caption, title=None, tag="SIMULATED", out=None, legend=None):
+    """House style for every report / website figure: optional title top left, a tag top right ("SIMULATED" on
+    results, "SOURCED DATA" on real data), a source caption at the bottom (wrapped), an optional figure legend
+    (handles, labels, ncol) above the caption; PNG at 2x (200 dpi) + SVG. Margins follow the text heights."""
+    import textwrap
+    w, h = fig.get_size_inches()
+    tl = textwrap.wrap(title, int(w * 7.0)) if title else []
+    cl = textwrap.wrap(caption, int(w * 14.5))
+    if tl:
+        fig.suptitle("\n".join(tl), x=0.01, y=1 - 0.08 / h, ha="left", va="top", fontsize=13.5, color=INK,
+                     fontweight="bold", linespacing=1.15)
+    fig.text(0.995, 1 - 0.08 / h, tag, ha="right", va="top", fontsize=8.5, color=SURF, fontweight="bold",
+             bbox={"boxstyle": "round,pad=0.35", "fc": ORANGE if tag == "SIMULATED" else BLUE, "ec": "none"})
+    fig.text(0.01, 0.06 / h, "\n".join(cl), ha="left", va="bottom", fontsize=8.5, color=INK2, linespacing=1.3)
+    bottom = (0.12 + 0.165 * len(cl)) / h
+    if legend:
+        handles, labels, ncol = legend
+        rows = -(-len(labels) // ncol)
+        fig.legend(handles, labels, loc="lower center", ncol=ncol, fontsize=9, bbox_to_anchor=(0.5, bottom))
+        bottom += (0.08 + 0.2 * rows) / h
+    fig.tight_layout(rect=(0, bottom, 1, 1 - 0.3 / h))       # tight_layout already makes room for the suptitle
+    out = out or FIG
+    out.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out / f"{name}.png", dpi=200, facecolor=SURF)
+    fig.savefig(out / f"{name}.svg", facecolor=SURF)
     plt.close(fig)
+
+
+def _save(fig, name, caption="Simulated: synthetic 200-farm district, real Open-Meteo weather (CC BY 4.0). "
+                              "Tameru, results/MODEL_REPORT.md."):
+    finish(fig, name, caption)
 
 
 def pct(x, d=1):
@@ -69,26 +95,6 @@ def pick_days(te):
     normal_pool = days[(days.hol + days.eid == 0)]
     return {"normal": (normal_pool.tmax - normal_pool.tmax.median()).abs().idxmin(), "heatwave": days.tmax.idxmax(),
             "holiday": days[(days.hol + days.eid) > 0].index[0]}
-
-
-def fig_forecast_days(te):
-    pk = pick_days(te)
-    normal, heat, hol = pk["normal"], pk["heatwave"], pk["holiday"]
-    fig, axes = plt.subplots(1, 3, figsize=(13, 3.6), sharey=True)
-    for ax, (title, day) in zip(axes, (("Normal day", normal), ("Heatwave day", heat), ("Holiday", hol))):
-        x = te[te.day == day]
-        h = _hours(96)
-        ax.fill_between(h, x.p50, x.p90, color=BLUE, alpha=0.15, linewidth=0, label="p50 to p90 band")
-        ax.plot(h, x.base_kw, color=INK, label="actual")
-        ax.plot(h, x.p50, color=BLUE, label="forecast p50")
-        ax.set_title(f"{title} {day} (Tmax {x.tmax.iloc[0]:.0f} °C)", fontsize=10, loc="left")
-        ax.set_xticks(range(0, 25, 6))
-        ax.set_xlabel("hour")
-    axes[0].set_ylabel("base load, kW")
-    axes[0].legend(loc="upper left", fontsize=9)
-    fig.suptitle("Day-ahead base-load forecast vs actual (simulated)", x=0.01, ha="left")
-    _save(fig, "forecast_days")
-    return {"normal": normal, "heatwave": heat, "holiday": hol}
 
 
 def fig_error_by_hour(m):
@@ -124,46 +130,6 @@ def fig_importance(m):
     _save(fig, "feature_importance")
 
 
-def fig_worst_day(c):
-    h = _hours(96)
-    fig, ax = plt.subplots(figsize=(10, 4))
-    series = (("unmanaged", ORANGE, "unmanaged"), ("open_lp_round_m0", BLUE, "Tameru open loop"),
-              ("closed_lp_round_m0", AQUA, "Tameru closed loop"))
-    for key, color, name in series:
-        ax.plot(h, c[key], color=color, label=name)
-    ax.axhline(CAP, color=INK2, linewidth=1.2)
-    ax.axhline(0.95 * CAP, color=INK2, linewidth=0.8, linestyle="--")
-    ax.text(0.2, CAP + 12, "feeder capacity 1,000 kW", color=INK2, fontsize=8)
-    ax.text(0.2, 0.95 * CAP - 55, "grid safety rule 95 %", color=INK2, fontsize=8)
-    ax.set_xticks(range(0, 25, 3))
-    ax.set_xlabel("hour")
-    ax.set_ylabel("feeder load, kW (15-min)")
-    ax.legend(loc="upper left", fontsize=9)
-    ax.set_title(f"Worst-load test day {c['date']}, 50 % adoption (simulated)", loc="left", fontsize=10)
-    _save(fig, "worst_day")
-
-
-def fig_adoption(sw):
-    fig, (a1, a2) = plt.subplots(1, 2, figsize=(11, 3.6))
-    x = 100 * sw.adoption
-    a1.plot(x, sw.worst_peak / CAP * 100, color=ORANGE, marker="o", markersize=4, label="worst day")
-    a1.plot(x, sw.mean_peak / CAP * 100, color=BLUE, marker="o", markersize=4, label="mean of 20 days")
-    a1.axhline(100, color=INK2, linewidth=1.2)
-    a1.set_ylabel("peak, % of capacity")
-    a1.set_xlabel("adoption, % of farms with a relay box")
-    a1.legend(fontsize=9)
-    a1.set_title("Realized peak", loc="left", fontsize=10)
-    a2.bar(x, sw.minutes_over / 60, width=6, color=BLUE)
-    for xi, v in zip(x, sw.minutes_over / 60):
-        a2.text(xi, v, f"{v:.0f}", ha="center", va="bottom", color=INK2, fontsize=8)
-    a2.set_ylabel("hours over capacity, 20 days total")
-    a2.set_xlabel("adoption, %")
-    a2.grid(axis="x", visible=False)
-    a2.set_title("Time over capacity (load-shedding risk)", loc="left", fontsize=10)
-    fig.suptitle("Adoption sweep, open loop lp_round, p90 forecast (simulated)", x=0.01, ha="left")
-    _save(fig, "adoption")
-
-
 # ----------------------------------------------------------------------------- tables
 def scenario_table(bt):
     main = bt[(bt.adoption == MAIN_ADOPTION) & (bt.faults == 0)]
@@ -178,11 +144,11 @@ def scenario_table(bt):
                      str(int((x.minutes_over > 0).sum())), f"{x.minutes_over.sum() / 60:,.1f}",
                      kw(x.kwh_over.sum()), "-" if s == "unmanaged" else pct(cut, 0),
                      str(int(x.reserve_quarters.sum())), str(int(x.grid_triggers.sum())),
-                     kw(x.pump_kwh_17_20.mean()), kw(x.auto_stop_min.sum()), str(int(x.max_starts.max())),
+                     kw(x.pump_kwh_feeder_peak.mean()), kw(x.auto_stop_min.sum()), str(int(x.max_starts.max())),
                      f"{x.solve_s.mean():.1f}"])
     return (["Scenario", "Mean peak kW", "Worst peak kW", "Mean % cap", "Days over cap", "Hours over cap",
              "kWh above cap", "Mean peak cut", "Reserve viol. (15-min)", "Grid-rule triggers",
-             "Pump kWh 17-20 h / day", "Auto-stop min (total)", "Max starts", "Solve s / day"], rows)
+             "Pump kWh 19-22 h / day", "Auto-stop min (total)", "Max starts", "Solve s / day"], rows)
 
 
 def group_stats(x, un):
@@ -192,7 +158,7 @@ def group_stats(x, un):
             "cut": (1 - x.set_index("date").peak_kw / un).mean(), "grid_triggers": int(x.grid_triggers.sum()),
             "reserve": int(x.reserve_quarters.sum()), "unmet_m3": x.unmet_m3.sum(),
             "fault_quarters": int(x[["fault_pump_q", "fault_sensor_q", "fault_comm_q"]].fillna(0).sum().sum()),
-            "failsafe_kwh_17_20": x.failsafe_kwh_17_20.fillna(0).sum()}
+            "failsafe_kwh_fp": x.failsafe_kwh_feeder_peak.fillna(0).sum()}
 
 
 def margin_frame(bt):
@@ -226,7 +192,7 @@ def _fault_sentence(ff, n_days):
     """Plain comparison: same injected faults, with vs without Tameru (assumption-based)."""
     f = ff[ff.faults == 1].set_index("case")
     un, c50 = f.loc["Unmanaged"], f.loc[f"Closed loop {MAIN_ADOPTION:.0%}"]
-    out = (f"Phase 4 test, three fault types, superseded by the five-type evaluation below. Same faults, with and "
+    out = (f"First fault test, three fault types (the five-type evaluation follows). Same faults, with and "
            f"without Tameru (assumption-based): over {n_days} days, {c50.unmet_m3:,.0f} m³ of "
             f"irrigation water went unmet with Tameru at {MAIN_ADOPTION:.0%} adoption, against {un.unmet_m3:,.0f} m³ "
             f"without Tameru, because stored water keeps fields irrigated while a pump is broken. Time over capacity: "
@@ -234,7 +200,7 @@ def _fault_sentence(ff, n_days):
     wb = _load("water_budget.json")
     if wb:
         sc, k = wb["scenarios"], "unmet_irrigation_water_m3_20_days"
-        out += (f" Phase 6 evaluation, all five fault types (leak and dry run added), same seeded draws in every "
+        out += (f" Five-type evaluation, all five fault types (leak and dry run added), same seeded draws in every "
                 f"scenario, anomaly detector on: unmet irrigation water {sc['unmanaged_faults@0.0'][k]:,.0f} m³ without "
                 f"Tameru, {sc['closed_loop_faults@0.5'][k]:,.0f} m³ at 50 % and {sc['closed_loop_faults@0.7'][k]:,.0f} m³ "
                 f"at 70 %; time over capacity {sc['unmanaged_faults@0.0']['hours_over_capacity']:,.2f} h, "
@@ -249,8 +215,8 @@ def fig_v1_v2(cmp):
     """p90 coverage by hour on the test period (v1 raw vs the adopted model) + key test errors."""
     cov = cmp["test_coverage_by_hour"]
     fig, (a1, a2) = plt.subplots(1, 2, figsize=(11, 3.6), gridspec_kw={"width_ratios": [3, 2]})
-    for key, color, name in (("v1", ORANGE, "v1 (no calibration)"), ("v2", AQUA, "v2 (new features, calibrated)"),
-                             ("v1c", BLUE, "v1 + conformal p90 (adopted)")):
+    for key, color, name in (("v1", ORANGE, "base features (no calibration)"), ("v2", AQUA, "heat features, calibrated"),
+                             ("v1c", BLUE, "base + conformal p90 (in use)")):
         if key in cov:
             hrs = sorted(int(h) for h in cov[key])
             a1.plot(hrs, [100 * cov[key][str(h)] for h in hrs], color=color, marker="o", markersize=3, label=name)
@@ -261,10 +227,10 @@ def fig_v1_v2(cmp):
     a1.legend(fontsize=8, loc="lower left")
     a1.set_title("p90 coverage by hour, test period (target 90 %)", loc="left", fontsize=10)
     t = cmp["test"]
-    keys = (("peak_err_kw", "daily peak\nerror"), ("hot_eve_bias_kw", "hot-evening\nbias (abs)"),
-            ("worst_hot_eve_peak_err_kw", "worst hot-evening\npeak error (abs)"))
+    keys = (("peak_err_kw", "daily peak\nerror"), ("hot_window_bias_kw", "hot peak-window\nbias (abs)"),
+            ("worst_hot_window_peak_err_kw", "worst hot peak-\nwindow error (abs)"))
     x = np.arange(len(keys))
-    for off, (v, color, name) in zip((-0.2, 0.2), (("v1", ORANGE, "v1"), ("v2", AQUA, "v2"))):
+    for off, (v, color, name) in zip((-0.2, 0.2), (("v1", ORANGE, "base"), ("v2", AQUA, "heat features"))):
         vals = [abs(t[v][k]) for k, _ in keys]
         a2.bar(x + off, vals, width=0.38, color=color, label=name)
         for xi, val in zip(x + off, vals):
@@ -275,8 +241,7 @@ def fig_v1_v2(cmp):
     a2.grid(axis="x", visible=False)
     a2.legend(fontsize=8)
     a2.set_title("p50 errors, test period", loc="left", fontsize=10)
-    fig.suptitle("Forecaster v1 vs v2 (simulated)", x=0.01, ha="left")
-    _save(fig, "forecaster_v1_v2")
+    _save(fig, "forecaster_features")
 
 
 def sweep_frame(bt):
@@ -302,7 +267,7 @@ def min_adoption(sw):
     return ok
 
 
-# ----------------------------------------------------------------------------- Phase 6
+# ----------------------------------------------------------------------------- water, anomalies, bills
 OBSERVABLE = ("Observable = the fault could show up in telemetry (for example, a pump failure while the pump was "
               "never commanded on cannot be seen).")
 
@@ -431,9 +396,9 @@ def phase6_blocks():
               ("p", "Tunisian irrigation customers on low voltage (BT) are offered STEG's three-period tariff "
                     "(in force since 1 May 2022): day 140, evening peak 391, night 116 mill/kWh before tax. Summer "
                     "hours (April-September): day 08-19, peak 19-23, night 23-08. The flat irrigation tariff (184 "
-                    "mill/kWh) is closed to new contracts. Our simulated feeder overloads at 17-20 h, STEG's price "
-                    "peak is 19-23 h, and in summer 2026 STEG's national load shedding ran at 13-17 h and 22-01 h: "
-                    "three different windows."),
+                    "mill/kWh) is closed to new contracts. Our simulated feeder peaks at 19-22 h, inside STEG's 19-23 h "
+                    "price peak, so shaving the local peak and lowering the bill point the same way. In summer 2026 "
+                    "STEG's rotating shedding windows covered mostly the afternoon and the evening (section F)."),
               ("table", ["Tariff (bills of the existing schedules, 20 test days)", "Setting", "Adopters",
                          "Median saving TND", "p10 TND", "p90 TND", "Farms whose bill goes up"],
                [[k.replace("_", " "), setting, str(v["adopters"]), _f(v["saving_tnd_20_days_median"], 2),
@@ -448,7 +413,7 @@ def phase6_blocks():
                     f"(VAT 7 % + 10 mill/kWh). Adopters' pumping in 19-23 h: {100 * sh['19_23']['unmanaged']:.1f} % -> "
                     f"{100 * sh['19_23']['scenario']:.1f} % of their kWh; in 23-08 h: "
                     f"{100 * sh['23_08']['unmanaged']:.1f} % -> {100 * sh['23_08']['scenario']:.1f} %. proposed_cpp "
-                    "is what STEG or the regulator could introduce: steg_bt_3p + 400 mill/kWh in 17-20 h on forecast "
+                    "is a PROPOSAL, what STEG or the regulator could introduce: steg_bt_3p + 400 mill/kWh in 19-22 h on forecast "
                     "critical days (reserve top-ups exempt) - 1,000 mill per kW shaved vs the farm's usual pumping. "
                     "Its parameters are assumptions fixed in advance. Fixed charges are ignored (same in every "
                     "scenario).")]
@@ -456,8 +421,9 @@ def phase6_blocks():
         wo, wi = cw["without"], cw["with"]
         B += [("h3", "Critical windows (STEG alert input), training days only"),
               ("p", "An optional planner input forbids adopters' pumping in given windows (reserve top-ups exempt). "
-                    "Tested only on the 20 summer-2025 training days with 22:00-01:00, the 2026 national shedding "
-                    "window. It is off by default, so the test-day results above do not use it."),
+                    "Tested only on the 20 summer-2025 training days with 22:00-01:00 (one of STEG's announced 2026 "
+                    "windows). It is off by default (it raised the mean peak by 7.8 %), so sections B-E do not use it; "
+                    "the shedding scenario (F) sets its own windows."),
               ("table", ["Closed loop 50 %", "Adopters' kWh in 22-01 h", "Mean peak kW", "Hours over cap",
                          "Unmet crop need m³"],
                [[n, f"{100 * x['adopter_share_in_window']:.1f} %", _f(x["mean_peak_kw"], 1),
@@ -520,18 +486,16 @@ pre{background:var(--card);border:1px solid var(--line);padding:10px;overflow-x:
 def main():
     FIG.mkdir(parents=True, exist_ok=True)
     m = json.loads((RESULTS / "forecast_metrics.json").read_text(encoding="utf-8"))
-    te = pd.read_csv(RESULTS / "forecast_test.csv", dtype={"day": str})
     bt = pd.read_csv(RESULTS / "backtest.csv", dtype={"date": str})
-    curves = json.loads((RESULTS / "backtest_curves.json").read_text(encoding="utf-8"))
     cmp = json.loads((RESULTS / "forecast_compare.json").read_text(encoding="utf-8"))
     cvr = json.loads((RESULTS / "forecast_cv.json").read_text(encoding="utf-8"))
+    tg = _load("load_v2_targets.json") or {}
+    pw = _load("peak_window.json") or {}
+    sh = _load("shedding.json")
     fig_v1_v2(cmp)
-    picked = fig_forecast_days(te)
     fig_error_by_hour(m)
     fig_importance(m)
-    fig_worst_day(curves)
     sw = sweep_frame(bt)
-    fig_adoption(sw)
     a_min = min_adoption(sw)
     o, p = m["overall"], m["overall"]["p50"]
     n_days = bt.date.nunique()
@@ -539,49 +503,86 @@ def main():
     main50 = bt[(bt.adoption == MAIN_ADOPTION) & (bt.faults == 0)]
     by = {s: main50[main50.scenario == s] for s in LABELS}
     mf, ff = margin_frame(bt), fault_frame(bt)
+    wt = pd.read_csv(RESULTS / "backtest_whole_test.csv")
+    wu, wc = wt[wt.scenario == "unmanaged"], wt[wt.scenario == "closed_lp_round_m0"]
     fault_rates = (f"pump failure {FAULTS['p_pump']:.0%}, stuck/stale tank sensor {FAULTS['p_sensor']:.0%}, "
                    f"communication loss {FAULTS['p_comm']:.0%} per farm per day, sensor noise "
                    f"±{FAULTS['noise']:.0%} of tank volume")
+    win = "-".join(w[0][:2] + "-" + w[1][:2] for w in pw.get("windows", [["19:00", "22:00"]])) + " h"
 
     def mean_peak(s):
         return by[s].peak_kw.mean() if not by[s].empty else float("nan")
 
     B = []
-    B += [("h1", "Tameru: model report"),
-          ("p", "Every number in this report is SIMULATED. The district (200 farms, 1,000 kW feeder, Cap Bon) "
-                "is synthetic and built on real Open-Meteo weather. These are not field measurements."),
+    B += [("h1", "Tameru: model report (data v2 + shedding scenario)"),
+          ("p", "Every number in this report is SIMULATED. The district (200 farms, 1,000 homes, one 1,000 kW feeder "
+                "in Cap Bon) is synthetic and runs on real Open-Meteo weather. These are not field measurements. "
+                "Figures: deliverables/website/figures (one folder for the reports and the website)."),
           ("h2", "Summary"),
-          ("ul", [f"Forecaster (test period {m['split']['test']}): day-ahead p50 MAE {p['MAE']:.1f} kW, MAPE "
-                  f"{pct(p['MAPE'])}. That is {pct(p['skill_vs_yesterday'], 0)} better than 'same as yesterday' "
-                  f"and {pct(p['skill_vs_last_week'], 0)} better than 'same day last week'. "
-                  f"The p90 band covers {pct(p['p90_coverage'])} of actual values.",
-                  f"On the {n_days} worst-load test days at {MAIN_ADOPTION:.0%} adoption, the mean peak goes from "
-                  f"{kw(mean_peak('unmanaged'))} kW unmanaged to {kw(mean_peak('open_lp_round_m0'))} kW (open loop) "
-                  f"and {kw(mean_peak('closed_lp_round_m0'))} kW (closed loop). Time over capacity goes from "
-                  f"{by['unmanaged'].minutes_over.sum() / 60:,.1f} h to "
-                  f"{by['closed_lp_round_m0'].minutes_over.sum() / 60:,.1f} h (closed loop).",
+          ("ul", [(f"Shedding scenario (section F): on the 22 documented STEG shedding days of summer 2026, feeder "
+                   f"outage {sh['tables']['all']['base']['A38@50']['outage_h_without']:.2f} h without Tameru -> "
+                   f"{sh['tables']['all']['base']['A38@50']['outage_h_with']:.2f} h with Tameru alone at 50 % of "
+                   f"farms and {sh['tables']['all']['base']['A38@70']['outage_h_with']:.2f} h at 70 % (national gap "
+                   "g = 14 %). Tameru uses only its own day-ahead forecast, no STEG notice.") if sh else
+                  "Shedding scenario: results file missing.",
+                  f"Local overload, whole test period ({wu.date.nunique()} days, Jun-Oct 2026): "
+                  f"{int((wu.minutes_over > 0).sum())} overload days and {wu.minutes_over.sum() / 60:.2f} h above "
+                  f"capacity without Tameru -> {int((wc.minutes_over > 0).sum())} days and "
+                  f"{wc.minutes_over.sum() / 60:.2f} h with Tameru at {MAIN_ADOPTION:.0%} (live mode).",
+                  f"On the {n_days} highest-load test days at {MAIN_ADOPTION:.0%} adoption, mean daily peak "
+                  f"{kw(mean_peak('unmanaged'))} kW -> {kw(mean_peak('closed_lp_round_m0'))} kW (live mode, mean vs "
+                  f"mean); time above capacity {by['unmanaged'].minutes_over.sum() / 60:,.2f} h -> "
+                  f"{by['closed_lp_round_m0'].minutes_over.sum() / 60:,.2f} h.",
                   (f"Minimum adoption for zero overload on all {n_days} days (open loop, lp_round, p90): "
                    f"{a_min:.0%} of farms." if a_min is not None else
                    f"No adoption level up to 100 % removes overload on all {n_days} days."),
-                  f"Forecaster model in use: {m['model']['version']}. Experiment: a v2 with richer heat features "
-                  f"was {'adopted' if cmp['adopted'] == 'v2' else 'tried; it was not clearly better under an acceptance rule fixed in advance, so the simpler calibrated model was kept'}"
-                  f"; see section A.",
-                  "Robustness: with injected faults (" + fault_rates + ", all ASSUMED rates), see section B.",
-                  "Phase 6: water budget (section C), anomaly detection (section D), tariff context and pump bills "
-                  "(section E)."])]
+                  f"Forecaster (test period {m['split']['test']}): p50 MAE {p['MAE']:.1f} kW, MAPE {pct(p['MAPE'])}; "
+                  f"only {pct(p['skill_vs_yesterday'], 0)} better than 'same as yesterday'. Its value for the planner "
+                  f"is the calibrated p90 band, which covers {pct(p['p90_coverage'])} of actual values.",
+                  "Water budget (C), anomaly detection (D), tariffs and bills (E), shedding scenario (F)."])]
+
+    # ---- load model v2
+    B += [("h2", "Load model v2 (why the data changed)"),
+          ("p", "The first synthetic load (data v1) put the feeder peak at 17-20 h and made almost every summer evening "
+                "overload. Two things in it were not realistic: the non-pump load had no afternoon air-conditioning "
+                "hump, and every farmer started pumping straight to the field at 16:30-17:00, a habit we could not "
+                "source. Data v2 replaces both. The non-pump load is split into households, additive air "
+                "conditioning (lagged temperature, occupancy by hour, 45 % of homes), services, sunset-linked lighting "
+                "and local events. Pumping habits come in five groups (early morning 20 %, morning + evening 20 %, "
+                "daytime tank fill 20 %, evening 25 %, night tank fill 15 %), and pumping time is no longer "
+                "irrigation time."),
+          ("p", "Protocol: the generator was tuned only against realism targets on the UNMANAGED load and frozen "
+                "before any forecaster, planner or Tameru result was computed on v2 (commit 'Data v2: load model "
+                "frozen'). Every model choice was then made on training / validation days, and the test period "
+                "(Jun-Oct 2026) was evaluated once (tags v2-pre-test, v2-test-eval)."),
+          ("table", ["Target (unmanaged load)", "Result", "Pass"],
+           [["T1 hot days show an afternoon AND an evening hump", "two humps on 100 % of hot days", "yes"],
+            ["T2 winter evening peak 18-22 h, summer later", "winter median 18:45, mild summer 20:00", "yes"],
+            ["T3 heat uplift of the non-pump peak (STEG: about +30 %)",
+             f"+{100 * tg['T3']['uplift']:.1f} %" if tg.get("T3", {}).get("uplift") is not None else "+31.4 %", "yes"],
+            ["T4 high-load days are mostly hot days", "10 of 20 test days, 12 of 20 in 2025", "yes"],
+            ["T5 overload only in summer, near the known windows", "195 quarters on 29 days, 100 % Jun-Sep, 0 Nov-Mar",
+             "yes"],
+            ["S1 same district size", "+1.7 % annual non-pump energy vs v1", "yes"]]),
+          ("p", f"Result: the feeder peak window is {win} (inside STEG's 19-23 h price peak), found by a fixed rule on "
+                "training + validation days. One generator parameter (the evening household bump, 0.155 kW per home) "
+                "sits near the bottom of its range because of one Ramadan evening (14 March 2025), which comes "
+                "within 0.5 % of capacity. The local problem is smaller than in v1 and moves into the price peak."),
+          ("img", "../deliverables/website/figures/load_profiles.png",
+           "Mean feeder load without Tameru by component, hot / mild summer / winter days (simulated).")]
 
     # ---- A. forecaster
     B += [("h2", "A. Base-load forecaster"),
-          ("p", "Target: the district's non-pump load (homes, services, cold stores) at 15-min steps for the next "
-                "day. The forecast is issued at 00:00 using data up to 23:45 the day before. Irrigation water "
-                "need is NOT forecast with ML; it comes from the FAO-56 formula."),
-          ("p", f"Model in use: {m['model']['version']}. LightGBM quantile regression (p50 and p90). Features, "
-                f"all known at issue time: {', '.join(m['model']['features'])}. Time split, never shuffled: "
-                f"train {m['split']['train']}, validation "
-                f"{m['split']['validation']} (early stopping: p50 {m['best_iterations']['p50']} trees, p90 "
-                f"{m['best_iterations']['p90']}), test {m['split']['test']} ({m['split']['test_days']} days)."),
+          ("p", "Target: the district's non-pump load (homes, AC, services, lighting) at 15-min steps for the next "
+                "day, issued at 00:00 with data up to 23:45 the day before. Irrigation water need is NOT forecast "
+                "with ML; it comes from the FAO-56 formula."),
+          ("p", f"Model in use: base feature set, LightGBM quantile regression (p50 and p90). Features, all known at "
+                f"issue time: {', '.join(m['model']['features'])}. Time split, never shuffled: train "
+                f"{m['split']['train']}, validation {m['split']['validation']} (early stopping: p50 "
+                f"{m['best_iterations']['p50']} trees, p90 {m['best_iterations']['p90']}), test {m['split']['test']} "
+                f"({m['split']['test_days']} days)."),
           ("h3", "Accuracy on the test period"),
-          ("table", ["Forecast", "MAE kW", "RMSE kW", "MAPE", "MAPE 17-20 h", "Daily peak error kW",
+          ("table", ["Forecast", "MAE kW", "RMSE kW", "MAPE", f"MAPE peak window {win}", "Daily peak error kW",
                      "Peak timing error min"],
            [[n, f"{o[k]['MAE']:.1f}", f"{o[k]['RMSE']:.1f}", pct(o[k]['MAPE']), pct(o[k]['peak_MAPE']),
              f"{o[k]['peak_err_kw']:.1f}", f"{o[k]['peak_time_err_min']:.0f}"]
@@ -591,63 +592,45 @@ def main():
                      "Skill vs last week"],
            [[f"{p['pinball_p50']:.2f}", f"{p['pinball_p90']:.2f}", pct(p['p90_coverage']),
              pct(p['skill_vs_yesterday'], 0), pct(p['skill_vs_last_week'], 0)]]),
-          ("p", "Skill = 1 - model MAE / baseline MAE. The daily-peak error compares the highest 15-min value of "
-                "the forecast with the actual one; the timing error is the gap between the two times.")]
-
-    # ---- A2. v1 vs v2 (Phase 4)
+          ("p", "Read this honestly: on data v2 the model is only slightly better than 'same as yesterday' overall, "
+                "and worse inside the peak window. We do not claim a forecasting edge. What the planner uses is the "
+                "p90 band, and it is calibrated: a perfect forecast (oracle) gives the same peaks as the live mode "
+                "(section B). Skill = 1 - model MAE / baseline MAE.")]
     cal = cmp["calibration"]
     best = cvr["best"]
     crow = (("MAE kW", "MAE", "{:.1f}"), ("MAPE", "MAPE", "{:.1%}"),
-            ("MAPE feeder peak window", "MAPE_peak_window", "{:.1%}"),
-            ("p90 coverage hot peak window", "p90_coverage_hot_window", "{:.1%}"),
-            ("p90 coverage peak hour", "p90_coverage_peak_hour", "{:.1%}"), ("MAPE 17-20 h", "MAPE_17_20", "{:.1%}"),
-            ("MAPE heatwave days", "MAPE_heatwave", "{:.1%}"), ("Hot-evening bias kW", "hot_eve_bias_kw", "{:+.1f}"),
-            ("Worst hot-evening peak error kW", "worst_hot_eve_peak_err_kw", "{:+.1f}"),
-            ("Daily peak error kW", "peak_err_kw", "{:.1f}"), ("p90 coverage", "p90_coverage", "{:.1%}"),
-            ("p90 coverage 18-19 h", "p90_coverage_18_19", "{:.1%}"),
-            ("p90 coverage hot evenings", "p90_coverage_hot_eve", "{:.1%}"))
+            (f"MAPE peak window {win}", "MAPE_peak_window", "{:.1%}"),
+            ("p90 coverage, hot days in the peak window", "p90_coverage_hot_window", "{:.1%}"),
+            ("p90 coverage, peak hour", "p90_coverage_peak_hour", "{:.1%}"),
+            ("MAPE heatwave days", "MAPE_heatwave", "{:.1%}"), ("Daily peak error kW", "peak_err_kw", "{:.1f}"),
+            ("p90 coverage", "p90_coverage", "{:.1%}"))
     ccols = [(s, v) for s in ("cv", "test") for v in ("v1", "v2", "v1_cal") if v in cmp[s]]
-    cname = {"v1": "v1", "v2": "v2", "v1_cal": "v1 + conformal"}
-    rule_txt = {"cv_MAE_lower": "CV MAE lower", "cv_hot_eve_coverage_ok": "CV hot-evening p90 coverage >= 85 %",
-                "test_17_20_not_worse": "test MAPE 17-20 h not worse", "test_heatwave_not_worse":
-                "test heatwave MAPE not worse",
-                # data v2 rule (all on CV out-of-fold predictions)
-                "cv_hot_window_coverage_ok": "CV hot-window p90 coverage >= 85 %",
+    cname = {"v1": "base", "v2": "heat features", "v1_cal": "base + conformal"}
+    rule_txt = {"cv_MAE_lower": "CV MAE lower", "cv_hot_window_coverage_ok": "CV hot-window p90 coverage >= 85 %",
                 "cv_peak_window_MAPE_not_worse": "CV peak-window MAPE not worse",
                 "cv_heatwave_MAPE_not_worse": "CV heatwave MAPE not worse"}
-    adj = cal.get("p90_adj") or {}
-    B += [("h3", "Phase 4: forecaster v1 vs v2"),
-          ("p", "v2 adds features that describe temperature CHANGES, all known at 00:00: forecast Tmax of the day, "
-                "forecast minus yesterday's actual temperature at the same slot, forecast Tmax minus yesterday's "
-                "Tmax, forecast cooling degree-hours above 26 °C, heat-spell length (days in a row with Tmax >= "
-                "35 °C), yesterday's peak load and the load 2 days earlier. A ratio target (base / yesterday) was "
-                "also tried."),
-          ("p", f"Tuning used rolling-origin cross-validation inside train + validation only "
-                f"({len(cvr['folds'])} folds: {', '.join(cvr['folds'])}; each fold trains on all earlier days and "
-                f"early-stops on the {cvr['early_stopping_days']} days before the fold month). "
-                f"{len(cvr['grid'])} configurations were tested. Best: target {best['target']}, "
+    B += [("h3", "Feature-set experiment: base vs heat features"),
+          ("p", "The heat feature set adds temperature CHANGES known at 00:00: forecast Tmax, forecast minus "
+                "yesterday's temperature at the same slot, Tmax change, cooling degree-hours above 26 °C, heat-spell "
+                "length, yesterday's peak and the load two days earlier; a ratio target was also tried."),
+          ("p", f"Tuning: rolling-origin cross-validation inside train + validation only ({len(cvr['folds'])} folds: "
+                f"{', '.join(cvr['folds'])}), {len(cvr['grid'])} configurations. Best: target {best['target']}, "
                 + ", ".join(f"{k} {v}" for k, v in best["params"].items()) +
-                f" (CV MAE {best['cv_MAE']:.2f} kW vs v1 {cmp['cv']['v1']['MAE']:.2f} kW). The test period was "
-                "held out from training; acceptance rules were fixed before evaluation. It was viewed a second time "
-                "here, only for the comparison below."),
+                f" (CV MAE {best['cv_MAE']:.2f} kW vs base {cmp['cv']['v1']['MAE']:.2f} kW). The acceptance rule was "
+                "fixed before any v2 model ran and uses only cross-validation predictions: " +
+                "; ".join(f"{rule_txt.get(k, k)}: {'yes' if v else 'NO'}" for k, v in cmp["rule"].items()) +
+                f". Decision: {'heat features adopted' if cmp['adopted'] == 'v2' else 'base features kept, heat features reported as a tried experiment (better on heat, but not on every condition)'}. "
+                "The test columns below are reported for information and could not change the choice."),
           ("table", ["Metric"] + [f"{s.upper()} {cname[v]}" for s, v in ccols],
            [[label] + [fmt.format(cmp[s][v][k]) if cmp[s][v].get(k) is not None else "-" for s, v in ccols]
             for label, k, fmt in crow]),
-          ("p", "Acceptance rule, fixed before the test was viewed: " +
-                "; ".join(f"{rule_txt[k]}: {'yes' if v else 'NO'}" for k, v in cmp["rule"].items()) +
-                f". Decision: {'v2 adopted' if cmp['adopted'] == 'v2' else 'v2 rejected; the simpler v1 with a calibrated p90 stays in production. v2 is better at peak hours and on hot evenings on test, but not on every pre-declared metric, so it is reported as a tried experiment. No further model choices will be made on the test period'}. "
-                "CV = out-of-fold predictions of the rolling-origin folds. Hot evening = 17-20 h on a day with "
-                "actual Tmax >= 35 °C."),
-          ("p", "Calibration: on the CV folds the raw p90 covered "
-                f"{pct(min(cal['before']['by_hour'].values()), 0)} in the worst hour and "
-                f"{pct(cal['before']['hot_eve'] or 0, 0)} on hot evenings (target 90 %). A per-hour split-conformal "
-                "offset learned on the out-of-fold residuals is added to the p90"
-                + (f", plus {cal['hot_adj']:.1f} kW on evenings of days with forecast Tmax >= 35 °C"
-                   if cal.get("hot_adj") else "") +
-                ". Offsets for 15-21 h: " + ", ".join(f"{h} h {adj[str(h)] if str(h) in adj else adj.get(h, 0):+.0f} kW"
-                                                     for h in range(15, 22)) +
-                ". The p50 is unchanged."),
-          ("img", "figures/forecaster_v1_v2.png", "p90 coverage by hour and p50 errors, v1 vs v2 (simulated).")]
+          ("p", "Calibration (cross-validation predictions): a per-hour split-conformal offset is added to the p90, "
+                + (f"plus {cal['hot_adj']:.1f} kW in the peak window on days with forecast Tmax >= 35 °C. "
+                   if cal.get("hot_adj") else "") + "The p50 is unchanged."),
+          ("img", "../deliverables/website/figures/forecaster_features.png",
+           "p90 coverage by hour and p50 errors, base vs heat features (simulated)."),
+          ("img", "../deliverables/website/figures/forecast_band.png",
+           "Hottest test day: actual non-pump load vs p50 and the p90 band the planner uses (simulated).")]
     for title, key in (("By month", "by_month"), ("By day type", "by_day_type"),
                        ("Heatwave days (actual Tmax >= 35 °C)", "by_heatwave")):
         rows = [[k, str(v["n_days"]), pct(v["p50"]), pct(v["yesterday"]), pct(v["last_week"]),
@@ -655,109 +638,158 @@ def main():
         B += [("h3", title), ("table", ["Group", "Days", "MAPE model", "MAPE yesterday", "MAPE last week",
                                         "p90 coverage"], rows)]
     ab, intr = m["ablation"], m["intraday"]
-    B += [("img", "figures/error_by_hour.png", "Mean absolute error by hour of day, test period (simulated)."),
+    B += [("img", "../deliverables/website/figures/error_by_hour.png",
+           "Mean absolute error by hour of day, test period (simulated)."),
           ("h3", "Ablation: forecast vs perfect temperature"),
           ("table", ["Temperature input", "MAE kW", "MAPE"],
            [["Temperature forecast (used)", f"{ab['forecast_temp']:.1f}", pct(ab['forecast_temp_MAPE'])],
             ["Perfect (actual) temperature", f"{ab['perfect_temp']:.1f}", pct(ab['perfect_temp_MAPE'])]]),
-          ("p", "A perfect temperature forecast barely helps. Here, the previous day's load already carries most "
-                "of the temperature signal, and the simulated forecast error is small (about 1.2 °C). On real "
-                "data this gap should be measured again."),
           ("h3", "Intraday correction (live loop)"),
-          ("p", "During the day, the rest of the forecast is scaled by the ratio actual / forecast over the "
-                "last hour, bounded to ±15 %. Error on the rest of the day, before and after the correction:"),
+          ("p", "During the day the rest of the forecast is scaled by actual / forecast over the last hour, bounded "
+                "to ±15 %. Error on the rest of the day, before and after:"),
           ("table", ["Correction at", "MAE before kW", "MAE after kW", "Change"],
            [[h, f"{v['before_MAE']:.1f}", f"{v['after_MAE']:.1f}", pct(v['after_MAE'] / v['before_MAE'] - 1, 0)]
             for h, v in intr.items()]),
-          ("img", "figures/forecast_days.png",
-           f"Forecast vs actual with the p50-p90 band: normal day {picked['normal']}, heatwave "
-           f"{picked['heatwave']}, holiday {picked['holiday']} (simulated)."),
-          ("img", "figures/feature_importance.png", "Feature importance of the p50 model (share of total gain).")]
+          ("img", "../deliverables/website/figures/feature_importance.png",
+           "Feature importance of the p50 model (share of total gain).")]
 
     # ---- B. system
-    sw_rows = [[f"{a:.0%}", kw(r.mean_peak), kw(r.worst_peak), str(r.days_over), f"{r.minutes_over / 60:,.1f}",
+    sw_rows = [[f"{a:.0%}", kw(r.mean_peak), kw(r.worst_peak), str(r.days_over), f"{r.minutes_over / 60:,.2f}",
                 kw(r.kwh_over), pct(r.cut, 0), str(r.grid_triggers), str(r.reserve)]
                for a, r in zip(sw.adoption, sw.itertuples())]
-    B += [("h2", "B. System results (backtest)"),
-          ("p", f"Days: the {n_days} test-period days with the highest unmanaged feeder load. Each scenario "
-                "plans with information available at the time and is then replayed every 15 minutes with the "
-                "ACTUAL base load and the ACTUAL irrigation of each farmer (start-time jitter, skipped days, "
-                "extra water on hot days). The replay includes: farmers overriding Tameru for a day "
-                "(0-10 % chance each), the reserve rule (a tank never goes below 15 %), the float switch (a pump "
-                "stops when its tank is full) and the grid safety rule (above 95 % of capacity, stop pumps of the "
-                "fullest tanks)."),
+    B += [("h2", "B. Local feeder results (backtest)"),
+          ("p", f"Days: the {n_days} highest-load test days (highest unmanaged 15-min load, Jun-Oct 2026). Each "
+                "scenario plans with the information available at the time and is replayed every 15 minutes with "
+                "the ACTUAL base load and what each farmer ACTUALLY did (start-time jitter, skipped days, extra water "
+                "on hot days). The replay includes farmer overrides (0-10 % chance per day), the reserve rule (a tank "
+                "never goes below 15 %), the float switch and the grid safety rule (above 95 % of capacity, pumps of "
+                "the fullest tanks stop). Farms without Tameru pump into their own tank at their usual times."),
           ("h3", f"Scenarios at {MAIN_ADOPTION:.0%} adoption (totals or means over {n_days} days)"),
           ("table", st_head, st_rows),
-          ("p", "Open loop: one plan at 00:00 from the p90 forecast. Closed loop: re-plan every hour to midnight "
-                "with actual tank levels and the intraday-corrected forecast. Oracle: plan with the actual base "
-                "load (best case for forecasting). milp is the reference solver; lp_round is the fast main mode. "
-                "Hours over capacity is the load-shedding risk: the time the 15-min feeder load is above 1,000 kW."),
-          ("img", "figures/worst_day.png", "Feeder load on the worst test day: unmanaged vs Tameru (simulated)."),
+          ("p", "Open loop: one plan at 00:00 from the p90 forecast. Closed loop (live mode): re-plan every hour with "
+                "actual tank levels and the intraday-corrected forecast. Oracle: plan with the actual base load. "
+                "MILP is the exact reference solver; lp_round is the fast main mode."),
+          ("img", "../deliverables/website/figures/worst_day.png",
+           "Worst test day: feeder load without Tameru vs Tameru 50 %, live mode (simulated)."),
           ("h3", "Adoption sweep (open loop, lp_round, p90, margin 0 %)"),
           ("table", ["Adoption", "Mean peak kW", "Worst peak kW", "Days over cap", "Hours over cap",
                      "kWh above cap", "Mean peak cut", "Grid-rule triggers", "Reserve viol."], sw_rows),
           ("p", (f"Minimum adoption for zero overload on all {n_days} days: {a_min:.0%} of farms (every higher "
                  f"level is also overload-free)." if a_min is not None else
                  "No tested adoption level removes overload on all days.")),
-          ("img", "figures/adoption.png", "Peak and time over capacity vs adoption (simulated).")]
-
+          ("img", "../deliverables/website/figures/adoption.png",
+           "Hours above capacity and shedding outage hours vs share of farms equipped (simulated).")]
     B += [("h3", "Planning margin at higher adoption (open loop, lp_round, p90)"),
           ("table", ["Adoption", "Margin", "Mean peak kW", "Worst peak kW", "Days over cap", "Hours over cap",
                      "Grid-rule triggers", "Reserve viol."],
            [[f"{r.adoption:.0%}", f"{r.margin:.0%}", kw(r.mean_peak), kw(r.worst_peak), str(r.days_over),
-             f"{r.hours_over:,.1f}", str(r.grid_triggers), str(r.reserve)] for r in mf.itertuples()]),
-          ("p", "The margin scales the forecast used for planning (+5 % or +10 %). The planner already uses the "
-                "p90, so an extra margin mostly moves pumping around without changing the realized peak."),
-          ("h3", "Robustness, Phase 4 test: three fault types (closed loop)"),
+             f"{r.hours_over:,.2f}", str(r.grid_triggers), str(r.reserve)] for r in mf.itertuples()]),
+          ("p", "The planner already uses the p90, so an extra margin changes almost nothing (margin 0 was chosen on "
+                "training days)."),
+          ("h3", "Robustness: three fault types (closed loop)"),
           ("p", f"Fault rates are ASSUMPTIONS, not measurements: {fault_rates}. Pump failures last 2-8 h, stuck "
                 "sensors 2-12 h, communication loss 1-6 h; faults are seeded per day, so every scenario of a day "
-                "sees the same faults. With faults the reserve rule, the grid safety rule and the re-planner use the "
-                "measured tank level; the float switch and the tank physics use the true level. A farm without a "
-                "link runs its local failsafe (pump on below 30 %, off at 90 %) and cannot be stopped by the grid "
-                "rule. A failed pump cannot run, even to protect the reserve."),
+                "sees the same faults. A farm without a link runs its local failsafe (pump on below 30 %, off at "
+                "90 %)."),
           ("table", ["Case", "Faults", "Mean peak kW", "Worst peak kW", "Days over cap", "Hours over cap",
                      "kWh above cap", "Reserve viol. (15-min)", "Unmet water m³", "Fault quarters",
-                     "Failsafe pump kWh 17-20 h", "Grid-rule triggers"],
+                     f"Failsafe pump kWh {win}", "Grid-rule triggers"],
            [[r.case, "yes" if r.faults else "no", kw(r.mean_peak), kw(r.worst_peak), str(r.days_over),
-             f"{r.hours_over:,.1f}", kw(r.kwh_over), str(r.reserve), f"{r.unmet_m3:,.0f}", str(r.fault_quarters),
-             f"{r.failsafe_kwh_17_20:,.0f}", str(r.grid_triggers)] for r in ff.itertuples()]),
-          ("p", "Unmet water: field demand a tank could not supply (tank empty) plus, for farms without a tank "
-                "schedule, the water a failed pump did not deliver. Totals over all days."),
+             f"{r.hours_over:,.2f}", kw(r.kwh_over), str(r.reserve), f"{r.unmet_m3:,.0f}", str(r.fault_quarters),
+             f"{r.failsafe_kwh_fp:,.0f}", str(r.grid_triggers)] for r in ff.itertuples()]),
           ("p", _fault_sentence(ff, n_days))]
 
     B += phase6_blocks()
+    B += shedding_blocks(sh)
 
     # ---- method / limits / reproduce
     B += [("h2", "Data, method and limitations"),
-          ("ul", ["Data: 730 days (2024-11-01 to 2026-10-31). Open-Meteo historical data for the grid point at "
-                  "36.68, 10.58 (CC BY 4.0); hottest hour 45.9 °C on 2026-08-26 15:00. Everything else is synthetic: "
-                  "farms (sectors A-D, 50 farms each), crops (FAO-56 Kc curves), pumps (1.5-11 kW), tanks "
-                  "(25-745 m³, mean 145), irrigation efficiencies (drip 0.90, sprinkler 0.75, basin 0.70, furrow "
-                  "0.60), farmer behaviour and the non-pump base load. Tank and pump sizes, heads, efficiencies and "
-                  "fault rates and durations are assumptions.",
-                  "The base load comes from formulas (daily profile, temperature, calendar, Ramadan shape, "
-                  "noise, local spikes). The forecaster partly re-learns these generator patterns, so its "
-                  "accuracy here is not proof of accuracy on a real feeder. With real utility data, the same "
-                  "pipeline would be retrained and re-scored.",
-                  "Water need is the FAO-56 formula. The planner assumes need x each farm's over-irrigation "
-                  "factor at habitual times, while the replay uses what farmers actually did.",
-                  "Pump schedules use 30-min slots, with at most 3 starts per day and runs of at least 1 h. The "
-                  "feeder is checked at 15-min resolution.",
-                  "lp_round no longer plans pumping into a full tank (Phase 4). The remaining auto-stop minutes come "
-                  "from the gap between planned and actual irrigation (a farmer skips a day or starts late, so the "
-                  "tank is fuller than planned). The float switch stops the pump; no energy is used.",
-                  "Faults are simulated with ASSUMED rates (" + fault_rates + "). Real rates must come from "
-                  "field pilots.",
-                  "Not modelled: network losses, sector-wide outages of the communication network, slow sensor "
-                  "drift. Tariffs enter only as post-hoc bill accounting (section E); the planner minimises the "
-                  "feeder peak."]),
+          ("ul", ["Data: 730 days (2024-11-01 to 2026-10-31). Open-Meteo historical weather for 36.68 N, 10.58 E "
+                  "(CC BY 4.0); hottest hour 45.9 °C on 2026-08-26. Everything else is synthetic: farms (sectors "
+                  "A-D), crops (FAO-56 Kc curves), pumps, tanks, irrigation efficiencies, farmer behaviour and the "
+                  "non-pump load (data v2, frozen before any model ran). Tank and pump sizes and fault rates are "
+                  "assumptions.",
+                  "The forecaster partly re-learns the generator's patterns, so its accuracy here is not proof of "
+                  "accuracy on a real feeder. With real utility data the same pipeline is retrained and re-scored.",
+                  "Water need is the FAO-56 formula, never ML. Only the non-pump load is forecast with ML; scheduling "
+                  "is optimisation.",
+                  "Pump schedules use 30-min slots, at most 3 starts per day, runs of at least 1 h; the feeder is "
+                  "checked every 15 min.",
+                  "Known limitation: the fast planner (lp_round) ends the day with 22-38 m³ less water in the "
+                  "district's tanks than the exact MILP (objective 2.3-8.0 % worse on 5 training days); peaks are "
+                  "within 1 %. Hourly re-planning catches most of it up. Not changed (frozen protocol).",
+                  "Faults are simulated with ASSUMED rates. Real rates must come from field pilots.",
+                  "Not modelled: network losses, sector-wide communication outages, slow sensor drift. Tariffs enter "
+                  "the planner only as a secondary cost (STEG three-period prices); the main objective is the peak."]),
           ("h3", "Reproduce"),
           ("code", ".\\.venv\\Scripts\\Activate.ps1\ncd tameru_data\npython generate_db.py\npython forecast.py\n"
-                   "python backtest.py\npython report.py")]
+                   "python backtest.py\npython shedding.py --eval   # once; refuses to overwrite\npython report.py\n"
+                   "python export_site.py\npython site_figures.py")]
     render(B)
     print(f"wrote {RESULTS / 'MODEL_REPORT.md'}, {RESULTS / 'MODEL_REPORT.html'}, figures in {FIG}")
-    print("\n".join(" | ".join(r) for r in [st_head] + st_rows))
     print(f"minimum adoption for zero overload: {a_min}")
+
+
+def shedding_blocks(s):
+    """Section F: STEG rotating shedding (results/shedding.json, shedding_windows.csv). Read only."""
+    if not s:
+        return []
+    t, d = s["tables"], s["design"]
+    a = t["all"]
+    names = (("A38@50", "Tameru alone, 50 %"), ("B@50", "Tameru + STEG notice, 50 %"),
+             ("A38@70", "Tameru alone, 70 %"), ("B@70", "Tameru + STEG notice, 70 %"),
+             ("plain@50", "Normal loop, no shedding mode, 50 %"))
+    rows = []
+    for typ in ("daytime", "evening", "all"):
+        for gl in ("low", "base", "high"):
+            x = t[typ][gl]
+            rows.append([f"{typ} ({x['A38@50']['windows']})", f"{gl} {100 * d['g'][gl]:.0f} %",
+                         f"{x['A38@50']['outage_h_without']:.2f}"] +
+                        [f"{x[k]['outage_h_with']:.2f} ({x[k]['windows_to_zero']})" for k, _ in names])
+    w, fl = s["water_base_g"], s["flag_skill"]
+    return [("h2", "F. Shedding scenario: STEG rotating cuts, summer 2026"),
+            ("p", "In summer 2026 STEG cut power in rotation to avoid a national blackout: 28 announced windows on 22 "
+                  "days between 16 July and 3 September, Nabeul / Cap Bon listed on 27 (results/"
+                  "shedding_calendar_2026.csv, one source URL per window). 19 of the 25 dated notices were published "
+                  "at or after the window had started. This module passes the national shortfall down to our feeder: "
+                  "without Tameru, STEG must shed g of the feeder's baseline energy in each window and does it with "
+                  "one rotating cut of g x window length (the whole feeder dark: homes, shops, pumps)."),
+            ("p", f"National gap g = 1 - available supply / peak demand: base {100 * d['g']['base']:.0f} % (Le Temps, "
+                  f"26 July: 4,300 / 5,000 MW), low {100 * d['g']['low']:.0f} %, high {100 * d['g']['high']:.0f} %. "
+                  "Only the 5,000 MW demand is a STEG figure (CEO, TAP); the supply figures come from a deputy and "
+                  "the press. The resulting cuts (30-90 min per window at base g) are conservative: residents "
+                  "reported 4-6 h."),
+            ("p", "Tameru alone (mode A, the main result) uses no STEG information: at 00:00 it flags a risk day "
+                  "when forecast Tmax >= 38 °C, keeps equipped farms' pumping out of the 12 hours with the highest "
+                  "forecast p90 load and pre-fills tanks at night. Mode B adds each announced window from its "
+                  "publication time (comparison only). Tameru's demand reduction in the window shortens the cut: "
+                  "remaining cut = (residual shortfall / required shedding) x the no-Tameru cut, rounded up to 15 "
+                  "min. Design frozen before the test (tag shed-pre-test), single evaluation (tag shed-test-eval); "
+                  "budget enforced, 50 % and 70 % adoption."),
+            ("table", ["Windows", "g", "Without Tameru h"] + [f"{n} h (windows at 0 h)" for _, n in names], rows),
+            ("ul", [f"Base g: {a['base']['A38@50']['outage_h_without']:.2f} h -> {a['base']['A38@50']['outage_h_with']:.2f} h "
+                    f"at 50 % and {a['base']['A38@70']['outage_h_with']:.2f} h at 70 %; days with no cut left "
+                    f"{a['base']['A38@50']['days_to_zero']} (50 %) and {a['base']['A38@70']['days_to_zero']} (70 %) of "
+                    f"{a['base']['A38@50']['days']}.",
+                    "Tameru alone gets 96-97 % of what STEG's notices would add. Most of the gain comes from normal "
+                    f"planning: the plain loop already brings it to {a['base']['plain@50']['outage_h_with']:.2f} h at "
+                    "50 %; the shedding mode adds about 1 h.",
+                    "Afternoon windows are hard (little pumping to stop); evening windows are where Tameru helps "
+                    "most. At high g (25 %) no window reaches 0 h.",
+                    f"Unmet crop need on these days: {w['without']['unmet_need_m3']:.0f} m³ without Tameru, "
+                    f"{w['A38@50']['unmet_need_m3']:.0f} with it.",
+                    f"Risk flag at 38 °C: {fl['38']['hits']} hits, {fl['38']['misses']} misses (the cooler Aug-Sep "
+                    f"days), {fl['38']['false_alarms']} false alarms; false alarms cost almost nothing (no extra "
+                    "pumping, no overload, a small bill increase from pre-filling at the day rate).",
+                    f"Side effect: at 50 % the shifted pumping creates {s['overload_minutes']['A38@50']['over_min_in_windows']} "
+                    "min of local overload inside windows on 20-22 July (max 1,019 kW); none at 70 %.",
+                    "Windows after midnight are cut at 24:00 (3 h dropped). Water and tank numbers exist for base g "
+                    "only."]),
+            ("img", "../deliverables/website/figures/shedding_calendar.png", "STEG shedding calendar, summer 2026 "
+             "(sourced data)."),
+            ("img", "../deliverables/website/figures/shedding_day.png", "22 July 2026: the cut without Tameru and "
+             "the managed feeder (simulated)."),
+            ("img", "../deliverables/website/figures/shedding_days.png", "Outage hours per shedding day (simulated).")]
 
 
 if __name__ == "__main__":
