@@ -45,7 +45,7 @@ def main():
 
     copy = (WEB / "copy.md").read_text(encoding="utf-8")
     n_copy = 0
-    for m in re.finditer(r"\[([a-z0-9_]+)\]", copy):
+    for m in re.finditer(r"\[([A-Za-z0-9_]+)]", copy):
         key = m.group(1)
         n_copy += 1
         if key not in v:
@@ -62,7 +62,7 @@ def main():
         cells = [c.strip() for c in line.strip("|").split("|")]
         if len(cells) < 7 or not cells[0].isdigit():
             continue
-        keys = re.findall(r"`([a-z0-9_]+)`", cells[5])
+        keys = re.findall(r"`([A-Za-z0-9_]+)`", cells[5])
         if re.fullmatch(r"\d+ of \d+|\d\d:\d\d-\d\d:\d\d", cells[1]):
             vals = [cells[1]]
         else:
