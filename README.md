@@ -2,6 +2,10 @@
 
 **Tameru moves irrigation pumping, not irrigation, so farms keep watering when the grid is short.**
 
+By **Mottainai Studio**, KIZUNA 2026 (Hackathon ESPRIT × Japan).
+
+**Links:** website [link] · demo video [link] · pitch deck [link]
+
 `KIZUNA 2026` · `MIT licence` · **All results in this repository are simulated** (a synthetic Cap Bon district
 on real weather). They are not field measurements. Real facts (the STEG shedding calendar, STEG tariffs, weather)
 are marked *real* and each one has a source link.
@@ -36,6 +40,29 @@ Tameru pumps into the tank when the grid is fine, and stops the pump when the gr
 irrigated from the tank at the farmer's usual time. Irrigation times don't change; only the pumping moves.
 
 ## 3. How it works
+
+**The AI pipeline in three steps.** (1) A forecaster predicts the village's electricity load, (2) an
+optimizer decides when each pump runs so the line stays under its capacity, and (3) an anomaly detector checks
+that the tank levels match what the pumps did.
+
+```mermaid
+flowchart LR
+    W["Real weather<br/>(Open-Meteo)"]
+
+    W --> L["1 · LightGBM<br/>predicts the village's load<br/>p50 likely · p90 safe"]
+    W --> F["FAO-56<br/>crop water need<br/>cap 110 %"]
+
+    L --> O["2 · HiGHS optimizer<br/>when should each pump run?<br/>line ≤ 1,000 kW"]
+    F --> O
+
+    O --> E["ESP32 box<br/>fills the tank at night,<br/>pauses at the peak"]
+
+    E --> A["3 · Anomaly detection<br/>tank level doesn't match?<br/>→ leak, dry run, failure"]
+    A -->|"stop"| E
+```
+
+**The control loop.** The box reports back every few seconds, the plan is redone every hour, and the box keeps
+working on its own if the link is lost.
 
 ```mermaid
 flowchart LR
@@ -131,6 +158,36 @@ assumption, tested from 10 % to 25 % (at 25 %: 37.25 h without Tameru, 28.5 h wi
 
 *Simulated. Crop need, water budget and pumping, with and without Tameru.*
 
+### Model performance (simulated test summer, Jun–Oct 2026)
+
+| Model | Metric | Value |
+|---|---|---|
+| Forecaster (LightGBM) | Error of the median forecast (MAE / MAPE) | 26.2 kW / 7.6 % |
+| Forecaster | Error in the feeder peak window 19-22 h (MAPE) | 7.1 % |
+| Forecaster | Better than "same as yesterday" / "same day last week" | 7.0 % / 43.0 % |
+| Forecaster | Share of hours under the p90 band (target 90 %) | 89.4 % |
+| Forecaster | p90 coverage on hot days, 19-22 h | 99.5 % |
+| Optimizer (HiGHS) | Worst-day feeder peak, 50 % equipped | 1,156 → 978 kW |
+| Anomaly detector | Precision / recall on observable faults | 81 % / 64 % |
+| Anomaly detector | False alarms | 0.44 per 100 farm-days |
+
+![Day-ahead forecast on the hottest test day](deliverables/website/figures/forecast_band.png)
+
+*Simulated. The hottest test day (26 Aug 2026, 45.9 °C): actual non-pump load vs the day-ahead p50 and the p90
+band the planner uses.*
+
+![Forecast error by hour vs simple baselines](deliverables/website/figures/error_by_hour.png)
+
+*Simulated. Forecast error by hour on the test summer, against "same as yesterday" and "same day last week".*
+
+![What the forecaster relies on](deliverables/website/figures/feature_importance.png)
+
+*Simulated. Share of the total gain per feature, p50 model.*
+
+![Adoption](deliverables/website/figures/adoption.png)
+
+*Simulated. Hours above capacity and shedding outage hours as more farms are equipped.*
+
 ## 5. How we evaluated
 
 - **Time-based split:** training Nov 2024 – Apr 2026, validation May 2026, test Jun – Oct 2026 (153 days).
@@ -195,7 +252,7 @@ deliverables/             pitch_numbers.md, dashboard_contract.md, brand/ (logo 
 deliverables/website/     site_data.json (every number), copy.md, PROJECT_REPORT.md, figures/ (+ INDEX.md), charts/
 dashboard/                decision-makers' dashboard (Vite + React + TypeScript), source only
 twin/index.html           3D digital twin with a guided demo (illustrative, own simplified simulation)
-hardware/                 IoT contract for the Tameru box (MQTT topics, payloads, failsafe)
+hardware/                 IoT contract for the Tameru box (MQTT topics, payloads, failsafe) + prototype photo
 ```
 
 Not in the repository (rebuilt locally): `tameru_data/tameru.db`, `models/`, `node_modules/`, dashboard builds.
@@ -254,6 +311,13 @@ results.
 
 ## 10. Hardware / IoT contract
 
+![Tameru box prototype at KIZUNA 2026](hardware/prototype.jpg)
+
+*The hackathon prototype: an ESP32 connected to the laptop (serial, 115,200 baud), a DHT11 temperature and
+humidity sensor, a servo for the gravity valve, an RFID reader with badges for the farmer's control, a buzzer, and
+a small pump moving water between two containers that stand in for the well and the tank. The laptop shows the
+live telemetry dashboard.*
+
 Each farm's box speaks MQTT:
 
 | Topic | Direction | Payload |
@@ -290,11 +354,14 @@ Real facts used in this project:
 Software: NumPy, SciPy (HiGHS), pandas, LightGBM, joblib, Matplotlib; the dashboard uses Vite, React and
 Chart.js; the twin uses three.js and Chart.js.
 
-## 12. Team
+## 12. Team: Mottainai Studio
 
 - **Rayan Rejeb**: AI (forecasting, optimization, simulation)
 - **[name]** (hardware)
 - **[name]** (website & dashboard)
+- **[name]** ([role])
+
+School / programme: [school] · Contact: [email]
 
 ## 13. Résumé en français
 
