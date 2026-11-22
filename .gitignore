@@ -11,3 +11,5 @@ node_modules/
 .env.*
 PROGRESS.md
 results_v1/
+!results/shedding_calendar_2026.csv
+!results/shedding_windows.csv

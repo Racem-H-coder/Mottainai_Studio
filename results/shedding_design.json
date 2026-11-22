@@ -1,0 +1,98 @@
+{
+ "protocol": "docs PROTOCOL_v2 \u00a717 (S0 approved 2026-11-22)",
+ "g": {
+  "low": 0.1,
+  "base": 0.14,
+  "high": 0.25
+ },
+ "g_sources": {
+  "low": "1 - 4,500/5,000: 5,000 MW peak demand = STEG CEO (TAP, 16 Jul 2026); 4,500 MW capacity = deputy M. Ktari (webdo 28 Jul 2026)",
+  "base": "1 - 4,300/5,000: both figures in Le Temps 26 Jul 2026 (press, not STEG)",
+  "high": "1 - 4,500/6,000: deputy M. Ktari's pair (webdo 28 Jul 2026)",
+  "note": "only the 5,000 MW demand is a STEG figure"
+ },
+ "risk_threshold_main_c": 38.0,
+ "risk_thresholds": [
+  36.0,
+  38.0,
+  40.0
+ ],
+ "risk_share": 0.5,
+ "risk_share_check": {
+  "0.5": {
+   "days_ok": 16,
+   "days": 16
+  },
+  "0.6": {
+   "days_ok": 16,
+   "days": 16
+  },
+  "0.7": {
+   "days_ok": 16,
+   "days": 16
+  }
+ },
+ "cut_seed": 2026,
+ "assumed_announcement_min": {
+  "daytime": 540,
+  "evening": 720
+ },
+ "clipped_hours_after_midnight": 3.0,
+ "scenarios": [
+  [
+   "plain@50",
+   0.5,
+   "plain",
+   null
+  ],
+  [
+   "A38@50",
+   0.5,
+   "A",
+   38.0
+  ],
+  [
+   "A36@50",
+   0.5,
+   "A",
+   36.0
+  ],
+  [
+   "A40@50",
+   0.5,
+   "A",
+   40.0
+  ],
+  [
+   "B@50",
+   0.5,
+   "B",
+   38.0
+  ],
+  [
+   "A38@70",
+   0.7,
+   "A",
+   38.0
+  ],
+  [
+   "B@70",
+   0.7,
+   "B",
+   38.0
+  ]
+ ],
+ "budget": "enforced",
+ "calendar_sha256": "e43fbb1b315de24c11add235ea6380591098b652a0e3f48223b5db5554d6adf1",
+ "train_debug": {
+  "synthetic_days": [
+   "2025-06-07",
+   "2025-06-16",
+   "2025-06-25",
+   "2025-06-26"
+  ],
+  "rows": 126,
+  "seconds": 55.7
+ },
+ "scope": "adoption 50 / 70 %, budget enforced; full water replay at base g only; low/high g outage hours from the same E_T (valid: E_T comes from the no-cut replay and does not depend on g)"
+}

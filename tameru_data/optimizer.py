@@ -130,7 +130,7 @@ def farm_view(f, t0=0, st=None):
 
 
 def solve(d, mode="lp", base_kw_forecast=None, margin=0.0, time_limit=180, shave_s=5.0, start_slot=0, state=None,
-          pump_cap=None, critical_windows=None):
+          pump_cap=None, critical_windows=None, fill_slot=None):
     """Plan from start_slot to midnight.
 
     base_kw_forecast: 48 half-hour kW values for the whole day (default d['base_kw_forecast']).
@@ -141,6 +141,8 @@ def solve(d, mode="lp", base_kw_forecast=None, margin=0.0, time_limit=180, shave
     critical_windows: [("HH:MM", "HH:MM"), ...] (e.g. a STEG load-shedding alert, 22:00-01:00); default none.
     Adopters' planned pumping there is forbidden (hard in lp/milp; lp_round's repair and local search see a
     prohibitive load there). Reserve top-ups stay exempt: the replay's reserve rule still runs the pump.
+    fill_slot: None or a half-hour slot; adopters' tanks should be full at its start (soft, same penalty as the
+    reserve shortfall; shedding-risk pre-fill, shedding.py). Ignored once start_slot >= fill_slot.
     Returns {farm_id: 48 duties} (zeros before start_slot) + stats."""
     if mode not in MODES:
         raise ValueError(f"mode must be one of {MODES}")
@@ -184,7 +186,8 @@ def solve(d, mode="lp", base_kw_forecast=None, margin=0.0, time_limit=180, shave
         c[E] = W_END
         for t in range(T):
             row([L + t + 1, L + t, X + t, S + t], [1, -1, -v["q"], 1], -v["dem"][t], -v["dem"][t])  # tank
-            row([L + t + 1, SH + t], [1, 1], v["res"], np.inf)                                    # reserve (soft)
+            fill = fill_slot is not None and t == fill_slot - t0 - 1                              # pre-fill target
+            row([L + t + 1, SH + t], [1, 1], max(v["res"], v["cap"]) if fill else v["res"], np.inf)  # reserve (soft)
             if t:
                 row([Y + t, X + t, X + t - 1], [1, -1, 1], 0, np.inf)                             # start
             else:
@@ -433,7 +436,8 @@ def schedule_checks(cmd_rows):
 
 
 def simulate(d, schedule, base15=None, demand15=None, rng=None, safety=True, grid_rule=True,
-             replan=None, replan_every=2, log=None, faults=None, trace=None, budget=None, monitor=None):
+             replan=None, replan_every=2, log=None, faults=None, trace=None, budget=None, monitor=None,
+             outage=None):
     """Replay one day every 15 min.
 
     schedule: {farm_id: 48 commanded duties} for controllable farms (plan made at 00:00).
@@ -467,7 +471,9 @@ def simulate(d, schedule, base15=None, demand15=None, rng=None, safety=True, gri
     monitor: None or an object (anomaly.Detector) with .step(k, obs) -> (F,) bool "stop now" and .lockout
     (quarters). It sees only telemetry: obs = {level (measured, start of quarter k; NaN when offline), online,
     power_prev, cmd_prev (server command of quarter k-1), online_prev, tank_fed (farms under Tameru control)}. A stopped tank-fed farm with link keeps
-    its pump off for .lockout quarters (reason fault_stop), then Tameru retries. trace then gets cmd_srv."""
+    its pump off for .lockout quarters (reason fault_stop), then Tameru retries. trace then gets cmd_srv.
+    outage: None or (96,) bool, a feeder cut (STEG rotating shedding, shedding.py): no base load and no pump runs
+    in those quarters (fields still draw from the tanks); farms on habits simply miss that pumping."""
     farms, cap_kw = d["farms"], d["capacity_kw"]
     F = len(farms)
     ids = [f["farm_id"] for f in farms]
@@ -605,13 +611,16 @@ def simulate(d, schedule, base15=None, demand15=None, rng=None, safety=True, gri
                 unmet_k += np.where(dead & ~phys, q15 * on, 0.0)
                 died = dead & (on > 0)
             on = np.where(dead, 0.0, on)
+        if outage is not None and outage[k]:             # feeder dark: nothing pumps
+            m["unmet_m3"] += float((q15 * on)[~phys].sum())
+            on = np.zeros(F)
         pw = kw * on
         if new_f:                                        # dry run: reduced power, no water
             pw = np.where(dry[:, k], faults["dry_power"] * pw, pw)
             m["unmet_m3"] += float((q15 * on)[dry[:, k] & ~phys].sum())
             if trace is not None:                        # direct-to-field farms get no water from a dry pump
                 unmet_k += np.where(dry[:, k] & ~phys, q15 * on, 0.0)
-        total = base15[k] + float(pw.sum())
+        total = (0.0 if outage is not None and outage[k] else base15[k]) + float(pw.sum())
         if monitor is not None:
             pre_on_grid = on.copy()
         if trace is not None:
