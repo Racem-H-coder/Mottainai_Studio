@@ -27,8 +27,8 @@ from datetime import date as Date
 
 import numpy as np
 
-from backtest import DB, SEED, actuals, run, worst_days
-from features import load_day
+from backtest import DB, SEED, actuals, closed_scenario, run, worst_days
+from features import load_day, peak_quarters, peak_window
 from forecast import RESULTS, predict_day
 from anomaly import Detector
 from optimizer import FAULTS_B, REASONS, draw_faults, draw_faults_b
@@ -49,7 +49,8 @@ FARM_COLS = ["day", "scenario", "adoption", "farm_id", "sector", "controllable",
              "curtailed_excess_m3", "pump_kwh", "pump_kwh_17_20", "kwh_shifted_out_of_peak", "peak_contrib_kw",
              "kwh_per_m3", "kwh_per_ha", "reserve_violation_q", "auto_stop_min", "starts", "override", "fault_types",
              "energy_saved_kwh", "co2_footprint_kg", "co2_avoided_kg", "budget_exceeded_at", "reserve_violation_q_before_need",
-             "pump_kwh_19_23", "pump_kwh_23_08", "pump_kwh_22_01", "cpp_critical_day"] + [f"bill_{k}_tnd" for k in BILL_KEYS]
+             "pump_kwh_19_23", "pump_kwh_23_08", "pump_kwh_22_01", "cpp_critical_day"] + [f"bill_{k}_tnd" for k in BILL_KEYS] + [
+             "pump_kwh_feeder_peak", "kwh_shifted_out_of_feeder_peak", "pump_kwh_13_17"]
 DIST_COLS = ["day", "scenario", "adoption", "ts", "base_kw", "pump_kw", "total_kw", "capacity_kw",
              "forecast_p50_kw", "forecast_p90_kw", "grid_rule_active"]
 TS_COLS = ["day", "scenario", "farm_id", "ts", "level_pct_true", "level_pct_measured", "pump_on", "power_kw",
@@ -84,6 +85,13 @@ def main(n_days=20):
     show = showcase_days(days, F)
     print("showcase days (worst, median, most faults):", show, [n_faults(d, F) for d in show])
     RESULTS.mkdir(exist_ok=True)
+    (RESULTS / "showcase_days.json").write_text(json.dumps({
+        "worst": show[0], "median": show[1], "most_faults": show[2], "fault_episodes": [n_faults(x, F) for x in show],
+        "days_20": days, "peak_window": peak_window(),
+        "rule": "worst = highest unmanaged 15-min peak of the 20 highest-load test days; median = days[len // 2] of "
+                "those 20 sorted by load; most_faults = most injected fault episodes (5 types) among the others",
+        "simulated": True}, indent=1), encoding="utf-8")
+    RESULTS.mkdir(exist_ok=True)
     files = {key: (RESULTS / f"{key}.csv").open("w", newline="", encoding="utf-8")
              for key in ("farm_metrics", "district_timeseries", "farm_timeseries")}
     w = {key: csv.DictWriter(files[key], cols) for key, cols in
@@ -92,7 +100,9 @@ def main(n_days=20):
         x.writeheader()
     cal = json.loads((RESULTS / "anomaly_calibration.json").read_text(encoding="utf-8"))
     q = np.arange(96)
-    win = {"19_23": (q >= 76) & (q < 92), "23_08": (q >= 92) | (q < 32), "22_01": (q >= 88) | (q < 4)}
+    win = {"19_23": (q >= 76) & (q < 92), "23_08": (q >= 92) | (q < 32), "22_01": (q >= 88) | (q < 4),
+           "13_17": (q >= 52) & (q < 68)}
+    fpk = np.array(peak_quarters())
     peaks, rows_all, dist_rows, tic = {}, {}, {}, time.perf_counter()
     for n, day in enumerate(days, 1):
         fc = predict_day(DB, day, which="eval")
@@ -105,7 +115,7 @@ def main(n_days=20):
                 tr, load = last                          # same pumping as closed_loop (cap off)
             else:
                 tr = {}
-                scen = "unmanaged" if adoption == 0 else "closed_lp_round_m0"
+                scen = "unmanaged" if adoption == 0 else closed_scenario(DB)
                 det = None
                 if faults and adoption > 0:
                     det = Detector(d, cal["params"], confidence=cal["confidence_from_training_precision"])
@@ -116,7 +126,8 @@ def main(n_days=20):
             if adoption == 0:
                 ref[faults] = tr
             ref_pk = ref[faults]["power_kw"][:, 68:80].sum(axis=1) * 0.25
-            rows = farm_rows(day, name, adoption, d, dem15, tr, load, ref_pk, mode, ts=ts)
+            ref_fpk = ref[faults]["power_kw"][:, fpk].sum(axis=1) * 0.25
+            rows = farm_rows(day, name, adoption, d, dem15, tr, load, ref_pk, mode, ts=ts, ref_kwh_fpk=ref_fpk)
             bills = farm_bills(day, tr["power_kw"], tr["forced"], crit, ref[faults]["power_kw"])
             for j, r in enumerate(rows):
                 r.update({f"pump_kwh_{k}": round(float(tr["power_kw"][j, m].sum()) * 0.25, 2) for k, m in win.items()})
@@ -152,6 +163,10 @@ def main(n_days=20):
     for fh in files.values():
         fh.close()
     check_against_backtest(peaks)
+
+
+def cmp_tot(ad, i):
+    return sum(x[i]["pump_kwh"] for x in ad)
 
 
 def _q(x, p):
@@ -218,7 +233,9 @@ def write_summaries(days, rows_all, dist_rows):
         def share(rr, k):
             return round(sum(r[f"pump_kwh_{k}"] for r in rr) / sum(r["pump_kwh"] for r in rr), 6)
         cmp["adopter_kwh_share"] = {k: {"unmanaged": share([x[0] for x in ad], k),
-                                        "scenario": share([x[1] for x in ad], k)} for k in ("19_23", "23_08", "22_01")}
+                                        "scenario": share([x[1] for x in ad], k)} for k in ("19_23", "23_08", "22_01", "13_17")}
+        cmp["adopter_kwh_share"]["feeder_peak"] = {"unmanaged": round(sum(x[0]["pump_kwh_feeder_peak"] for x in ad) / cmp_tot(ad, 0), 6),
+                                                   "scenario": round(sum(x[1]["pump_kwh_feeder_peak"] for x in ad) / cmp_tot(ad, 1), 6)}
         cmp["adopter_kwh"] = {"unmanaged": round(sum(x[0]["pump_kwh"] for x in ad), 1),
                               "scenario": round(sum(x[1]["pump_kwh"] for x in ad), 1)}
         bills["comparisons"][f"{name}@{a}_vs_unmanaged"] = cmp
@@ -236,7 +253,7 @@ def check_against_backtest(peaks):
         return
     diffs = []
     for r in csv.DictReader(path.open(encoding="utf-8")):
-        name = {"unmanaged": "unmanaged", "closed_lp_round_m0": "closed_loop"}.get(r["scenario"])
+        name = {"unmanaged": "unmanaged", closed_scenario(DB): "closed_loop"}.get(r["scenario"])
         if name is None or r["faults"] == "1":           # fault scenarios now use FAULTS_B: not comparable
             continue
         key = (r["date"], name, 0.0 if name.startswith("unmanaged") else float(r["adoption"]))

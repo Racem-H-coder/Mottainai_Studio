@@ -1,0 +1,993 @@
+{
+ "criterion": "H(m) = hours above capacity, 20 training days x adoption 70 % + 80 %; lowest wins, ties -> smaller margin",
+ "days": [
+  "2025-07-21",
+  "2025-07-24",
+  "2025-07-23",
+  "2025-07-25",
+  "2025-07-20",
+  "2025-07-17",
+  "2025-07-16",
+  "2025-07-15",
+  "2025-06-25",
+  "2025-07-07",
+  "2025-06-16",
+  "2025-07-06",
+  "2025-07-13",
+  "2025-07-30",
+  "2025-07-27",
+  "2025-07-03",
+  "2025-06-24",
+  "2025-06-14",
+  "2025-07-14",
+  "2025-07-19"
+ ],
+ "H_hours": {
+  "0.0": 0.0,
+  "0.05": 0.0,
+  "0.1": 0.0
+ },
+ "chosen_margin": 0.0,
+ "rows": [
+  {
+   "date": "2025-07-21",
+   "adoption": 0.7,
+   "margin": 0.0,
+   "peak_kw": 890.8,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-21",
+   "adoption": 0.8,
+   "margin": 0.0,
+   "peak_kw": 876.9,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-21",
+   "adoption": 0.7,
+   "margin": 0.05,
+   "peak_kw": 889.3,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-21",
+   "adoption": 0.8,
+   "margin": 0.05,
+   "peak_kw": 876.9,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-21",
+   "adoption": 0.7,
+   "margin": 0.1,
+   "peak_kw": 889.3,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-21",
+   "adoption": 0.8,
+   "margin": 0.1,
+   "peak_kw": 876.9,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-24",
+   "adoption": 0.7,
+   "margin": 0.0,
+   "peak_kw": 835.8,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-24",
+   "adoption": 0.8,
+   "margin": 0.0,
+   "peak_kw": 842.4,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-24",
+   "adoption": 0.7,
+   "margin": 0.05,
+   "peak_kw": 835.8,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-24",
+   "adoption": 0.8,
+   "margin": 0.05,
+   "peak_kw": 848.4,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-24",
+   "adoption": 0.7,
+   "margin": 0.1,
+   "peak_kw": 834.9,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-24",
+   "adoption": 0.8,
+   "margin": 0.1,
+   "peak_kw": 845.4,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-23",
+   "adoption": 0.7,
+   "margin": 0.0,
+   "peak_kw": 842.4,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-23",
+   "adoption": 0.8,
+   "margin": 0.0,
+   "peak_kw": 803.4,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-23",
+   "adoption": 0.7,
+   "margin": 0.05,
+   "peak_kw": 839.0,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-23",
+   "adoption": 0.8,
+   "margin": 0.05,
+   "peak_kw": 799.7,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-23",
+   "adoption": 0.7,
+   "margin": 0.1,
+   "peak_kw": 840.9,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-23",
+   "adoption": 0.8,
+   "margin": 0.1,
+   "peak_kw": 809.2,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-25",
+   "adoption": 0.7,
+   "margin": 0.0,
+   "peak_kw": 833.2,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-25",
+   "adoption": 0.8,
+   "margin": 0.0,
+   "peak_kw": 864.9,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-25",
+   "adoption": 0.7,
+   "margin": 0.05,
+   "peak_kw": 833.2,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-25",
+   "adoption": 0.8,
+   "margin": 0.05,
+   "peak_kw": 866.7,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-25",
+   "adoption": 0.7,
+   "margin": 0.1,
+   "peak_kw": 830.2,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-25",
+   "adoption": 0.8,
+   "margin": 0.1,
+   "peak_kw": 861.2,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-20",
+   "adoption": 0.7,
+   "margin": 0.0,
+   "peak_kw": 838.0,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-20",
+   "adoption": 0.8,
+   "margin": 0.0,
+   "peak_kw": 828.4,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-20",
+   "adoption": 0.7,
+   "margin": 0.05,
+   "peak_kw": 838.0,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-20",
+   "adoption": 0.8,
+   "margin": 0.05,
+   "peak_kw": 828.3,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-20",
+   "adoption": 0.7,
+   "margin": 0.1,
+   "peak_kw": 839.3,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-20",
+   "adoption": 0.8,
+   "margin": 0.1,
+   "peak_kw": 829.8,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-17",
+   "adoption": 0.7,
+   "margin": 0.0,
+   "peak_kw": 810.9,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-17",
+   "adoption": 0.8,
+   "margin": 0.0,
+   "peak_kw": 754.2,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-17",
+   "adoption": 0.7,
+   "margin": 0.05,
+   "peak_kw": 799.0,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-17",
+   "adoption": 0.8,
+   "margin": 0.05,
+   "peak_kw": 754.8,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-17",
+   "adoption": 0.7,
+   "margin": 0.1,
+   "peak_kw": 803.2,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-17",
+   "adoption": 0.8,
+   "margin": 0.1,
+   "peak_kw": 758.7,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-16",
+   "adoption": 0.7,
+   "margin": 0.0,
+   "peak_kw": 738.6,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-16",
+   "adoption": 0.8,
+   "margin": 0.0,
+   "peak_kw": 711.2,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-16",
+   "adoption": 0.7,
+   "margin": 0.05,
+   "peak_kw": 728.1,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-16",
+   "adoption": 0.8,
+   "margin": 0.05,
+   "peak_kw": 699.4,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-16",
+   "adoption": 0.7,
+   "margin": 0.1,
+   "peak_kw": 731.4,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-16",
+   "adoption": 0.8,
+   "margin": 0.1,
+   "peak_kw": 705.4,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-15",
+   "adoption": 0.7,
+   "margin": 0.0,
+   "peak_kw": 772.4,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-15",
+   "adoption": 0.8,
+   "margin": 0.0,
+   "peak_kw": 805.3,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-15",
+   "adoption": 0.7,
+   "margin": 0.05,
+   "peak_kw": 779.9,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-15",
+   "adoption": 0.8,
+   "margin": 0.05,
+   "peak_kw": 811.3,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-15",
+   "adoption": 0.7,
+   "margin": 0.1,
+   "peak_kw": 785.4,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-15",
+   "adoption": 0.8,
+   "margin": 0.1,
+   "peak_kw": 808.3,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-25",
+   "adoption": 0.7,
+   "margin": 0.0,
+   "peak_kw": 800.1,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-25",
+   "adoption": 0.8,
+   "margin": 0.0,
+   "peak_kw": 796.9,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-25",
+   "adoption": 0.7,
+   "margin": 0.05,
+   "peak_kw": 797.3,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-25",
+   "adoption": 0.8,
+   "margin": 0.05,
+   "peak_kw": 808.0,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-25",
+   "adoption": 0.7,
+   "margin": 0.1,
+   "peak_kw": 794.8,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-25",
+   "adoption": 0.8,
+   "margin": 0.1,
+   "peak_kw": 807.0,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-07",
+   "adoption": 0.7,
+   "margin": 0.0,
+   "peak_kw": 790.6,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-07",
+   "adoption": 0.8,
+   "margin": 0.0,
+   "peak_kw": 783.6,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-07",
+   "adoption": 0.7,
+   "margin": 0.05,
+   "peak_kw": 796.1,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-07",
+   "adoption": 0.8,
+   "margin": 0.05,
+   "peak_kw": 774.2,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-07",
+   "adoption": 0.7,
+   "margin": 0.1,
+   "peak_kw": 803.5,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-07",
+   "adoption": 0.8,
+   "margin": 0.1,
+   "peak_kw": 784.3,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-16",
+   "adoption": 0.7,
+   "margin": 0.0,
+   "peak_kw": 765.4,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-16",
+   "adoption": 0.8,
+   "margin": 0.0,
+   "peak_kw": 704.4,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-16",
+   "adoption": 0.7,
+   "margin": 0.05,
+   "peak_kw": 767.6,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-16",
+   "adoption": 0.8,
+   "margin": 0.05,
+   "peak_kw": 721.3,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-16",
+   "adoption": 0.7,
+   "margin": 0.1,
+   "peak_kw": 767.6,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-16",
+   "adoption": 0.8,
+   "margin": 0.1,
+   "peak_kw": 737.4,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-06",
+   "adoption": 0.7,
+   "margin": 0.0,
+   "peak_kw": 739.1,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-06",
+   "adoption": 0.8,
+   "margin": 0.0,
+   "peak_kw": 754.5,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-06",
+   "adoption": 0.7,
+   "margin": 0.05,
+   "peak_kw": 756.8,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-06",
+   "adoption": 0.8,
+   "margin": 0.05,
+   "peak_kw": 783.0,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-06",
+   "adoption": 0.7,
+   "margin": 0.1,
+   "peak_kw": 750.5,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-06",
+   "adoption": 0.8,
+   "margin": 0.1,
+   "peak_kw": 801.9,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-13",
+   "adoption": 0.7,
+   "margin": 0.0,
+   "peak_kw": 755.7,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-13",
+   "adoption": 0.8,
+   "margin": 0.0,
+   "peak_kw": 753.6,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-13",
+   "adoption": 0.7,
+   "margin": 0.05,
+   "peak_kw": 757.9,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-13",
+   "adoption": 0.8,
+   "margin": 0.05,
+   "peak_kw": 780.3,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-13",
+   "adoption": 0.7,
+   "margin": 0.1,
+   "peak_kw": 757.9,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-13",
+   "adoption": 0.8,
+   "margin": 0.1,
+   "peak_kw": 771.8,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-30",
+   "adoption": 0.7,
+   "margin": 0.0,
+   "peak_kw": 731.7,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-30",
+   "adoption": 0.8,
+   "margin": 0.0,
+   "peak_kw": 681.2,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-30",
+   "adoption": 0.7,
+   "margin": 0.05,
+   "peak_kw": 725.0,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-30",
+   "adoption": 0.8,
+   "margin": 0.05,
+   "peak_kw": 702.5,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-30",
+   "adoption": 0.7,
+   "margin": 0.1,
+   "peak_kw": 724.2,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-30",
+   "adoption": 0.8,
+   "margin": 0.1,
+   "peak_kw": 715.6,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-27",
+   "adoption": 0.7,
+   "margin": 0.0,
+   "peak_kw": 731.6,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-27",
+   "adoption": 0.8,
+   "margin": 0.0,
+   "peak_kw": 670.8,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-27",
+   "adoption": 0.7,
+   "margin": 0.05,
+   "peak_kw": 714.9,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-27",
+   "adoption": 0.8,
+   "margin": 0.05,
+   "peak_kw": 709.0,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-27",
+   "adoption": 0.7,
+   "margin": 0.1,
+   "peak_kw": 727.9,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-27",
+   "adoption": 0.8,
+   "margin": 0.1,
+   "peak_kw": 709.2,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-03",
+   "adoption": 0.7,
+   "margin": 0.0,
+   "peak_kw": 769.7,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-03",
+   "adoption": 0.8,
+   "margin": 0.0,
+   "peak_kw": 712.9,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-03",
+   "adoption": 0.7,
+   "margin": 0.05,
+   "peak_kw": 776.7,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-03",
+   "adoption": 0.8,
+   "margin": 0.05,
+   "peak_kw": 722.8,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-03",
+   "adoption": 0.7,
+   "margin": 0.1,
+   "peak_kw": 783.4,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-03",
+   "adoption": 0.8,
+   "margin": 0.1,
+   "peak_kw": 719.3,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-24",
+   "adoption": 0.7,
+   "margin": 0.0,
+   "peak_kw": 739.0,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-24",
+   "adoption": 0.8,
+   "margin": 0.0,
+   "peak_kw": 690.3,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-24",
+   "adoption": 0.7,
+   "margin": 0.05,
+   "peak_kw": 746.7,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-24",
+   "adoption": 0.8,
+   "margin": 0.05,
+   "peak_kw": 695.5,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-24",
+   "adoption": 0.7,
+   "margin": 0.1,
+   "peak_kw": 738.0,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-24",
+   "adoption": 0.8,
+   "margin": 0.1,
+   "peak_kw": 697.3,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-14",
+   "adoption": 0.7,
+   "margin": 0.0,
+   "peak_kw": 755.5,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-14",
+   "adoption": 0.8,
+   "margin": 0.0,
+   "peak_kw": 711.1,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-14",
+   "adoption": 0.7,
+   "margin": 0.05,
+   "peak_kw": 750.0,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-14",
+   "adoption": 0.8,
+   "margin": 0.05,
+   "peak_kw": 714.6,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-14",
+   "adoption": 0.7,
+   "margin": 0.1,
+   "peak_kw": 750.8,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-06-14",
+   "adoption": 0.8,
+   "margin": 0.1,
+   "peak_kw": 710.2,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-14",
+   "adoption": 0.7,
+   "margin": 0.0,
+   "peak_kw": 714.2,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-14",
+   "adoption": 0.8,
+   "margin": 0.0,
+   "peak_kw": 707.0,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-14",
+   "adoption": 0.7,
+   "margin": 0.05,
+   "peak_kw": 709.8,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-14",
+   "adoption": 0.8,
+   "margin": 0.05,
+   "peak_kw": 715.5,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-14",
+   "adoption": 0.7,
+   "margin": 0.1,
+   "peak_kw": 714.2,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-14",
+   "adoption": 0.8,
+   "margin": 0.1,
+   "peak_kw": 726.5,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-19",
+   "adoption": 0.7,
+   "margin": 0.0,
+   "peak_kw": 698.2,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-19",
+   "adoption": 0.8,
+   "margin": 0.0,
+   "peak_kw": 684.7,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-19",
+   "adoption": 0.7,
+   "margin": 0.05,
+   "peak_kw": 707.6,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-19",
+   "adoption": 0.8,
+   "margin": 0.05,
+   "peak_kw": 686.8,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-19",
+   "adoption": 0.7,
+   "margin": 0.1,
+   "peak_kw": 697.9,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  },
+  {
+   "date": "2025-07-19",
+   "adoption": 0.8,
+   "margin": 0.1,
+   "peak_kw": 676.6,
+   "minutes_over": 0,
+   "kwh_over": 0.0
+  }
+ ]
+}

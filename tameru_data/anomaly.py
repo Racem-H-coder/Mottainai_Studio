@@ -308,7 +308,7 @@ def iforest_alerts(keys, scores, thr):
 def run_days(days, p=None, passive=True, conf=None, with_monitor=True):
     """Closed loop 50 %, faults FAULTS_B, one Detector per day. Returns per day: alerts, episodes, telemetry,
     trace metrics, and the day inputs."""
-    from backtest import DB, run
+    from backtest import DB, closed_scenario, run
     from features import load_day
     from forecast import predict_day
     from optimizer import FAULTS_B
@@ -320,7 +320,7 @@ def run_days(days, p=None, passive=True, conf=None, with_monitor=True):
             f["controllable"] = int(f["adopt_u"] < 0.5)
         det = Detector(d, p, passive=passive, confidence=conf) if with_monitor else None
         tr = {}
-        row, _ = run(DB, day, 0.5, "closed_lp_round_m0", fc, faults=True, trace=tr, fault_cfg=FAULTS_B, monitor=det)
+        row, _ = run(DB, day, 0.5, closed_scenario(DB), fc, faults=True, trace=tr, fault_cfg=FAULTS_B, monitor=det)
         out.append({"day": day, "d": d, "tr": tr, "row": row, "det": det,
                     "eps": episodes(tr, [f["farm_id"] for f in d["farms"]])})
     return out
@@ -393,10 +393,12 @@ def calibrate(n_days=20):
     data = run_days(days)
     print(f"training telemetry: {len(days)} days, {time.perf_counter() - tic:.0f}s", flush=True)
     p = dict(DEFAULT)
-    p, _ = _pick(data, {"n_stuck": [2, 3, 4, 6]}, p, "stuck_sensor")
-    # leak grid widened once after a first pass hit its edge (h 0.14, clip 0.04, drift 0); training days only
-    p, _ = _pick(data, {"buf": [2, 4, 6], "ext": [0.5, 1.0], "drift": [0.0, 0.0005],
-                        "h": [0.10, 0.14, 0.18, 0.24], "clip": [0.02, 0.04, 0.08]}, p, "leak")
+    # data v2 (PROTOCOL_v2 s8.6): grids widened ONCE by one step where the first v2 pass chose a value on an edge
+    # that is not a natural bound (counts >= 1, drift >= 0): n_stuck +1, buf +1, ext +0.25, clip +0.12.
+    # (data v1: the leak grid had been widened once after a first pass hit h 0.14, clip 0.04, drift 0.) Training days only.
+    p, _ = _pick(data, {"n_stuck": [1, 2, 3, 4, 6]}, p, "stuck_sensor")
+    p, _ = _pick(data, {"buf": [1, 2, 4, 6], "ext": [0.25, 0.5, 1.0], "drift": [0.0, 0.0005],
+                        "h": [0.10, 0.14, 0.18, 0.24], "clip": [0.02, 0.04, 0.08, 0.12]}, p, "leak")
     p, _ = _pick(data, {"n_dry": [1, 2, 3]}, p, "dry_run")
     p, _ = _pick(data, {"n_pf": [1, 2, 3]}, p, "pump_failure")
     m, al, ep, fd = evaluate_alerts(data, p)

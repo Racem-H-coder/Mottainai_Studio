@@ -20,6 +20,40 @@ SLOTS = 24 * 60 // SLOT_MIN
 RESERVE_PCT = 0.15
 
 
+PEAK_WINDOW_FILE = Path(__file__).resolve().parent.parent / "results" / "peak_window.json"
+
+
+def peak_window():
+    """The feeder peak window(s) [("HH:MM", "HH:MM"), ...] frozen at the data-v2 freeze (load_checks.peak_window,
+    results/peak_window.json); 17:00-20:00 (data v1) if the file is absent."""
+    if PEAK_WINDOW_FILE.exists():
+        return [tuple(w) for w in json.loads(PEAK_WINDOW_FILE.read_text(encoding="utf-8"))["windows"]]
+    return [("17:00", "20:00")]
+
+
+def peak_quarters():
+    """(96,) bool mask of the quarters inside the feeder peak window(s) (windows may wrap midnight)."""
+    q = [False] * 96
+    for a, b in peak_window():
+        sa, sb = (int(x[:2]) * 4 + int(x[3:]) // 15 for x in (a, b))
+        for k in (range(sa, sb) if sa < sb else list(range(sa, 96)) + list(range(sb))):
+            q[k] = True
+    return q
+
+
+def peak_hour():
+    """Hour with the most unmanaged overload quarters (results/peak_window.json); 18 h (data v1) if absent."""
+    if PEAK_WINDOW_FILE.exists():
+        return int(json.loads(PEAK_WINDOW_FILE.read_text(encoding="utf-8"))["peak_hour"])
+    return 18
+
+
+def peak_hours():
+    """Hours (0-23) inside the feeder peak window(s)."""
+    m = peak_quarters()
+    return sorted({k // 4 for k in range(96) if m[k]})
+
+
 def _rows(db, sql, *args):
     cur = db.execute(sql, args)
     cols = [c[0] for c in cur.description]

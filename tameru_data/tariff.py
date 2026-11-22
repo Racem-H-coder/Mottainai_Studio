@@ -103,7 +103,7 @@ def farm_bills(day, power_kw, forced=None, critical=False, baseline_kw=None):
 
 def critical_windows_check(n_days=20, windows=(("22:00", "01:00"),)):
     """Closed loop 50 % on the training days with and without the critical windows (no faults)."""
-    from backtest import DB, actuals, run
+    from backtest import DB, actuals, closed_scenario, run
     from features import load_day
     from forecast import RESULTS, predict_day
     from optimizer import window_slots
@@ -111,14 +111,14 @@ def critical_windows_check(n_days=20, windows=(("22:00", "01:00"),)):
     days = train_days(DB, n_days)
     wq = np.repeat(window_slots(list(windows)), 2)
     res, tic = {}, time.perf_counter()
-    for tag, cw in (("without", None), ("with", list(windows))):
+    for tag, cw in (("without", []), ("with", list(windows))):
         peaks, minutes, unmet, win_kwh, tot_kwh, forced_kwh = [], 0, 0.0, 0.0, 0.0, 0.0
         for day in days:
             fc = predict_day(DB, day, which="eval")
             d = load_day(str(DB), day)
             _, dem15, _ = actuals(DB, day, d["farms"])
             tr = {}
-            row, load = run(DB, day, 0.5, "closed_lp_round_m0", fc, trace=tr, critical_windows=cw)
+            row, load = run(DB, day, 0.5, closed_scenario(DB), fc, trace=tr, critical_windows=cw)
             adopt = np.array([f["adopt_u"] < 0.5 for f in d["farms"]])
             pw = tr["power_kw"][adopt] * 0.25
             win_kwh += pw[:, wq].sum()

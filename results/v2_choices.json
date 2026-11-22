@@ -1,0 +1,32 @@
+{
+ "margin": 0.0,
+ "critical_windows_default": null,
+ "margin_H_hours": {
+  "0.0": 0.0,
+  "0.05": 0.0,
+  "0.1": 0.0
+ },
+ "data_version": "v2",
+ "decided_on": "training days (water_budget.train_days, Jun-Oct 2025)",
+ "critical_windows_dH_hours": 0.0,
+ "critical_windows_info": {
+  "without": {
+   "adopter_share_in_window": 0.2118,
+   "adopter_kwh_in_window": 11094.2,
+   "of_which_reserve_rule_kwh": 235.3,
+   "mean_peak_kw": 859.1,
+   "hours_over_capacity": 0.0,
+   "unmet_need_m3": 0.0,
+   "adopter_kwh": 52387.5
+  },
+  "with": {
+   "adopter_share_in_window": 0.0121,
+   "adopter_kwh_in_window": 644.8,
+   "of_which_reserve_rule_kwh": 213.5,
+   "mean_peak_kw": 926.5,
+   "hours_over_capacity": 0.0,
+   "unmet_need_m3": 0.0,
+   "adopter_kwh": 53087.8
+  }
+ }
+}

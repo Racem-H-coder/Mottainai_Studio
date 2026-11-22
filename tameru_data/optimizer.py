@@ -41,11 +41,11 @@ import numpy as np
 from scipy.optimize import Bounds, LinearConstraint, milp
 from scipy.sparse import coo_matrix
 
-from features import SLOTS, hottest_day, load_day
+from features import SLOTS, hottest_day, load_day, peak_quarters
 
 W_PEAK, W_SHORT, W_END, W_SPILL, W_START = 1000.0, 1e4, 2000.0, 1.0, 1.0
 MAX_STARTS, MIN_RUN = 3, 2
-PEAK_SLOTS = range(34, 40)          # 17:00-20:00
+PEAK_SLOTS = range(34, 40)          # 17:00-20:00 (data v1 metric pump_kwh_17_20, kept one version, deprecated)
 GRID_RULE = 0.95                    # grid safety rule threshold, share of feeder capacity
 MODES = ("lp", "lp_round", "milp")
 # Why a pump is on/off in a quarter (simulate(trace=...)); the index is the stored code.
@@ -500,8 +500,9 @@ def simulate(d, schedule, base15=None, demand15=None, rng=None, safety=True, gri
         habit = np.minimum(1.0, D / q15[:, None])
     phys = tankf | htank                                 # farms whose water goes through their tank
     load = np.zeros(96)
+    fpk = np.array(peak_quarters())                      # feeder peak window (results/peak_window.json)
     m = {"reserve_quarters": 0, "farms_below_reserve": set(), "unmet_m3": 0.0, "forced_quarters": 0,
-         "auto_stop_min": 0.0, "grid_triggers": 0, "grid_stops": 0, "pump_kwh_17_20": 0.0,
+         "auto_stop_min": 0.0, "grid_triggers": 0, "grid_stops": 0, "pump_kwh_17_20": 0.0, "pump_kwh_feeder_peak": 0.0,
          "overrides": int(over.sum()), "replans": 0}
     new_f = bool(faults) and (faults.get("p_leak", 0) > 0 or faults.get("p_dry", 0) > 0)
     if new_f:
@@ -514,7 +515,7 @@ def simulate(d, schedule, base15=None, demand15=None, rng=None, safety=True, gri
     if faults:
         down, stuck, comm, noise = draw_faults(F, faults)
         m.update(fault_pump_q=int(down.sum()), fault_sensor_q=int(stuck.sum()), fault_comm_q=int(comm.sum()),
-                 failsafe_kwh_17_20=0.0)
+                 failsafe_kwh_17_20=0.0, failsafe_kwh_feeder_peak=0.0)
         held, prev_on = lvl.copy(), np.zeros(F)
     if trace is not None:
         tr = {key: np.zeros((F, 96)) for key in ("on", "power_kw", "pumped_m3", "level_m3", "meas_m3", "unmet_m3")}
@@ -528,7 +529,7 @@ def simulate(d, schedule, base15=None, demand15=None, rng=None, safety=True, gri
         if monitor is not None:
             tr.update(cmd_srv=np.zeros((F, 96), bool))
         trace.update(tr)
-        peak_q = (np.arange(96) >= 2 * PEAK_SLOTS.start) & (np.arange(96) < 2 * PEAK_SLOTS.stop)
+        peak_q = fpk                                     # reason reserve_topup vs prefill: the feeder peak window
     if budget is not None:
         cap_b, need_b = np.asarray(budget["cap_m3"], float), np.asarray(budget["need_m3"], float)
         pumped_b, deliv_b = np.zeros(F), np.zeros(F)
@@ -675,6 +676,10 @@ def simulate(d, schedule, base15=None, demand15=None, rng=None, safety=True, gri
             m["pump_kwh_17_20"] += float(pw.sum()) * 0.25
             if faults:
                 m["failsafe_kwh_17_20"] += float(pw[lost].sum()) * 0.25
+        if fpk[k]:
+            m["pump_kwh_feeder_peak"] += float(pw.sum()) * 0.25
+            if faults:
+                m["failsafe_kwh_feeder_peak"] += float(pw[lost].sum()) * 0.25
         if faults:
             prev_on = on
     m["farms_below_reserve"] = len(m["farms_below_reserve"])

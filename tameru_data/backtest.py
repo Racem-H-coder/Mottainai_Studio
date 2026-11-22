@@ -18,7 +18,11 @@ unmanaged with faults as the reference.
 Output: results/backtest.csv (one row per day x scenario x adoption), results/backtest_curves.json (load
 curves of the worst day), grid safety triggers in the events table. All numbers are simulated.
 
-Usage:  python backtest.py [--days 20] [--skip-milp]
+Data v2: the closed-loop margin and the default critical window come from results/v2_choices.json (frozen on
+training days, docs PROTOCOL_v2 s8); closed loop also at 100 %. --whole-period replays EVERY test day (unmanaged,
+closed loop 50 %) -> results/backtest_whole_test.csv.
+
+Usage:  python backtest.py [--days 20] [--skip-milp] [--whole-period]
 """
 import argparse
 import csv
@@ -45,9 +49,26 @@ FIELDS = ["date", "scenario", "adoption", "mode", "loop", "forecast", "margin", 
           "kwh_over", "reserve_quarters", "farms_below_reserve", "forced_quarters", "grid_triggers", "grid_stops",
           "auto_stop_min", "pump_kwh_17_20", "max_starts", "short_runs", "solve_s", "replans", "overrides",
           "unmet_m3", "end_deficit_m3", "faults", "fault_pump_q", "fault_sensor_q", "fault_comm_q",
-          "failsafe_kwh_17_20", "budget_cap_q", "leak_m3", "dry_kwh", "monitor_stops"]
+          "failsafe_kwh_17_20", "budget_cap_q", "leak_m3", "dry_kwh", "monitor_stops", "pump_kwh_feeder_peak",
+          "failsafe_kwh_feeder_peak"]
+CHOICES = HERE.parent / "results" / "v2_choices.json"
 MARGIN_ADOPTIONS = (0.7, 0.8)       # margins 0 / 5 / 10 % re-tested where forecast error starts to matter
 FAULT_ADOPTIONS = (0.5, 0.7)        # closed loop with and without injected faults
+
+
+def choices(db=DB):
+    """Frozen training-day choices (results/v2_choices.json) for a data-v2 DB: margin and default critical
+    windows. Data v1 (or no file): margin 0, no window."""
+    v2 = sqlite3.connect(db).execute("SELECT value FROM meta WHERE key = 'load_model'").fetchone()
+    if v2 and v2[0] == "v2" and CHOICES.exists():
+        c = json.loads(CHOICES.read_text(encoding="utf-8"))
+        return {"margin": c["margin"], "critical_windows": [tuple(w) for w in c["critical_windows_default"] or []]}
+    return {"margin": 0.0, "critical_windows": []}
+
+
+def closed_scenario(db=DB):
+    """Name of the live-mode scenario (closed loop, lp_round, frozen margin)."""
+    return f"closed_lp_round_m{round(100 * choices(db)['margin'])}"
 
 
 def worst_days(db, n):
@@ -104,6 +125,8 @@ def run(db, day, adoption, scenario, fc, log=None, faults=False, trace=None, bud
     optimizer.FAULTS_B). monitor: anomaly detector passed to simulate (closed and open loop only).
     critical_windows: planner windows where adopters may not pump (optimizer.solve); default none."""
     d = load_day(str(db), day)
+    if critical_windows is None:                         # None = the frozen default ([] = explicitly none)
+        critical_windows = choices(db)["critical_windows"]
     for f in d["farms"]:
         f["controllable"] = int(f["adopt_u"] < adoption) if scenario != "unmanaged" else 0
     base15, dem15, _ = actuals(db, day, d["farms"])
@@ -144,9 +167,11 @@ def run(db, day, adoption, scenario, fc, log=None, faults=False, trace=None, bud
     row.update({k: m[k] for k in FIELDS if k in m and k not in row}, pct_cap=round(m["peak_kw"] / cap, 4))
     row["auto_stop_min"] = round(row["auto_stop_min"], 1)
     row["pump_kwh_17_20"] = round(row["pump_kwh_17_20"], 1)
+    row["pump_kwh_feeder_peak"] = round(row["pump_kwh_feeder_peak"], 1)
     row["unmet_m3"] = round(row["unmet_m3"], 2)
     if faults:
         row["failsafe_kwh_17_20"] = round(row["failsafe_kwh_17_20"], 1)
+        row["failsafe_kwh_feeder_peak"] = round(row["failsafe_kwh_feeder_peak"], 1)
     return row, m["load15"]
 
 
@@ -154,11 +179,13 @@ def main(db=DB, n_days=20, skip_milp=False):
     days = worst_days(db, n_days)
     scen = ["unmanaged", "open_lp_round_m0", "open_lp_round_m5", "open_lp_round_m10"]
     scen += [] if skip_milp else ["open_milp_m0", "open_milp_m10"]
-    scen += ["closed_lp_round_m0", "oracle_lp_round_m0"]
+    closed = closed_scenario(db)
+    scen += [closed, "oracle_lp_round_m0"]
     extra = [(MAIN_ADOPTION, "unmanaged", True)]                       # (adoption, scenario, faults)
     extra += [(a, f"open_lp_round_m{m}", False) for a in MARGIN_ADOPTIONS for m in (5, 10)]
-    extra += [(a, "closed_lp_round_m0", f) for a in FAULT_ADOPTIONS for f in (False, True)
+    extra += [(a, closed, f) for a in FAULT_ADOPTIONS for f in (False, True)
               if not (a == MAIN_ADOPTION and not f)]                   # 50 % no-fault closed loop is in scen
+    extra += [(1.0, closed, False)]
     rows, log, curves = [], [], {}
     RESULTS.mkdir(exist_ok=True)
     out = RESULTS / "backtest.csv"
@@ -202,10 +229,36 @@ def main(db=DB, n_days=20, skip_milp=False):
     return rows
 
 
+def whole_period(db=DB, adoptions=(0.5,)):
+    """Every test day (Jun-Oct 2026): unmanaged (replay) and the live mode at each adoption (50 % only, user scope
+    change 2026-11-22), no faults.
+    -> results/backtest_whole_test.csv (date, scenario, adoption, peak_kw, minutes_over, kwh_over, ...)."""
+    con = sqlite3.connect(db)
+    days = [r[0] for r in con.execute("SELECT DISTINCT substr(ts,1,10) FROM grid_load WHERE substr(ts,1,10) > ? "
+                                      "ORDER BY 1", (VAL_END,))]
+    closed, rows, tic = closed_scenario(db), [], time.perf_counter()
+    out = RESULTS / "backtest_whole_test.csv"
+    for n, day in enumerate(days, 1):
+        fc = predict_day(db, day, which="eval")
+        rows.append(run(db, day, 0.0, "unmanaged", fc)[0])
+        rows += [run(db, day, a, closed, fc)[0] for a in adoptions]
+        if n % 10 == 0 or n == len(days):
+            with out.open("w", newline="", encoding="utf-8") as fh:
+                w = csv.DictWriter(fh, FIELDS)
+                w.writeheader()
+                w.writerows(rows)
+            print(f"[{n}/{len(days)} {time.perf_counter() - tic:5.0f}s] {day}", flush=True)
+    return rows
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--db", default=str(DB))
     ap.add_argument("--days", type=int, default=20)
     ap.add_argument("--skip-milp", action="store_true")
+    ap.add_argument("--whole-period", action="store_true", help="every test day, unmanaged + live mode 50 %%")
     a = ap.parse_args()
-    main(Path(a.db), a.days, a.skip_milp)
+    if a.whole_period:
+        whole_period(Path(a.db))
+    else:
+        main(Path(a.db), a.days, a.skip_milp)

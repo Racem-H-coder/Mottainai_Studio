@@ -65,17 +65,20 @@ def pump_cap_left(f, st=None):
     return max(0.0, budget_m3(f) - st.get("pumped_m3", 0.0), for_crop)
 
 
-def farm_rows(day, name, adoption, d, dem15, tr, load, ref_kwh_peak, mode="off", ts=None):
+def farm_rows(day, name, adoption, d, dem15, tr, load, ref_kwh_peak, mode="off", ts=None, ref_kwh_fpk=None):
     """One metrics row per farm from an optimizer.simulate trace (column contract:
-    deliverables/dashboard_contract.md). ref_kwh_peak: (F,) pump kWh 17-20 h of the unmanaged run."""
+    deliverables/dashboard_contract.md). ref_kwh_peak: (F,) pump kWh 17-20 h of the unmanaged run (deprecated
+    columns); ref_kwh_fpk: (F,) pump kWh in the feeder peak window of the unmanaged run."""
+    from features import peak_quarters
     from optimizer import FAULT_LABELS
+    fpk = np.array(peak_quarters())
     kpk = int(np.argmax(load))
     ef = EMISSION_FACTOR["kg_co2_per_kwh"]
     out = []
     for j, f in enumerate(d["farms"]):
         fid = f["farm_id"]
         power = tr["power_kw"][j]
-        kwh, kwh_pk = power.sum() * 0.25, power[68:80].sum() * 0.25
+        kwh, kwh_pk, kwh_fpk = power.sum() * 0.25, power[68:80].sum() * 0.25, power[fpk].sum() * 0.25
         pumped_q = tr["pumped_m3"][j]
         pumped = pumped_q.sum()
         requested = float(np.sum(dem15[fid]))
@@ -99,6 +102,8 @@ def farm_rows(day, name, adoption, d, dem15, tr, load, ref_kwh_peak, mode="off",
             "over_pumped_m3": round(max(0.0, pumped - budget), 2), "unmet_need_m3": round(unmet_need, 2),
             "curtailed_excess_m3": round(curtailed, 2), "pump_kwh": round(kwh, 2), "pump_kwh_17_20": round(kwh_pk, 2),
             "kwh_shifted_out_of_peak": round(ref_kwh_peak[j] - kwh_pk, 2), "peak_contrib_kw": round(power[kpk], 2),
+            "pump_kwh_feeder_peak": round(kwh_fpk, 2),
+            "kwh_shifted_out_of_feeder_peak": round(ref_kwh_fpk[j] - kwh_fpk, 2) if ref_kwh_fpk is not None else "",
             "kwh_per_m3": round(kwh / pumped, 3) if pumped > 1e-9 else "",
             "kwh_per_ha": round(kwh / (f["area_m2"] / 1e4), 2),
             "reserve_violation_q": int(tr["reserve_q"][j]),
@@ -133,7 +138,8 @@ def train_days(db, n):
 
 
 def main(n_days=20):
-    from backtest import DB, actuals, run
+    from backtest import DB, actuals, closed_scenario, run
+    from features import peak_quarters
     from dashboard_data import stamps
     from features import load_day
     from forecast import predict_day
@@ -150,12 +156,13 @@ def main(n_days=20):
         ref = {}
         for name, a, fl, mode in scen:
             tr = {}
-            row, load = run(DB, day, a, "unmanaged" if a == 0 else "closed_lp_round_m0", fc, faults=fl, trace=tr,
+            row, load = run(DB, day, a, "unmanaged" if a == 0 else closed_scenario(DB), fc, faults=fl, trace=tr,
                             budget_mode=mode)
             if a == 0:
-                ref[fl] = tr["power_kw"][:, 68:80].sum(axis=1) * 0.25
-            rows.setdefault((name, a), []).extend(farm_rows(day, name, a, d, dem15, tr, load, ref[fl], mode,
-                                                            stamps(day)))
+                ref[fl] = (tr["power_kw"][:, 68:80].sum(axis=1) * 0.25,
+                           tr["power_kw"][:, np.array(peak_quarters())].sum(axis=1) * 0.25)
+            rows.setdefault((name, a), []).extend(farm_rows(day, name, a, d, dem15, tr, load, ref[fl][0], mode,
+                                                            stamps(day), ref[fl][1]))
             dist.append({"day": day, "scenario": name, "adoption": a, "peak_kw": row["peak_kw"],
                          "minutes_over": row["minutes_over"], "kwh_over": row["kwh_over"],
                          "budget_cap_q": row.get("budget_cap_q", 0), "end_deficit_m3": row["end_deficit_m3"]})
