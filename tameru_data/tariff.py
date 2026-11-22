@@ -23,6 +23,7 @@ Tests: python test_tariff.py
 import argparse
 import json
 import time
+from pathlib import Path
 from datetime import date as Date
 
 import numpy as np
@@ -32,7 +33,11 @@ FLAT = 184                                                 # mill/kWh HT
 VAT, SURCHARGE = 0.07, 10                                  # 7 % on energy; mill/kWh (municipal 5 + FTE 5)
 HOURS = {"summer": {"day": (480, 1140), "peak": (1140, 1380)},     # minutes; the rest is night
          "winter": {"day": (390, 1050), "peak": (1050, 1290)}}
-CPP = {"adder_mill_per_kwh": 400, "window": ("17:00", "20:00"), "rebate_mill_per_kw": 1000,
+PEAK_WINDOW = Path(__file__).resolve().parents[1] / "results" / "peak_window.json"
+# CPP window = the feeder's peak window(s) (load_checks.peak_window, data v2); data v1 used 17:00-20:00
+CPP_WINDOWS = ([tuple(w) for w in json.loads(PEAK_WINDOW.read_text(encoding="utf-8"))["windows"]]
+               if PEAK_WINDOW.exists() else [("17:00", "20:00")])
+CPP = {"adder_mill_per_kwh": 400, "windows": CPP_WINDOWS, "rebate_mill_per_kw": 1000,
        "critical_day": "forecast p90 base load + usual pumping of all farms > feeder capacity in the window",
        "baseline": "the farm's usual (habit) pumping on that day; a utility would use metered history",
        "assumption": True}
@@ -63,16 +68,15 @@ def ttc(ht_mill, kwh):
 
 
 def cpp_quarters():
-    a, b = ((int(x[:2]) * 60 + int(x[3:])) // 15 for x in CPP["window"])
-    q = np.zeros(96, bool)
-    q[a:b] = True
-    return q
+    """(96,) bool: quarters inside the CPP window(s); a window may wrap midnight."""
+    from optimizer import window_slots
+    return np.repeat(window_slots(CPP["windows"]), 2)
 
 
 def critical_day(fc_p90, d):
     """Forecast critical day: p90 base load + every farm's usual pumping above capacity in the CPP window."""
-    from optimizer import habit_duty
-    pump = sum(np.repeat(f["pump_kw"] * habit_duty(f["demand_m3"], f), 2) for f in d["farms"])
+    from optimizer import habit_kw
+    pump = sum(np.repeat(habit_kw(f), 2) for f in d["farms"])
     return bool(np.max((np.asarray(fc_p90) + pump)[cpp_quarters()]) > d["capacity_kw"])
 
 

@@ -1,0 +1,22 @@
+{
+ "windows": [
+  [
+   "19:00",
+   "22:00"
+  ]
+ ],
+ "peak_hour": 20,
+ "coverage": 0.9762,
+ "quarters": 84,
+ "rule": "total_kw > capacity",
+ "days": "2024-11-01 .. 2026-05-31 (training + validation)",
+ "count_by_hour": {
+  "12": 2,
+  "19": 20,
+  "20": 45,
+  "21": 17
+ },
+ "hot_version": "quarters inside the window(s) on days with forecast Tmax >= 35 C",
+ "definition": "fewest whole hours (<= 2 contiguous windows) holding >= 80 % of the quarters; ties: higher coverage, one window, earliest start",
+ "simulated": true
+}

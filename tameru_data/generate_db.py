@@ -18,6 +18,13 @@ Usage:
     python generate_db.py                      # 200 farms, 730 days ending 2026-10-31, 50 % adoption
     python generate_db.py --farms 200 --days 365 --end 2026-09-30 --seed 7 --adoption 0.3
     python generate_db.py --offline            # skip Open-Meteo
+    python generate_db.py --load-model v1      # data v1 (tag data-v1), reproducible
+    python generate_db.py --habit-mix tariff_aware --out mix.db   # v2 sensitivity mixes (training days only)
+
+Load model v2 (default): non-pump load = households + additive AC (lagged temperature, occupancy) + services +
+lighting (sunset-anchored) + local spikes, stored per component in base_components; farmers' pumps follow pumping
+groups (pump_events), separate from irrigation times (irrigation_events). Parameters P_V2 were frozen from realism
+targets on the unmanaged load only (load_checks.py).
 
 Only the Python standard library is needed.
 """
@@ -106,6 +113,36 @@ JITTER_MIN = (-30, -15, 0, 15, 30)  # start-time jitter per session per day
 SKIP_PROB, CARRY = 0.07, 0.5        # skip an irrigation day; share of the deficit still made up later
 HEAT_T, HEAT_PROB = 36.0, 0.3       # on days with Tmax >= HEAT_T, this share of farms irrigates 15-25 % more
 
+# --------------------------------------------------------------------------
+# Load model v2 (docs: PROTOCOL_v2 sections 2-3). Every value is an ASSUMPTION; ranges were fixed before tuning.
+# Non-pump load = household (non-AC) + AC (additive) + services + lighting + local spikes, per 15 min.
+# --------------------------------------------------------------------------
+P_V2 = dict(
+    n_hh=1000,                       # households on the feeder (~5 per farm incl. village homes)
+    hh_base=0.135, hh_morn=0.11, hh_noon=0.11, hh_eve=0.155,  # kW/household: base + bumps 07:00, 13:00, sunset+offset
+    eve_offset=90,                   # min after sunset of the evening household bump
+    light_hh=0.06, light_pub=25.0,   # kW/household after sunset; public lighting kW (sunset -> sunrise)
+    cold=40.0, cold_t=0.02,          # cold stores kW, +2 %/C above 25 C
+    shops=80.0,                      # shops, cafes, workshops kW at full opening
+    ac_pen=0.45, ac_kw=0.80,         # share of households with AC; kW per AC household at full duty
+    ac_t0=26.0, ac_t1=36.0,          # AC duty 0 at T_eff = t0, full at t1
+    ac_tau=2.0, ac_spell=0.3,        # thermal inertia (h, exponential lag); + spell * (3-day mean T - 27)
+    ac_occ=[0.40] * 6 + [0.20] * 3 + [0.35] * 3 + [0.60] + [0.80] * 4 + [0.50] * 4 + [0.55] * 3,  # by hour
+)
+# Pumping groups (share of farms, ASSUMPTION, fixed at R1): pumping start window, irrigation start window.
+# Direct groups pump straight while irrigating; pre-fill groups fill the tank's free space first, then pump
+# the rest while irrigating.
+HABIT_WINDOWS = {"morning": (300, 450), "evening": (990, 1170), "day": (510, 750), "night": (0, 120)}
+HABIT_GROUPS = ("early_morning", "split", "day_prefill", "evening", "night_prefill")
+HABIT_MIXES = {
+    "default":       (0.20, 0.20, 0.20, 0.25, 0.15),
+    "evening_heavy": (0.15, 0.40, 0.00, 0.45, 0.00),
+    "tariff_aware":  (0.15, 0.15, 0.25, 0.15, 0.30),
+}
+# BT three-period irrigation tariff (STEG, summer hours), price index = mill / day rate; see tariff.py
+TARIFF_PERIODS_V2 = [("night", 0, 480, 116 / 140), ("day", 480, 1140, 1.0), ("peak", 1140, 1380, 391 / 140),
+                     ("late_night", 1380, 1440, 116 / 140)]
+
 # Tunisian fixed public holidays
 FIXED_HOLIDAYS = {(1, 1): "New Year", (3, 20): "Independence Day", (4, 9): "Martyrs' Day",
                   (5, 1): "Labour Day", (7, 25): "Republic Day", (8, 13): "Women's Day",
@@ -182,8 +219,10 @@ CREATE TABLE tanks (
   tank_id INTEGER PRIMARY KEY, farm_id INTEGER UNIQUE REFERENCES farms,
   volume_m3 REAL, tank_type TEXT, initial_level_pct REAL);
 
-CREATE TABLE irrigation_habits (       -- when the farmer irrigates without Tameru
+CREATE TABLE irrigation_habits (       -- when the farmer irrigates (field) and pumps without Tameru
   farm_id INTEGER REFERENCES farms, slot TEXT, start_min INTEGER, share REAL,
+  grp TEXT,                   -- v2 pumping group (NULL in v1)
+  pump_start_min INTEGER,     -- when the farmer's pump starts for this session (= start_min unless pre-fill)
   PRIMARY KEY (farm_id, slot));
 
 -- ---------- history ----------
@@ -201,9 +240,15 @@ CREATE TABLE farm_daily_water (
 CREATE TABLE irrigation_events (  -- what farmers actually did (jitter, skips, over-irrigation)
   farm_id INTEGER REFERENCES farms, day TEXT, start_min INTEGER, volume_m3 REAL);
 
+CREATE TABLE pump_events (  -- when farmers' pumps ran without Tameru (v1: = irrigation_events)
+  farm_id INTEGER REFERENCES farms, day TEXT, start_min INTEGER, volume_m3 REAL);
+
 CREATE TABLE grid_load (
   ts TEXT PRIMARY KEY, temp_c REAL, temp_forecast_c REAL, base_kw REAL, pump_kw_unmanaged REAL,
   total_kw REAL, capacity_kw REAL);
+
+CREATE TABLE base_components (  -- v2: non-pump load split, kW (sum = grid_load.base_kw up to rounding)
+  ts TEXT PRIMARY KEY, household_kw REAL, ac_kw REAL, services_kw REAL, lighting_kw REAL, spikes_kw REAL);
 
 -- ---------- runtime (filled by the backend) ----------
 CREATE TABLE telemetry (
@@ -218,6 +263,7 @@ CREATE TABLE events (ts TEXT, type TEXT, farm_id INTEGER, detail TEXT);
 CREATE INDEX ix_plantings_plot ON plantings(plot_id);
 CREATE INDEX ix_fdw_day ON farm_daily_water(day);
 CREATE INDEX ix_ie_day ON irrigation_events(day);
+CREATE INDEX ix_pe_day ON pump_events(day);
 """
 
 
@@ -328,9 +374,101 @@ def synthetic_weather(start, end, rng):
 
 
 # --------------------------------------------------------------------------
+# Load model v2 helpers
+# --------------------------------------------------------------------------
+def sun_times(day):
+    """(sunrise, sunset) in local minutes (UTC+1, no DST) at LAT/LON, NOAA approximation (+-2 min)."""
+    g = 2 * math.pi / 365 * (day.timetuple().tm_yday - 1)
+    eq = 229.18 * (0.000075 + 0.001868 * math.cos(g) - 0.032077 * math.sin(g) - 0.014615 * math.cos(2 * g)
+                   - 0.040849 * math.sin(2 * g))
+    dec = (0.006918 - 0.399912 * math.cos(g) + 0.070257 * math.sin(g) - 0.006758 * math.cos(2 * g)
+           + 0.000907 * math.sin(2 * g) - 0.002697 * math.cos(3 * g) + 0.00148 * math.sin(3 * g))
+    lat = math.radians(LAT)
+    ha = math.degrees(math.acos(math.cos(math.radians(90.833)) / (math.cos(lat) * math.cos(dec))
+                                - math.tan(lat) * math.tan(dec)))
+    noon = 720 - 4 * LON - eq + 60
+    return noon - 4 * ha, noon + 4 * ha
+
+
+def _ramp(x, a, b):
+    return min(1.0, max(0.0, (x - a) / (b - a)))
+
+
+def ac_temperature(weather, p=P_V2):
+    """Hourly 'felt' temperature driving AC: exponentially lagged air temperature (time constant ac_tau h)."""
+    a, cur, out = 1 - math.exp(-1 / p["ac_tau"]), None, {}
+    for r in weather:
+        cur = r[1] if cur is None else cur + a * (r[1] - cur)
+        out[r[0]] = cur
+    return out
+
+
+def draw_habit_v2(hrng, mix):
+    """(group, [(irrigation slot, irrigation start min, share)], pre-fill pump start min or None) for one farm."""
+    r, acc = hrng.random(), 0.0
+    for grp, s in zip(HABIT_GROUPS, HABIT_MIXES[mix]):
+        acc += s
+        if r < acc:
+            break
+    pick = lambda w: hrng.randrange(HABIT_WINDOWS[w][0], HABIT_WINDOWS[w][1] + 1, 15)  # noqa: E731
+    if grp == "split":
+        ev = round(hrng.uniform(0.4, 0.7), 2)
+        return grp, [("morning", pick("morning"), round(1 - ev, 2)), ("evening", pick("evening"), ev)], None
+    if grp == "day_prefill":
+        return grp, [("evening", pick("evening"), 1.0)], pick("day")
+    if grp == "night_prefill":
+        return grp, [("morning", pick("morning"), 1.0)], pick("night")
+    return grp, [("morning" if grp == "early_morning" else "evening",
+                  pick("morning" if grp == "early_morning" else "evening"), 1.0)], None
+
+
+def nonpump_v2(day, holiday, ramadan, temp_h, teff, t3, nrng, state, p=P_V2):
+    """One day of the v2 non-pump load: 5 lists of 96 kW (household, ac, services, lighting, spikes).
+    state carries the day-level AR(1) shift and the 15-min AR(1) noise across days."""
+    ds, nxt = str(day), str(day + timedelta(days=1))
+    sr, ss = sun_times(day)
+    day_f = {5: 0.96, 6: 0.93}.get(day.weekday(), 1.0) * (HOLIDAY_F if holiday else 1.0)
+    state["lvl"] = LEVEL_AR * state["lvl"] + nrng.gauss(0, LEVEL_SD)
+    spikes = [0.0] * 96
+    for _ in range(3):
+        if nrng.random() < EVENT_RATE / 3:
+            s0, n, kw = nrng.randrange(96), nrng.randint(4, 12), nrng.uniform(30, 120)
+            for k in range(min(n, 96 - s0)):
+                spikes[s0 + k] += kw * min(1.0, (k + 1) / 2, (n - k) / 2)
+    th = [teff.get(f"{ds} {i:02d}:00", temp_h[i]) for i in range(24)]
+    th.append(teff.get(f"{nxt} 00:00", th[-1]))
+    spell = p["ac_spell"] * max(0.0, t3 - 27)
+    occ, nh = p["ac_occ"], p["n_hh"]
+    G = lambda m, c, s: math.exp(-0.5 * ((m - c) / s) ** 2)  # noqa: E731
+    out = [[0.0] * 96 for _ in range(4)] + [spikes]
+    for q in range(96):
+        m = 15 * q + 7.5
+        x = m / 60 - 0.5                                    # hourly values sit at the hour's centre
+        i0, fr = int(math.floor(x)) % 24, x - math.floor(x)
+        o = occ[i0] * (1 - fr) + occ[(i0 + 1) % 24] * fr
+        k = m / 60
+        te = th[int(k)] + (th[int(k) + 1] - th[int(k)]) * (k - int(k)) + spell
+        hh = nh * (p["hh_base"] + p["hh_morn"] * G(m, 420, 60) + p["hh_noon"] * G(m, 780, 90)
+                   + p["hh_eve"] * G(m, ss + p["eve_offset"], 90))
+        hh *= day_f * (RAMADAN_SHAPE[int(m // 60)] if ramadan else 1.0)
+        ac = nh * p["ac_pen"] * p["ac_kw"] * o * _ramp(te, p["ac_t0"], p["ac_t1"])
+        opening = 0.2 + 0.8 * _ramp(m, 450, 510) - 0.4 * _ramp(m, 750, 810) + 0.4 * _ramp(m, 930, 990)  # 1-h ramps
+        serv = (p["cold"] * (1 + p["cold_t"] * max(0.0, temp_h[int(k)] - 25))
+                + p["shops"] * opening * (1 - 0.8 * _ramp(m, ss + 120, ss + 240)) * day_f)
+        light = (nh * p["light_hh"] * (_ramp(m, ss - 30, ss + 30) * (1 - _ramp(m, 1380, 1470))
+                                       + 0.4 * (m < sr + 30) * _ramp(m, 300, 330))
+                 + p["light_pub"] * (m >= ss or m < sr))
+        state["ar"] = NOISE_AR * state["ar"] + nrng.gauss(0, NOISE_SD)
+        f = (1 + state["lvl"]) * (1 + state["ar"])
+        for c, v in enumerate((hh, ac, serv, light)):
+            out[c][q] = v * f
+    return out
+
+
+# --------------------------------------------------------------------------
 # Generator
 # --------------------------------------------------------------------------
-def build(out, n_farms, days, end, seed, offline, adoption):
+def build(out, n_farms, days, end, seed, offline, adoption, load_model="v2", habit_mix="default"):
     rng = random.Random(seed)
     adopt_rng = random.Random(seed + 1)   # own stream: --adoption changes nothing else, sets are nested
     start = end - timedelta(days=days - 1)
@@ -350,7 +488,7 @@ def build(out, n_farms, days, end, seed, offline, adoption):
     crop_by_code = {c[0]: c for c in CROPS}
     for i, m in enumerate(PUMP_MODELS, 1):
         db.execute("INSERT INTO pump_models VALUES (?,?,?,?,?,?)", (i, *m))
-    db.executemany("INSERT INTO tariff_periods VALUES (?,?,?,?)", TARIFF_PERIODS)
+    db.executemany("INSERT INTO tariff_periods VALUES (?,?,?,?)", TARIFF_PERIODS_V2 if load_model == "v2" else TARIFF_PERIODS)
 
     # ---- weather
     source = "synthetic"
@@ -512,27 +650,38 @@ def build(out, n_farms, days, end, seed, offline, adoption):
     db.executemany("INSERT INTO pumps VALUES (?,?,?,?,?,?,?,?,?)", pump_rows)
     db.executemany("INSERT INTO tanks VALUES (?,?,?,?,?)", tank_rows)
 
-    # ---- farmer habits (when they irrigate without Tameru)
-    habits = {}
-    hab_rows = []
+    # ---- farmer habits: when they irrigate (field) and when their pump runs, without Tameru.
+    #      v1: pump = irrigation time. v2: pumping groups (HABIT_MIXES), own RNG streams so that a habit mix moves
+    #      only pump timing and the non-pump load is the same whatever the mix.
+    v2 = load_model == "v2"
+    hrng, nrng = random.Random(seed + 4), random.Random(seed + 5)
+    habits, prefill, hab_rows = {}, {}, []
     for fid in range(1, n_farms + 1):
-        r = rng.random()
-        if r < 0.45:
-            h = [("evening", rng.randrange(15 * 60 + 30, 18 * 60 + 1, 15), 1.0)]
-        elif r < 0.85:
-            ev = round(rng.uniform(0.4, 0.7), 2)
-            h = [("morning", rng.randrange(5 * 60, 7 * 60 + 31, 15), round(1 - ev, 2)),
-                 ("evening", rng.randrange(15 * 60 + 30, 18 * 60 + 1, 15), ev)]
+        if v2:
+            grp, h, prefill[fid] = draw_habit_v2(hrng, habit_mix)
+            hab_rows += [(fid, *x, grp, x[1] if prefill[fid] is None else prefill[fid]) for x in h]
         else:
-            h = [("morning", rng.randrange(5 * 60, 7 * 60 + 31, 15), 1.0)]
+            r = rng.random()
+            if r < 0.45:
+                h = [("evening", rng.randrange(15 * 60 + 30, 18 * 60 + 1, 15), 1.0)]
+            elif r < 0.85:
+                ev = round(rng.uniform(0.4, 0.7), 2)
+                h = [("morning", rng.randrange(5 * 60, 7 * 60 + 31, 15), round(1 - ev, 2)),
+                     ("evening", rng.randrange(15 * 60 + 30, 18 * 60 + 1, 15), ev)]
+            else:
+                h = [("morning", rng.randrange(5 * 60, 7 * 60 + 31, 15), 1.0)]
+            hab_rows += [(fid, *x, None, x[1]) for x in h]
         habits[fid] = h
-        hab_rows += [(fid, *x) for x in h]
-    db.executemany("INSERT INTO irrigation_habits VALUES (?,?,?,?)", hab_rows)
+    db.executemany("INSERT INTO irrigation_habits VALUES (?,?,?,?,?,?)", hab_rows)
 
     # ---- what farmers actually do: the soil deficit (need * over_irrigation, more on very hot days)
     #      builds up and they irrigate at habit times (with jitter) once it reaches IRR_THRESH of a peak day:
     #      daily in summer, every few days in winter. Some irrigation days are skipped.
-    events, deficit = {}, dict.fromkeys(range(1, n_farms + 1), 0.0)
+    #      v2 pre-fill farms: the pump first fills the tank's free space (tank at its start-of-day level), then
+    #      pumps the rest while irrigating, never two runs at once.
+    jit = hrng if v2 else rng
+    space = {t[1]: t[2] - round(t[2] * t[4] / 100, 2) for t in tank_rows}
+    events, pump_ev, deficit = {}, {}, dict.fromkeys(range(1, n_farms + 1), 0.0)
     day = start
     while day <= end:
         ds = str(day)
@@ -549,19 +698,32 @@ def build(out, n_farms, days, end, seed, offline, adoption):
                 continue
             v, deficit[fid] = deficit[fid], 0.0
             for _, start_min, share in habits[fid]:
-                st = min(max(0, start_min + rng.choice(JITTER_MIN)), 24 * 60 - 15)
-                events.setdefault(ds, []).append((fid, ds, st, round(v * share, 2)))
+                st = min(max(0, start_min + jit.choice(JITTER_MIN)), 24 * 60 - 15)
+                vol = round(v * share, 2)
+                events.setdefault(ds, []).append((fid, ds, st, vol))
+                if not v2 or prefill[fid] is None:
+                    pump_ev.setdefault(ds, []).append((fid, ds, st, vol))
+                    continue
+                pst = min(max(0, prefill[fid] + jit.choice(JITTER_MIN)), 24 * 60 - 15)
+                pre = round(min(vol, space[fid]), 2)
+                pump_ev.setdefault(ds, []).append((fid, ds, pst, pre))
+                if vol - pre > 1e-9:
+                    q_end = pst // 15 + math.ceil(pre / farm_pump[fid][1] * 4 - 1e-9)
+                    pump_ev[ds].append((fid, ds, max(st, 15 * q_end), round(vol - pre, 2)))
         day += timedelta(days=1)
     db.executemany("INSERT INTO irrigation_events VALUES (?,?,?,?)", [e for d in events.values() for e in d])
+    db.executemany("INSERT INTO pump_events VALUES (?,?,?,?)", [e for d in pump_ev.values() for e in d])
 
     # ---- grid load history at 15-min resolution
-    grid_rows, cal_rows = [], []
+    teff = ac_temperature(weather) if v2 else None
+    grid_rows, cal_rows, comp_rows = [], [], []
     ar = lvl = 0.0
+    nstate = {"ar": 0.0, "lvl": 0.0}
     day = start
     while day <= end:
         ds = str(day)
         pump = [0.0] * 96
-        for fid, _, st, vol in events.get(ds, []):
+        for fid, _, st, vol in pump_ev.get(ds, []):
             kw, flow = farm_pump[fid]
             q, rem = st // 15, vol / flow * 4                 # quarters of pumping, last one partial
             while rem > 1e-9 and q < 96:                     # ponytail: runs past midnight are cut (as in features.py)
@@ -571,10 +733,23 @@ def build(out, n_farms, days, end, seed, offline, adoption):
 
         holiday, ramadan = day_calendar(day)
         cal_rows.append((ds, holiday, ramadan))
+        t3 = sum(dmean.get(str(day - timedelta(days=k)), 20.0) for k in range(3)) / 3
+        if v2:
+            temp_h = [hourly_temp.get(f"{ds} {i:02d}:00", 20.0) for i in range(24)]
+            comps = nonpump_v2(day, holiday, ramadan, temp_h, teff, t3, nrng, nstate)
+            for q in range(96):
+                i = q // 4
+                key = f"{ds} {i:02d}:00"
+                ts = f"{ds} {i:02d}:{(q % 4) * 15:02d}"
+                base_kw = sum(c[q] for c in comps)
+                comp_rows.append((ts, *(round(c[q], 1) for c in comps)))
+                grid_rows.append((ts, temp_h[i], hourly_fc.get(key, temp_h[i]), round(base_kw, 1), round(pump[q], 1),
+                                  round(base_kw + pump[q], 1), FEEDER_CAPACITY_KW))
+            day += timedelta(days=1)
+            continue
         lvl = LEVEL_AR * lvl + rng.gauss(0, LEVEL_SD)
         day_f = {5: 0.96, 6: 0.93}.get(day.weekday(), 1.0) * (HOLIDAY_F if holiday else 1.0) * (1 + lvl)
         prof = [BASE_PROFILE[h] * (RAMADAN_SHAPE[h % 24] if ramadan else 1.0) for h in range(25)]
-        t3 = sum(dmean.get(str(day - timedelta(days=k)), 20.0) for k in range(3)) / 3
         spikes = [0.0] * 96
         for _ in range(3):
             if rng.random() < EVENT_RATE / 3:
@@ -597,6 +772,7 @@ def build(out, n_farms, days, end, seed, offline, adoption):
                               round(base_kw + pump[q], 1), FEEDER_CAPACITY_KW))
         day += timedelta(days=1)
     db.executemany("INSERT INTO grid_load VALUES (?,?,?,?,?,?,?)", grid_rows)
+    db.executemany("INSERT INTO base_components VALUES (?,?,?,?,?,?)", comp_rows)
     db.executemany("INSERT INTO calendar VALUES (?,?,?)", cal_rows)
 
     meta = [
@@ -606,7 +782,10 @@ def build(out, n_farms, days, end, seed, offline, adoption):
         ("weather_source", source), ("location", f"{LAT},{LON} Cap Bon, Tunisia"),
         ("calendar_note", "Ramadan and Eid dates are approximate (+-1 day)."),
         ("note", "Synthetic district data for the Tameru hackathon prototype. Not real farms."),
+        ("load_model", load_model),
     ]
+    if load_model == "v2":
+        meta += [("habit_mix", habit_mix), ("load_params", json.dumps(P_V2))]
     if source == "open-meteo":
         meta.append(("weather_attribution", "Weather data by Open-Meteo.com (CC BY 4.0)"))
     db.executemany("INSERT INTO meta VALUES (?,?)", meta)
@@ -658,7 +837,12 @@ if __name__ == "__main__":
     ap.add_argument("--adoption", type=float, default=0.5, help="share of farms with a Tameru relay box")
     ap.add_argument("--out", type=Path, default=HERE / "tameru.db")
     ap.add_argument("--offline", action="store_true", help="skip Open-Meteo, use synthetic weather")
+    ap.add_argument("--load-model", choices=("v1", "v2"), default="v2",
+                    help="v1 = data-v1 load and habits (reproducible); v2 = component load model + pumping groups")
+    ap.add_argument("--habit-mix", choices=tuple(HABIT_MIXES), default="default",
+                    help="v2 pumping-group shares (sensitivity runs on training days only)")
     a = ap.parse_args()
-    print(f"Generating {a.farms} farms, {a.days} days to {a.end}, adoption {a.adoption:.0%} -> {a.out}")
-    db, s, e = build(a.out, a.farms, a.days, a.end, a.seed, a.offline, a.adoption)
+    print(f"Generating {a.farms} farms, {a.days} days to {a.end}, adoption {a.adoption:.0%}, load model "
+          f"{a.load_model}" + (f" ({a.habit_mix})" if a.load_model == "v2" else "") + f" -> {a.out}")
+    db, s, e = build(a.out, a.farms, a.days, a.end, a.seed, a.offline, a.adoption, a.load_model, a.habit_mix)
     report(db)

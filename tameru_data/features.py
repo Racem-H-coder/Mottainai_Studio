@@ -31,6 +31,32 @@ def hottest_day(db_path):
     return db.execute("SELECT day FROM farm_daily_water GROUP BY day ORDER BY SUM(need_m3) DESC LIMIT 1").fetchone()[0]
 
 
+def habit_pumping(f, habits):
+    """48 half-hour slots of water (m3) the farm's own pump delivers without Tameru (data v2), planned volume.
+    Direct sessions pump while irrigating; a pre-fill session (pump_start_min != start_min) first fills the tank's
+    free space from pump_start_min, then pumps the rest from the irrigation start (never two runs at once)."""
+    rate = f["flow_m3h"] * SLOT_MIN / 60
+    out = [0.0] * SLOTS
+
+    def fill(slot, vol):
+        while vol > 1e-6 and slot < SLOTS:
+            take = min(vol, rate - out[slot])
+            out[slot] += take
+            vol -= take
+            slot += 1
+        return slot
+
+    for h in habits:
+        vol = f["plan_need_m3"] * h["share"]
+        if h.get("pump_start_min") in (None, h["start_min"]):
+            fill(h["start_min"] // SLOT_MIN, vol)
+            continue
+        pre = min(vol, f["volume_m3"] - f["level0_m3"])
+        end = fill(h["pump_start_min"] // SLOT_MIN, pre)
+        fill(max(h["start_min"] // SLOT_MIN, end), vol - pre)
+    return [round(x, 3) for x in out]
+
+
 def load_day(db_path, day):
     """Everything the forecaster + optimizer need for one day, as plain Python data."""
     db = sqlite3.connect(db_path)
@@ -49,6 +75,7 @@ def load_day(db_path, day):
         raise ValueError(f"No data for {day}. Range: " +
                          str(db.execute("SELECT MIN(day), MAX(day) FROM farm_daily_water").fetchone()))
 
+    v2 = dict(db.execute("SELECT key, value FROM meta").fetchall()).get("load_model", "v1") == "v2"
     habits = {}
     for h in _rows(db, "SELECT * FROM irrigation_habits"):
         habits.setdefault(h["farm_id"], []).append(h)
@@ -79,10 +106,12 @@ def load_day(db_path, day):
                 s += 1
         f["demand_m3"] = [round(x, 3) for x in demand]
         f["level0_m3"] = round(f["volume_m3"] * f["initial_level_pct"] / 100, 2)
+        if v2:
+            f["habit_m3"] = habit_pumping(f, habits[f["farm_id"]])
         f["reserve_m3"] = round(f["volume_m3"] * RESERVE_PCT, 2)
         f["pump_m3_per_slot"] = round(f["flow_m3h"] * SLOT_MIN / 60, 3)
         f["crops"] = crops.get(f["farm_id"], [])
-        f["habits"] = [{k: h[k] for k in ("slot", "start_min", "share")} for h in habits[f["farm_id"]]]
+        f["habits"] = [{k: h.get(k) for k in ("slot", "start_min", "share", "pump_start_min")} for h in habits[f["farm_id"]]]
 
     grid = _rows(db, "SELECT ts, temp_c, base_kw, pump_kw_unmanaged, total_kw, capacity_kw "
                      "FROM grid_load WHERE ts LIKE ? ORDER BY ts", day + "%")
@@ -91,9 +120,13 @@ def load_day(db_path, day):
     unmanaged = [round(sum(g["total_kw"] for g in grid[i:i + per]) / per, 1) for i in range(0, len(grid), per)]
 
     tariff = [1.0] * SLOTS
-    for t in _rows(db, "SELECT * FROM tariff_periods"):
-        for s in range(t["start_min"] // SLOT_MIN, t["end_min"] // SLOT_MIN):
-            tariff[s] = t["price_index"]
+    if v2:      # STEG BT three-period irrigation tariff by date (summer/winter hours), index = price / day price
+        from tariff import BT_3P, bt_prices
+        tariff = [round(float(x) / BT_3P["day"], 4) for x in bt_prices(day)[::SLOT_MIN // 15]]
+    else:       # data v1: the illustrative periods stored in the DB
+        for t in _rows(db, "SELECT * FROM tariff_periods"):
+            for s in range(t["start_min"] // SLOT_MIN, t["end_min"] // SLOT_MIN):
+                tariff[s] = t["price_index"]
 
     return {
         "date": day,
@@ -103,6 +136,8 @@ def load_day(db_path, day):
         "base_kw_forecast": base,
         "unmanaged_total_kw": unmanaged,
         "tariff_index": tariff,
+        # v2: farms without Tameru pump into their own tank (habit_m3); v1: straight to the field
+        "habit_tank": v2,
         "farms": farms,
     }
 

@@ -60,7 +60,9 @@ def worst_days(db, n):
 
 def actuals(db, day, farms):
     """Actual 15-min base load (96) and field demand per farm from irrigation_events: water leaves the tank
-    at the pump's flow rate from the event's start, cut at midnight (same rule as the generator)."""
+    at the pump's flow rate from the event's start, cut at midnight (same rule as the generator).
+    Also sets f["pump15_m3"] on each farm dict: what the farm's own pump delivered without Tameru (pump_events;
+    data v1: = field demand), used by optimizer.simulate for farms that follow their habits (data v2)."""
     con = sqlite3.connect(db)
     base = np.array([r[0] for r in con.execute(
         "SELECT base_kw FROM grid_load WHERE ts LIKE ? ORDER BY ts", (day + "%",))], float)
@@ -74,6 +76,16 @@ def actuals(db, day, farms):
         while vol > 1e-9 and k < 96:
             take = min(vol, rate[fid])
             dem[fid][k] += take
+            vol -= take
+            k += 1
+    for f in farms:
+        f["pump15_m3"] = np.zeros(96)
+    pump = {f["farm_id"]: f["pump15_m3"] for f in farms}
+    for fid, st, vol in con.execute("SELECT farm_id, start_min, volume_m3 FROM pump_events WHERE day = ?", (day,)):
+        k = st // 15
+        while vol > 1e-9 and k < 96:
+            take = min(vol, rate[fid] - pump[fid][k])
+            pump[fid][k] += take
             vol -= take
             k += 1
     return base, dem, total

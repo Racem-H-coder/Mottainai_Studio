@@ -113,6 +113,14 @@ def habit_duty(demand_m3, f):
     return np.minimum(1.0, np.asarray(demand_m3, float) / f["pump_m3_per_slot"])
 
 
+def habit_kw(f):
+    """48 half-hour kW of a farm's own pumping without Tameru: planned habit pumping into its tank (data v2,
+    features.habit_pumping) or straight to the field at its irrigation times (data v1)."""
+    if f.get("habit_m3") is not None:
+        return f["pump_kw"] * habit_duty(f["habit_m3"], f)
+    return f["pump_kw"] * habit_duty(f["demand_m3"], f)
+
+
 def farm_view(f, t0=0, st=None):
     """Planning view of one farm from slot t0, given its state {level, on, run, starts} at t0."""
     st = st or {"level": f["level0_m3"], "on": 0, "run": 0, "starts": 0}
@@ -143,8 +151,7 @@ def solve(d, mode="lp", base_kw_forecast=None, margin=0.0, time_limit=180, shave
     plan_base = base * (1 + margin)
     ctrl = [f for f in farms if f["controllable"]]
     fv = {f["farm_id"]: farm_view(f, t0, (state or {}).get(f["farm_id"])) for f in ctrl}
-    fixed_kw = sum((f["pump_kw"] * habit_duty(f["demand_m3"][t0:], f) for f in farms if not f["controllable"]),
-                   np.zeros(T))
+    fixed_kw = sum((habit_kw(f)[t0:] for f in farms if not f["controllable"]), np.zeros(T))
 
     nb = 5 * T + 2                     # per farm: x[T] y[T] L[T+1] spill[T] short[T] end
     n = len(ctrl) * nb + 1
@@ -482,7 +489,16 @@ def simulate(d, schedule, base15=None, demand15=None, rng=None, safety=True, gri
     for j, i in enumerate(ids):
         if tankf[j]:
             cmd[j] = schedule[i]
-    habit = np.minimum(1.0, D / q15[:, None])
+    # Farms not following a Tameru plan: data v2 -> their own pump fills their own tank (actual pump15_m3 set by
+    # backtest.actuals, else the planned habit_m3) and the field draws from the tank; data v1 -> straight to field.
+    htank = bool(d.get("habit_tank"))
+    if htank:
+        P15 = np.array([np.asarray(f["pump15_m3"], float) if demand15 is not None and f.get("pump15_m3") is not None
+                        else np.repeat(np.asarray(f["habit_m3"], float) / 2, 2) for f in farms])
+        habit = np.minimum(1.0, P15 / q15[:, None])
+    else:
+        habit = np.minimum(1.0, D / q15[:, None])
+    phys = tankf | htank                                 # farms whose water goes through their tank
     load = np.zeros(96)
     m = {"reserve_quarters": 0, "farms_below_reserve": set(), "unmet_m3": 0.0, "forced_quarters": 0,
          "auto_stop_min": 0.0, "grid_triggers": 0, "grid_stops": 0, "pump_kwh_17_20": 0.0,
@@ -576,24 +592,24 @@ def simulate(d, schedule, base15=None, demand15=None, rng=None, safety=True, gri
         room = np.clip((cap - lvl + dem) / q15, 0.0, 1.0)            # float switch (true level)
         if new_f:
             room = np.where(dry[:, k], 1.0, room)        # a dry-running pump adds no water
-        stop = tankf & (on > room + 1e-9)
-        m["auto_stop_min"] += float(15 * (on - room)[stop].sum())
+        stop = phys & (on > room + 1e-9)
+        m["auto_stop_min"] += float(15 * (on - room)[stop & tankf].sum())     # Tameru plans only
         if trace is not None:
-            trace["auto_stop_min"][stop] += 15 * (on - room)[stop]
+            trace["auto_stop_min"][stop & tankf] += 15 * (on - room)[stop & tankf]
         on = np.where(stop, room, on)
         if faults:                                       # a failed pump cannot run
             dead = down[:, k]
-            m["unmet_m3"] += float((q15 * on)[dead & ~tankf].sum())   # direct-to-field farms lose that water
+            m["unmet_m3"] += float((q15 * on)[dead & ~phys].sum())    # direct-to-field farms lose that water
             if trace is not None:
-                unmet_k += np.where(dead & ~tankf, q15 * on, 0.0)
+                unmet_k += np.where(dead & ~phys, q15 * on, 0.0)
                 died = dead & (on > 0)
             on = np.where(dead, 0.0, on)
         pw = kw * on
         if new_f:                                        # dry run: reduced power, no water
             pw = np.where(dry[:, k], faults["dry_power"] * pw, pw)
-            m["unmet_m3"] += float((q15 * on)[dry[:, k] & ~tankf].sum())
+            m["unmet_m3"] += float((q15 * on)[dry[:, k] & ~phys].sum())
             if trace is not None:                        # direct-to-field farms get no water from a dry pump
-                unmet_k += np.where(dry[:, k] & ~tankf, q15 * on, 0.0)
+                unmet_k += np.where(dry[:, k] & ~phys, q15 * on, 0.0)
         total = base15[k] + float(pw.sum())
         if monitor is not None:
             pre_on_grid = on.copy()
@@ -613,8 +629,8 @@ def simulate(d, schedule, base15=None, demand15=None, rng=None, safety=True, gri
                 if log is not None:
                     log.append((k, ids[j], round(total, 1)))
         inflow = q15 * on if not new_f else np.where(dry[:, k], 0.0, q15 * on)
-        lvl = np.where(tankf, lvl + inflow - dem, lvl)
-        neg = tankf & (lvl < 0)
+        lvl = np.where(phys, lvl + inflow - dem, lvl)
+        neg = phys & (lvl < 0)
         if budget is not None:
             pumped_b += np.where(tankf, inflow, 0.0)
             deliv_b += np.where(tankf, dem + np.where(neg, lvl, 0.0), 0.0)
@@ -623,7 +639,7 @@ def simulate(d, schedule, base15=None, demand15=None, rng=None, safety=True, gri
             unmet_k += np.where(neg, -lvl, 0.0)
         lvl = np.where(neg, 0.0, lvl)
         if new_f:                                        # leak: water lost whatever the pump does
-            gone = np.where(tankf, np.minimum(lvl, leak[:, k] / 4), 0.0)
+            gone = np.where(phys, np.minimum(lvl, leak[:, k] / 4), 0.0)
             lvl = lvl - gone
             m["leak_m3"] += float(gone.sum())
             m["dry_kwh"] += float(pw[dry[:, k]].sum()) * 0.25

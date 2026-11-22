@@ -1,0 +1,69 @@
+{
+ "T1": {
+  "hot_days": 24,
+  "two_humps_share": 1.0,
+  "afternoon_higher_share": 0.4166666666666667,
+  "pass": true
+ },
+ "T2": {
+  "winter_days": 180,
+  "winter_peak_18_22_share": 0.9944444444444445,
+  "winter_median_peak_h": 18.75,
+  "mild_summer_median_peak_h": 20.0,
+  "later_by_h": 1.25,
+  "pass": true
+ },
+ "T3": {
+  "hottest5_days": [
+   "2026-08-26",
+   "2026-07-21",
+   "2026-07-17",
+   "2026-07-19",
+   "2025-07-21"
+  ],
+  "hottest5_mean_kw": 657.4999999999999,
+  "normal_mean_kw": 500.2481343283582,
+  "normal_days": 67,
+  "uplift": 0.3143477304173672,
+  "pass": true
+ },
+ "T4": {
+  "test_overlap": 10,
+  "summer2025_overlap": 12,
+  "pass": true
+ },
+ "T5": {
+  "overload_quarters": 195,
+  "overload_days": 29,
+  "jun_sep_share": 1.0,
+  "hot35_share": 0.9128205128205128,
+  "nov_mar_quarters": 0,
+  "may_quarters": 0,
+  "in_12_02_share": 1.0,
+  "by_hour": {
+   "12": 2,
+   "19": 45,
+   "20": 101,
+   "21": 45,
+   "22": 2
+  },
+  "by_month": {
+   "2025-06": 2,
+   "2025-07": 11,
+   "2026-06": 1,
+   "2026-07": 13,
+   "2026-08": 2
+  },
+  "pass": true
+ },
+ "S1": {
+  "nonpump_mwh_per_year": 2787.9401000000003,
+  "v1_mwh_per_year": 2742,
+  "change": 0.01675423048869451,
+  "pass": true
+ },
+ "ac": {
+  "ac_share_jun_sep_energy": 0.14493429881197398,
+  "ac_share_at_hot_day_peak": 0.3361875721374412
+ }
+}

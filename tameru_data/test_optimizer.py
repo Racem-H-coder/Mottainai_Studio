@@ -25,7 +25,9 @@ for p, s in ((rd, s_rd), (mi, s_mi)):                # on/off, <= 3 starts, runs
     assert s["max_starts"] <= MAX_STARTS and s["short_runs"] == 0, (p["mode"], s["max_starts"], s["short_runs"])
 assert s_lp["peak_kw"] <= min(s_rd["peak_kw"], s_mi["peak_kw"]) + 1          # LP is a lower bound
 assert s_rd["peak_kw"] <= s_raw["peak_kw"] + 1                               # repair + shave never hurt
-assert s_rd["auto_stop_min"] <= max(2 * s_mi["auto_stop_min"], 60), (s_rd["auto_stop_min"], s_mi["auto_stop_min"])
+# float-switch stops of planned pumping: <= 15 min per farm-day (v1 open loop averaged ~21; vs MILP the ratio
+# swings both ways from day to day on data v2, so no relative bound)
+assert s_rd["auto_stop_min"] <= max(2 * s_mi["auto_stop_min"], 15 * len(d["farms"])), (s_rd["auto_stop_min"], s_mi["auto_stop_min"])
 
 # faults: zero rates = no-op; failed pumps draw nothing; lost link -> failsafe, never stopped by the grid rule
 z = simulate(d, rd["schedule"], rng=random.Random(1), faults={"seed": 3, "p_pump": 0, "p_sensor": 0, "noise": 0,
@@ -83,9 +85,12 @@ assert all(not any(x[34:]) for x in p3["schedule"].values())
 # water budget (enforced): caps hold except crop-need top-ups, no crop need left unmet, trace is recording only
 from optimizer import REASONS
 from water_budget import budget_m3, pump_cap_left, sim_budget
-saved = [f["demand_m3"] for f in d["farms"]]
+from features import habit_pumping
+saved = [(f["demand_m3"], f.get("habit_m3")) for f in d["farms"]]
 for f in d["farms"]:                                 # farmers demand 1.3 x need: the cap must bind
     f["demand_m3"] = list(np.asarray(f["demand_m3"]) * 1.3 / f["over_irrigation"])
+    if f.get("habit_m3") is not None:                # data v2: their own pumping follows the same volume
+        f["habit_m3"] = habit_pumping(dict(f, plan_need_m3=f["plan_need_m3"] * 1.3 / f["over_irrigation"]), f["habits"])
 pb = solve(d, "lp_round", pump_cap={i: pump_cap_left(F[i]) for i in F})
 tr0, tr1 = {}, {}
 off = simulate(d, pb["schedule"], rng=random.Random(1), trace=tr0)
@@ -99,13 +104,35 @@ assert enf["budget_cap_q"] > 0 and tr0["pumped_m3"].sum() > pumped.sum()
 topup = (tr1["reason"] == REASONS.index("reserve_topup")).any(axis=1)
 assert np.all((pumped <= cap + 1e-6) | ~tr1["tank_fed"] | topup), "cap broken"
 assert np.all(delivered >= need - 1e-6), "irrigation cut below crop need"
-for f, dm in zip(d["farms"], saved):
-    f["demand_m3"] = dm
+for f, (dm, hm) in zip(d["farms"], saved):
+    f["demand_m3"], f["habit_m3"] = dm, hm
 
 # grid rule and float switch on the replay
 d["capacity_kw"] = 0.8 * s_rd["peak_kw"]
 log = []
 g = simulate(d, rd["schedule"], rng=random.Random(1), log=log)
 assert g["grid_triggers"] > 0 and len(log) == g["grid_stops"] and g["reserve_quarters"] == 0
+
+# habit replay (data v2: farms without Tameru pump into their own tank): the unmanaged replay of the actual day
+# reproduces the generator's feeder load, never overflows nor empties a tank, and the planner's fixed load uses
+# the planned habit pumping. Run on every farm of two days (worst summer day, a winter day).
+from backtest import actuals
+from optimizer import habit_kw
+DBP = str(Path(__file__).parent / "tameru.db")
+for day in ("2026-07-21", "2026-01-15"):
+    du = load_day(DBP, day)
+    for f in du["farms"]:
+        f["controllable"] = 0
+    b15, dm15, tot = actuals(DBP, day, du["farms"])
+    tru = {}
+    u = simulate(du, {}, b15, dm15, safety=False, grid_rule=False, trace=tru)
+    gap = np.abs(u["load15"] - tot).max()
+    assert gap < 2.0, (day, gap)                                   # 0.1 kW rounding + rounded flow rates
+    if du.get("habit_tank"):
+        assert u["unmet_m3"] < 1e-6 and (tru["reason"] != REASONS.index("float_switch")).all(), day
+        fixed = sum(np.repeat(habit_kw(f), 2) for f in du["farms"])
+        assert np.all(fixed >= 0) and abs(fixed.sum() / 4 - sum(f["pump_kw"] * sum(f["habit_m3"]) /
+                                                             f["pump_m3_per_slot"] for f in du["farms"]) / 2) < 1.0
+print(f"ok  habit replay matches the generator (max gap {gap:.2f} kW on {day})")
 print(f"ok  peaks lp {s_lp['peak_kw']}  raw rounding {s_raw['peak_kw']}  lp_round {s_rd['peak_kw']}  "
       f"milp {s_mi['peak_kw']}  | grid rule: {g['grid_triggers']} triggers, {g['grid_stops']} stops")

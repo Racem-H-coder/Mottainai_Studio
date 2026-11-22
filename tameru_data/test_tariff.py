@@ -1,7 +1,7 @@
 """Tariff period boundaries, season switch and bill arithmetic. Run: python test_tariff.py"""
 import numpy as np
 
-from tariff import BT_3P, CPP, FLAT, bt_period, bt_prices, farm_bills, ttc
+from tariff import BT_3P, CPP, FLAT, bt_period, bt_prices, cpp_quarters, farm_bills, ttc
 
 # summer (Apr-Sep): day 08-19, peak 19-23, night 23-08
 for minute, want in ((7 * 60 + 59, "night"), (8 * 60, "day"), (18 * 60 + 59, "day"), (19 * 60, "peak"),
@@ -24,7 +24,11 @@ assert abs(ttc(1000, 10) - 1170) < 1e-9
 # CPP: adder only in the window on critical days, forced quarters exempt, rebate for shaved kW
 c = farm_bills("2026-07-15", np.ones((1, 96)), forced=np.zeros((1, 96), bool), critical=True,
                baseline_kw=2 * np.ones((1, 96)))
-assert abs(c["proposed_cpp_ht"][0] - (want_bt + (3 * CPP["adder_mill_per_kwh"] - CPP["rebate_mill_per_kw"]) / 1000)) < 1e-9
+win_h = cpp_quarters().sum() / 4                     # total length of the CPP window(s), hours (any width)
+assert win_h > 0 and abs(c["proposed_cpp_ht"][0] - (want_bt + (win_h * CPP["adder_mill_per_kwh"]
+                                                     - CPP["rebate_mill_per_kw"]) / 1000)) < 1e-9
+from optimizer import window_slots
+assert np.repeat(window_slots([("22:00", "01:00")]), 2).sum() == 12      # wrap past midnight = 3 h
 f = farm_bills("2026-07-15", np.ones((1, 96)), forced=np.ones((1, 96), bool), critical=True)
 assert abs(f["proposed_cpp_ht"][0] - want_bt) < 1e-9
 print("ok  tariff boundaries, seasons, bills")
