@@ -3,6 +3,7 @@
  * Switch each one to the exported value as soon as it appears, then delete it here.
  * Nothing in this file is computed or invented: every value is quoted from that message with its source.
  */
+import { days } from "../data";
 
 export interface TariffPeriod { name: "day" | "peak" | "night"; label: string; from: string; to: string; millPerKwh: number }
 export interface Tariff {
@@ -65,12 +66,8 @@ export const CO2_SOURCE = "IFI default grid factors, 2019, combined margin";
 /** Water-budget reference from the fact-check: today's pumping vs 110 % of the FAO-56 crop need. */
 export const BUDGET_SHARE_OF_NEED = 1.1;
 
-/** Showcase days named by the team; replaced by results/showcase_days.json or the contract when exported. */
-export const SHOWCASE_DAYS = [
-  { date: "2026-07-21", label: "Showcase: worst load" },
-  { date: "2026-06-01", label: "Showcase: median day" },
-  { date: "2026-07-14", label: "Showcase: most faults" },
-];
+/** Showcase days (worst load, median day, most faults), from results/showcase_days.json via the export. */
+export const SHOWCASE_DAYS: { date: string; label: string }[] = days.showcase.status === "ok" ? days.showcase.data : [];
 
 /** "HH:MM" -> minutes. */
 export const toMin = (hhmm: string) => Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3, 5));

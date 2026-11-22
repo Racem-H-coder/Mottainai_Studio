@@ -1,6 +1,6 @@
 /** Number and time formatting. Figures are rendered in Inter with tabular numerals. */
 
-// Half-even rounding, like the pipeline (Python round), so 75.25 h shows as 75.2 h as in site_data.json.
+// Half-even rounding, like the pipeline (Python round), so 27.75 h shows as 27.8 h as in site_data.json.
 const nf = (d: number) => new Intl.NumberFormat("en-US", { minimumFractionDigits: d, maximumFractionDigits: d, roundingMode: "halfEven" });
 const cache = new Map<number, Intl.NumberFormat>();
 

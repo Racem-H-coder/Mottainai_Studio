@@ -33,7 +33,7 @@ describe("format", () => {
     expect(fmt(12955)).toBe("12,955");
     expect(fmt(4.49, 1)).toBe("4.5");
     expect(hm(1035)).toBe("17:15");
-    expect(deltaPct(975, 1285)).toBe("−24 %");
+    expect(deltaPct(873, 1055)).toBe("−17 %");
   });
 });
 

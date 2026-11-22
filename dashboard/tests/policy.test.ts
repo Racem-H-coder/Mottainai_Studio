@@ -10,7 +10,7 @@ const steg = TARIFFS.find((t) => t.id === "steg")!;
 
 describe("tariff config (fact-check 2026-11-21)", () => {
   it("STEG three periods, summer hours, prices", () => {
-    const p = periodsFor(steg, "2026-07-21");
+    const p = periodsFor(steg, "2026-07-22");
     expect(p.summer).toBe(true);
     expect(p.periods!.map((x) => [x.name, x.from, x.to, x.millPerKwh])).toEqual([
       ["night", "23:00", "08:00", 116], ["day", "08:00", "19:00", 140], ["peak", "19:00", "23:00", 391]]);
@@ -33,7 +33,7 @@ describe("tariff config (fact-check 2026-11-21)", () => {
 
 describe("energy by window", () => {
   it("a constant load splits by period length and sums to 24 h", () => {
-    const e = kwhByPeriods(flat96(10), periodsFor(steg, "2026-07-21").periods!);
+    const e = kwhByPeriods(flat96(10), periodsFor(steg, "2026-07-22").periods!);
     expect(e.night).toBeCloseTo(90);
     expect(e.day).toBeCloseTo(110);
     expect(e.peak).toBeCloseTo(40);

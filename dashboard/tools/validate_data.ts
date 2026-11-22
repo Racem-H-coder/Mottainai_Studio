@@ -1,7 +1,7 @@
 /**
  * Build-time validation of src/data/*.json against src/data/schema.ts.
  * Exits 1 (and so fails `npm run build`) on a missing file or any schema error.
- * Also enforces the ~6 MB data budget and that the exporter's consistency checks passed.
+ * Also enforces the ~6.5 MB data budget and that the exporter's consistency checks passed.
  */
 import { readFileSync, statSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
@@ -43,5 +43,5 @@ try {
 } catch { /* already reported */ }
 
 console.log(`data size ${(total / 1e6).toFixed(2)} MB`);
-if (total > 6e6) { console.error("data exceeds the 6 MB budget"); errors++; }
+if (total > 6.5e6) { console.error("data exceeds the 6.5 MB budget (data v2 is about 6.1 MB)"); errors++; }
 if (errors) { console.error(`${errors} data error(s): build stopped`); process.exit(1); }

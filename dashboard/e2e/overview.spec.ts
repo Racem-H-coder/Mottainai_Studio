@@ -102,15 +102,15 @@ test.describe("overview", () => {
   test("the tour drives the controls; numbers follow them @jury", async ({ page }) => {
     await page.goto("/#tour/1");
     await expect(page.getByRole("button", { name: "Without Tameru", exact: true })).toHaveAttribute("aria-pressed", "true");
-    expect(await fig(page)).toEqual(["1,363 kW", "4.8 h", "75.2 h"]);
+    expect(await fig(page)).toEqual(["1,156 kW", "2.8 h", "27.8 h"]);
     await page.keyboard.press("ArrowRight");
     await expect(page.getByRole("button", { name: "With Tameru", exact: true })).toHaveAttribute("aria-pressed", "true");
     await expect(page.getByRole("button", { name: "50 %", exact: true })).toHaveAttribute("aria-pressed", "true");
-    expect(await fig(page)).toEqual(["1,363 → 1,051 kW", "4.8 → 3 h", "75.2 → 4.5 h"]);
-    await expect(page.locator(".ov-figs")).toContainText("peak, over the limit");   // 21 July with Tameru is still above 1,000 kW
+    expect(await fig(page)).toEqual(["1,156 → 978 kW", "2.8 → 0 h", "27.8 → 0 h"]);
+    await expect(page.locator(".ov-figs")).toContainText("peak, within the limit");   // 22 July with Tameru is back under 1,000 kW
     await page.keyboard.press("ArrowRight");
-    await expect(page.getByRole("button", { name: "70 %", exact: true })).toHaveAttribute("aria-pressed", "true");
-    expect(await fig(page)).toEqual(["1,363 → 950 kW", "4.8 → 0 h", "75.2 → 0 h"]);
+    await expect(page.getByRole("button", { name: "50 %", exact: true })).toHaveAttribute("aria-pressed", "true");   // smallest share with no day over
+    expect(await fig(page)).toEqual(["1,156 → 978 kW", "2.8 → 0 h", "27.8 → 0 h"]);
     await page.keyboard.press("ArrowRight");
     await expect(page.locator(".ov-farm")).toBeVisible();
     await expect(page.locator(".ov-sms-ar")).toHaveAttribute("dir", "rtl");

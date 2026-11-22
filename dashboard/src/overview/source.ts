@@ -115,7 +115,7 @@ export function runs(xs: readonly boolean[]): [number, number][] {
 
 const hm = (q: number) => `${String(Math.floor(q / 4)).padStart(2, "0")}:${String((q % 4) * 15).padStart(2, "0")}`;
 
-/** The recorded day with the highest feeder load without Tameru (21 July 2026 in this export). */
+/** The recorded day with the highest feeder load without Tameru (22 July 2026 in the v2 export). */
 export function worstDay(): string {
   const all = days.days;
   const top = max(all.map((d) => d.unmanaged_peak_kw));
@@ -193,7 +193,7 @@ function makeRecorded(): OverviewSource {
     const starts = (w ?? u) ? runs((w ?? u)!.irrigating).map(([q]) => hm(q)) : [];
     const pre = w ? w.reason.map((r, q) => [r === "prefill", q] as const).filter(([x]) => x) : [];
     const night = pre.length > 0 && pre.filter(([, q]) => q < 32).length > pre.length / 2;
-    const moved = a === 0 ? 0 : fmValue(KEY[a], date, "kwh_shifted_out_of_peak", id);
+    const moved = a === 0 ? 0 : fmValue(KEY[a], date, "kwh_shifted_out_of_feeder_peak", id);
     const pumped = fmValue(KEY[a], date, "pumped_m3", id);
     return { id, sector: tile.sector, equipped: eq, strip, irrigationStarts: starts, filledAtNight: night, kwhOutOfPeak: moved, pumpedM3: pumped };
   };

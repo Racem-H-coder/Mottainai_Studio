@@ -38,7 +38,13 @@ FEATURES_PY = ROOT / "tameru_data" / "features.py"
 OUT = DASH / "src" / "data"
 
 Q = 96                      # 15-min quarters per day
-PEAK = (17 * 60, 20 * 60)   # evening peak window used in backtest.csv (pump_kwh_17_20)
+def _peak_window() -> tuple[int, int]:
+    """The feeder's evening peak window (data v2: 19:00-22:00), from results/peak_window.json."""
+    w = json.loads((RESULTS / "peak_window.json").read_text(encoding="utf-8"))["windows"][0]
+    return tuple(int(t[:2]) * 60 + int(t[3:5]) for t in w)
+
+
+PEAK = _peak_window()       # minutes; the *_feeder_peak columns of backtest.csv / farm_metrics.csv use it
 SCHEMA_VERSION = 1
 
 sources: list[dict] = []
@@ -105,11 +111,11 @@ def read_backtest() -> tuple[list[dict], list[str]]:
         sys.exit(f"ERROR required file {rel(p)} is missing")
     df = pd.read_csv(p)
     require_cols(df, ["date", "scenario", "adoption", "peak_kw", "minutes_over", "kwh_over", "unmet_m3",
-                      "faults", "pump_kwh_17_20", "farms_below_reserve", "reserve_quarters"], p)
+                      "faults", "pump_kwh_feeder_peak", "farms_below_reserve", "reserve_quarters"], p)
     note_source(p, "ok", len(df))
     keep = ["peak_kw", "pct_cap", "minutes_over", "kwh_over", "reserve_quarters", "farms_below_reserve",
-            "forced_quarters", "grid_triggers", "grid_stops", "auto_stop_min", "pump_kwh_17_20", "max_starts",
-            "solve_s", "replans", "overrides", "unmet_m3", "end_deficit_m3", "failsafe_kwh_17_20"]
+            "forced_quarters", "grid_triggers", "grid_stops", "auto_stop_min", "pump_kwh_feeder_peak", "max_starts",
+            "solve_s", "replans", "overrides", "unmet_m3", "end_deficit_m3", "failsafe_kwh_feeder_peak"]
     rows = []
     for r in df.to_dict("records"):
         row = {"date": r["date"], "key": scen_key(r["scenario"], r["adoption"], int(r["faults"])),
@@ -237,6 +243,9 @@ def read_db(days: list[str]) -> dict:
              "AND substr(made_at,12,5)='00:00' ORDER BY target_ts", *days)
     need = sql(f"SELECT farm_id, day, need_m3, et0_mm, rain_mm FROM farm_daily_water WHERE day IN ({ph})", *days)
     ev = sql(f"SELECT farm_id, day, start_min, volume_m3 FROM irrigation_events WHERE day IN ({ph})", *days)
+    # data v2: pumps run at their own times (pre-fill), stored in pump_events; data v1 had pump = irrigation
+    has_pe = con.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='pump_events'").fetchone()
+    pe = sql(f"SELECT farm_id, day, start_min, volume_m3 FROM pump_events WHERE day IN ({ph})", *days) if has_pe else ev
     wx = sql(f"SELECT ts, temp_c, temp_forecast_c FROM weather_hourly WHERE substr(ts,1,10) IN ({ph})", *days)
     cal = sql(f"SELECT * FROM calendar WHERE day IN ({ph})", *days).set_index("day")
     gs = sql(f"SELECT ts, farm_id, detail FROM events WHERE type='grid_safety' AND substr(ts,1,10) IN ({ph})", *days)
@@ -260,7 +269,8 @@ def read_db(days: list[str]) -> dict:
         f_ = fc[fc.target_ts.str.startswith(d)]
         pump_sum = [0.0] * Q
         per_farm = {}
-        for fid, grp in ev[ev.day == d].groupby("farm_id"):
+        applied_by_farm = ev[ev.day == d].groupby("farm_id").volume_m3.sum().to_dict()
+        for fid, grp in pe[pe.day == d].groupby("farm_id"):
             kw, flow = kw_flow[fid]
             prof = [0.0] * Q
             runs = []
@@ -273,7 +283,7 @@ def read_db(days: list[str]) -> dict:
                     prof[q] += kw * min(1.0, rem)
                     rem -= 1
                     q += 1
-            per_farm[fid] = (prof, runs, float(grp.volume_m3.sum()))
+            per_farm[fid] = (prof, runs, float(applied_by_farm.get(fid, 0.0)))
             profiles[(d, fid)] = prof
             for q in range(Q):
                 pump_sum[q] += prof[q]
@@ -284,7 +294,7 @@ def read_db(days: list[str]) -> dict:
         gsd = gs[gs.ts.str.startswith(d)]
         rows = []
         for fid in order:
-            prof, runs, applied = per_farm.get(fid, ([0.0] * Q, [], 0.0))
+            prof, runs, applied = per_farm.get(fid, ([0.0] * Q, [], float(applied_by_farm.get(fid, 0.0))))
             by = {p.name: sum(prof[q] for q in range(p.start_min // 15, p.end_min // 15)) / 4
                   for p in tariff.itertuples()}
             stops = {k: sorted(qmin(t) for t in x.ts) for k, x in gsd[gsd.farm_id == fid].groupby("key")}
@@ -420,8 +430,8 @@ def read_district_timeseries(district: dict, bt_rows: list[dict]) -> None:
 
 # farm_metrics.csv: per-farm columns kept for the dashboard (columnar, 200 values per day and scenario).
 FM_COLS = ["controllable", "farmer_use_m3", "pumped_m3", "over_pumped_m3", "unmet_need_m3",
-           "curtailed_excess_m3", "pump_kwh", "pump_kwh_17_20", "pump_kwh_19_23", "pump_kwh_23_08",
-           "pump_kwh_22_01", "kwh_shifted_out_of_peak", "peak_contrib_kw", "reserve_violation_q_before_need",
+           "curtailed_excess_m3", "pump_kwh", "pump_kwh_feeder_peak", "pump_kwh_19_23", "pump_kwh_23_08",
+           "pump_kwh_22_01", "kwh_shifted_out_of_feeder_peak", "peak_contrib_kw", "reserve_violation_q_before_need",
            "starts", "energy_saved_kwh", "co2_avoided_kg",
            "bill_steg_bt_3p_ht_tnd", "bill_legacy_flat_ht_tnd", "bill_proposed_cpp_ht_tnd"]
 
@@ -569,6 +579,11 @@ def main() -> None:
     alerts = read_csv_records("day_ahead_alerts.csv", ["date", "forecast_peak_p90_kw"], key_cols=False)         if alerts_p.exists() else missing(alerts_p, "not in contract v2: no total-load forecast exported")
 
     showcase = read_json_file(RESULTS / "showcase_days.json")
+    if showcase.get("status") == "ok":   # {worst, median, most_faults, ...} -> [{date, label}] for the dashboard
+        raw = showcase["data"]
+        showcase["data"] = [{"date": raw[k], "label": lbl} for k, lbl in
+                            (("worst", "Showcase: worst load"), ("median", "Showcase: median day"),
+                             ("most_faults", "Showcase: most faults")) if raw.get(k)]
 
     write("meta.json", {
         "schema_version": SCHEMA_VERSION,
@@ -595,7 +610,11 @@ def main() -> None:
     write("farm_timeseries.json", read_farm_timeseries({f["id"]: f["pump"]["rated_kw"] for f in db["farms"]}))
     write("anomalies.json", read_anomalies())
     write("anomaly_metrics.json", read_json_file(RESULTS / "anomaly_metrics.json"))
-    write("water_budget.json", read_json_file(RESULTS / "water_budget.json"))
+    def drop_v1(x):   # the pipeline still writes the deprecated data-v1 metric pump_kwh_17_20; not shown here
+        if isinstance(x, dict):
+            return {k: drop_v1(v) for k, v in x.items() if k != "pump_kwh_17_20"}
+        return [drop_v1(v) for v in x] if isinstance(x, list) else x
+    write("water_budget.json", drop_v1(read_json_file(RESULTS / "water_budget.json")))
     write("bills.json", read_json_file(RESULTS / "bills.json"))
 
     total = sum(f.stat().st_size for f in OUT.glob("*.json"))
@@ -605,8 +624,8 @@ def main() -> None:
               + (f"  {s['note']}" if s["note"] else ""))
     for c in checks:
         print(f"  check {'OK  ' if c['ok'] else 'FAIL'} {c['id']}: {c['detail']}")
-    if total > 6e6:
-        sys.exit(f"ERROR data size {total / 1e6:.2f} MB exceeds the 6 MB budget")
+    if total > 6.5e6:   # data v2 (pumping events separate from irrigation) is about 6.1 MB
+        sys.exit(f"ERROR data size {total / 1e6:.2f} MB exceeds the 6.5 MB budget")
     if not all(c["ok"] for c in checks if c.get("fatal", True)):
         sys.exit("ERROR a consistency check failed (see above)")
 

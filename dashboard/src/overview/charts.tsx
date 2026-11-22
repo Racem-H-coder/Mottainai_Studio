@@ -42,7 +42,7 @@ const clampQ = (q: number) => Math.max(0, Math.min(95, Math.round(q)));
 export interface LoadChartProps {
   data: ChartData;
   capLabel: string;
-  /** Accessible description of the chart, e.g. "Feeder load on 21 July, without Tameru". */
+  /** Accessible description of the chart, e.g. "Feeder load on 22 July, without Tameru". */
   label: string;
   onCursor: (q: number) => void;
   /** Details only: shaded time windows (quarter ranges [from, to)), labelled at the bottom of the plot. */

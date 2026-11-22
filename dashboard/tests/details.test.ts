@@ -26,7 +26,7 @@ import { fmt, max } from "../src/lib/format";
 
 (globalThis as Record<string, unknown>).__TWIN_URL__ = "./twin/";   // build-time constant (vite define)
 
-const DAY = "2026-07-21";
+const DAY = "2026-07-22";   // worst test day (data v2), also a day with hour-by-hour farm data
 const STORY = src.storyFarm(DAY)!;
 
 function render(role: Role, tier: Tier, patch: Partial<AppState> = {}): string {
@@ -43,48 +43,48 @@ const ovFigs = (v: View) => figures(src, v).flatMap((g) => g.items.map((f) => `$
 const COMBOS: [Role, Tier][] = (["steg", "crda", "gda", "farmer"] as Role[]).flatMap((r) => tiersFor(r).map((t) => [r, t] as [Role, Tier]));
 
 describe("the brief's numbers", () => {
-  it("district, budget off: average peak 1,285 → 975 kW, 75.2 → 4.5 h, 12,955 → 117 kWh over the limit", () => {
+  it("district, budget off: average peak 1,055 → 873 kW, 27.8 → 0 h, 1,646 → 0 kWh over the limit", () => {
     const k = districtKpis(0.5, false);
-    expect([fmt(k.peak.from), fmt(k.peak.to), hText(k.hours.from!), hText(k.hours.to!), fmt(k.kwh.from), fmt(k.kwh.to)]).toEqual(["1,285", "975", "75.2", "4.5", "12,955", "117"]);
+    expect([fmt(k.peak.from), fmt(k.peak.to), hText(k.hours.from!), hText(k.hours.to!), fmt(k.kwh.from), fmt(k.kwh.to)]).toEqual(["1,055", "873", "27.8", "0", "1,646", "0"]);
     expect(k.days).toBe(20);
   });
-  it("adoption, closed loop only: 75.2 → 4.5 → 0 h; from 70 % no day over the limit", () => {
+  it("adoption, closed loop only: 27.8 → 0 → 0 h; from 50 % no day over the limit", () => {
     const p = adoption(false);
-    expect(p.map((x) => hText(x.hours!))).toEqual(["75.2", "4.5", "0"]);
-    expect(minShareZero(p)).toBe(0.7);
+    expect(p.map((x) => hText(x.hours!))).toEqual(["27.8", "0", "0"]);
+    expect(minShareZero(p)).toBe(0.5);
   });
-  it("water budget on (50 %): pumping −2.3 %, 469 m³/day saved (range 469–1,630), 0 unmet, 76 kWh/day, 31 kg CO₂/day at 404 g/kWh", () => {
+  it("water budget on (50 %): pumping −4.6 %, 395 m³/day saved (range 395–1,418), 0 unmet, 66 kWh/day, 27 kg CO₂/day at 404 g/kWh", () => {
     const w = waterEnergyView(0.5, true);
-    expect(fmt(w.pumpingVsToday! * 100, 1)).toBe("-2.3");
-    expect([fmt(w.savedM3), fmt(w.savedUpperM3), fmt(w.unmetNeedM3), fmt(w.kwhSaved), fmt(w.co2Kg), fmt(w.co2FactorG)]).toEqual(["469", "1,630", "0", "76", "31", "404"]);
+    expect(fmt(w.pumpingVsToday! * 100, 1)).toBe("-4.6");
+    expect([fmt(w.savedM3), fmt(w.savedUpperM3), fmt(w.unmetNeedM3), fmt(w.kwhSaved), fmt(w.co2Kg), fmt(w.co2FactorG)]).toEqual(["395", "1,418", "0", "66", "27", "404"]);
     expect(w.co2Source).toMatch(/IFI/);
     expect(fmt(waterEnergyView(0.5, false).savedM3)).toBe("0");
   });
-  it("current practice: schedules ask for 115 % of the crop need (delivered 104 %)", () => {
+  it("current practice: schedules ask for 115 % of the crop need (delivered 100 %)", () => {
     const p = currentPractice();
-    expect([fmt(p.asked! * 100), fmt(p.delivered! * 100)]).toEqual(["115", "104"]);
+    expect([fmt(p.asked! * 100), fmt(p.delivered! * 100)]).toEqual(["115", "100"]);
   });
   it("pillars: clean energy = energy saved by the water budget, not kWh moved", () => {
-    expect(fmt(pillars(0.5, true).cleanEnergy)).toBe("76");
+    expect(fmt(pillars(0.5, true).cleanEnergy)).toBe("66");
     expect(fmt(pillars(0.5, false).cleanEnergy)).toBe("0");
   });
-  it("forecast: 20.1 / 24.5 / 32.2 kW, upper forecast held 93 %", () => {
+  it("forecast: 26.2 / 28.2 / 45.7 kW, upper forecast held 89 %", () => {
     const f = forecastQuality();
-    expect(f.bars.map((b) => fmt(b.mae, 1))).toEqual(["20.1", "24.5", "32.2"]);
-    expect(fmt(f.p90 * 100)).toBe("93");
+    expect(f.bars.map((b) => fmt(b.mae, 1))).toEqual(["26.2", "28.2", "45.7"]);
+    expect(fmt(f.p90 * 100)).toBe("89");
   });
-  it("detector: precision 76 %, recall 64 % (observable), false alarms 0.67 / 100 farm-days, dry run 30 min, pump failure 15 min, slow leaks weak", () => {
+  it("detector: precision 81 %, recall 64 % (observable), false alarms 0.44 / 100 farm-days, dry run 45 min, pump failure 105 min, slow leaks weak", () => {
     const d = detector();
-    expect([d.precisionPct, d.recallPct, d.falseAlarmsPer100]).toEqual([76, 64, 0.67]);
-    expect(d.byType.find((x) => x.type === "Dry run")?.delayMin).toBe(30);
-    expect(d.byType.find((x) => x.type === "Pump failure")?.delayMin).toBe(15);
+    expect([d.precisionPct, d.recallPct, d.falseAlarmsPer100]).toEqual([81, 64, 0.44]);
+    expect(d.byType.find((x) => x.type === "Dry run")?.delayMin).toBe(45);
+    expect(d.byType.find((x) => x.type === "Pump failure")?.delayMin).toBe(105);
     expect(d.observable).toMatch(/^Observable: the fault could show up in telemetry/);
     expect(text(render("gda", "tactical"))).toContain("Weak spot: slow leaks.");
   });
-  it("fault robustness, 5 fault types: water lost 3,613 → 2,200 → 1,569 m³; 75.0 → 4.75 → 0 h; marked Assumption", () => {
+  it("fault robustness, 5 fault types: water lost 1,303 → 754 → 612 m³; 27.8 → 0 → 0 h; marked Assumption", () => {
     const f = faultRobustness();
-    expect(f.map((x) => fmt(x.lostM3))).toEqual(["3,613", "2,200", "1,569"]);
-    expect(f.map((x) => hText(x.hours!))).toEqual(["75", "4.75", "0"]);
+    expect(f.map((x) => fmt(x.lostM3))).toEqual(["1,303", "754", "612"]);
+    expect(f.map((x) => hText(x.hours!))).toEqual(["27.8", "0", "0"]);
     expect(render("gda", "tactical")).toMatch(/id="faults"[\s\S]*?tag-assume/);
   });
 });
@@ -98,11 +98,11 @@ describe("same thing, same number as the Overview", () => {
       expect(text(render("steg", "strategic", { scenario: sc }))).toContain(`${hText(k.hours.from!)} → ${hText(k.hours.to!)} h`);
     }
   });
-  it("hours with the water budget on: District = the Overview's quiet line (3.75 h at 50 %)", () => {
+  it("hours with the water budget on: District = the Overview's quiet line (0 h at 50 %)", () => {
     const h = hText(districtKpis(0.5, true).hours.to!);
-    expect(h).toBe("3.75");
+    expect(h).toBe("0");
     expect(gridNote(src, ovView({ tameru: true, adoption: 0.5 }))).toContain(`With it on: ${h} h`);
-    expect(text(render("steg", "strategic", { budget: true }))).toContain(`75.2 → ${h} h`);
+    expect(text(render("steg", "strategic", { budget: true }))).toContain(`27.8 → ${h} h`);
   });
   it("every day, 50 % and 70 %: the Sectors peak and hours equal the Overview's day figures", () => {
     for (const d of src.days.map((x) => x.date)) for (const [a, sc] of [[0.5, CLOSED_50], [0.7, CLOSED_70]] as const) {
@@ -112,15 +112,15 @@ describe("same thing, same number as the Overview", () => {
       expect(t, `${d} ${a}`).toContain(hours!);
     }
   });
-  it("21 July: the load title says 1,363 to 1,051 kW, still above the limit", () => {
-    expect(text(render("gda", "tactical"))).toContain("Tameru lowers the peak from 1,363 to 1,051 kW, still above the 1,000 kW limit");
+  it("22 July: the load title says 1,156 to 978 kW, within the limit", () => {
+    expect(text(render("gda", "tactical"))).toContain("Tameru lowers the peak from 1,156 to 978 kW, within the limit");
     const l = src.load(DAY)!;
-    expect(fmt(max(l.with[0.5]))).toBe("1,051");
+    expect(fmt(max(l.with[0.5]))).toBe("978");
   });
-  it("kWh moved out of STEG's 19–23 h on 21 July: policy table = Overview Money (508 kWh)", () => {
+  it("kWh moved out of STEG's 19–23 h on 22 July: policy table = Overview Money (550 kWh)", () => {
     const u = periodEnergy(DAY, "unmanaged")!, t = periodEnergy(DAY, CLOSED_50)!;
     expect(fmt(u.peak - t.peak)).toBe(fmt(src.money(DAY, 0.5)!.kwhOutOfPricePeak));
-    expect(text(render("steg", "strategic"))).toContain("−508 kWh");
+    expect(text(render("steg", "strategic"))).toContain("−550 kWh");
   });
   it("the story farm's SMS and irrigation time are the Overview's", () => {
     const sms = farmerSms(src.farmDay(DAY, 0.5, STORY)!)!;
@@ -140,7 +140,8 @@ describe("expert screens, same product", () => {
       expect(t).not.toMatch(/\bPending\b|\bDerived\b|closed_lp|open_lp/);
       expect(t.match(/\bSimulated\b/g)?.length).toBe(1);
       expect(t).not.toMatch(/\b(verified|compliant|hottest)\b|eliminat\w* load shedding/i);
-      expect(t).not.toMatch(/(^|[^0-9])100 % (of|less|fewer|no)\b/i);
+      // "100 % of crop need" is today's practice without Tameru (a ratio), not a claim about Tameru
+      expect(t.replace(/100 % of crop need/g, "")).not.toMatch(/(^|[^0-9])100 % (of|less|fewer|no)\b/i);
       expect(h).not.toMatch(/text-transform|letter-spacing/);
     });
   }

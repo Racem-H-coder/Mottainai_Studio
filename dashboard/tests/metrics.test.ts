@@ -68,14 +68,14 @@ describe("derived per-farm data", () => {
       sum.forEach((kw, q) => expect(Math.abs(kw - rec[q]!)).toBeLessThan(0.6));
     }
   });
-  it("exported district pump curves (contract v2) reproduce backtest pump_kwh_17_20 on all days", () => {
+  it("exported district pump curves (contract v2) reproduce backtest pump_kwh_feeder_peak on all days", () => {
     const [a, b] = meta.peak_window_min.map(hm) as [string, string];
     const days = Object.keys(district).filter((d) => district[d]!.pump_kw?.[CLOSED_50]);
     expect(days.length).toBe(20);
     for (const date of days) {
       const dd = district[date]!;
-      const c = backtest.rows.find((r) => r.key === CLOSED_50 && r.date === date)!.pump_kwh_17_20;
-      const u = backtest.rows.find((r) => r.key === UNMANAGED && r.date === date)!.pump_kwh_17_20;
+      const c = backtest.rows.find((r) => r.key === CLOSED_50 && r.date === date)!.pump_kwh_feeder_peak;
+      const u = backtest.rows.find((r) => r.key === UNMANAGED && r.date === date)!.pump_kwh_feeder_peak;
       expect(Math.abs(kwhInWindow(dd.pump_kw![CLOSED_50]!, a, b) - c)).toBeLessThan(0.5);
       expect(Math.abs(kwhInWindow(dd.pump_kw![UNMANAGED]!, a, b) - u)).toBeLessThan(0.5);
       // the older derivation (replay − base load) agrees too

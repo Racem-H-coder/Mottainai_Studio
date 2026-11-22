@@ -38,7 +38,7 @@ export function aggregate(rs: readonly BacktestRowT[]): Agg {
     kwhOver: sum(rs.map((r) => r.kwh_over)),
     daysOver: rs.filter((r) => r.minutes_over > 0).length,
     unmet: sum(rs.map((r) => r.unmet_m3)),
-    pumpKwhPeak: sum(rs.map((r) => r.pump_kwh_17_20)),
+    pumpKwhPeak: sum(rs.map((r) => r.pump_kwh_feeder_peak)),
     farmsBelowReserveMax: max(rs.map((r) => r.farms_below_reserve ?? 0)),
     gridStops: sum(rs.map((r) => r.grid_stops ?? 0)),
   };
@@ -108,7 +108,7 @@ export interface SectorRow {
   sector: string;
   farms: number;
   adopters: number;
-  peakContribKw: number; // unmanaged mean kW 17-20 h
+  peakContribKw: number; // unmanaged mean kW in the feeder peak window (meta.peak_window_min)
   peakShare: number;
   needM3: number;
   appliedM3: number;

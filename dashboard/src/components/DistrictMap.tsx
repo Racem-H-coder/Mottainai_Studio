@@ -5,7 +5,12 @@
  * STEG and the CRDA see one block per sector with the sector's aggregate.
  */
 import { useMemo, useRef, useState, type KeyboardEvent } from "react";
-import { crops, farms } from "../data";
+import { crops, farms, farmTimeseries } from "../data";
+
+/** Days with hour-by-hour tank levels in results/farm_timeseries.csv, e.g. "14 July, 19 July and 22 July". */
+const TS_DAYS = farmTimeseries.status === "ok" ? Object.keys(farmTimeseries.days).sort() : [];
+const tsDaysText = TS_DAYS.map((d) => new Date(`${d}T12:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "long" }))
+  .join(", ").replace(/, ([^,]*)$/, " and $1");
 import { farmSeries } from "../lib/contract";
 import { activeCrops } from "../lib/farm";
 import { fmt, pct, qhm } from "../lib/format";
@@ -71,7 +76,7 @@ export function DistrictMap({ date, a, q, role, onOpenFarm }: Props) {
   const takeaway = (() => {
     switch (layer) {
       case "equipped": return `${farms.filter((f) => isAdopter(f.adopt_u, a)).length} of ${farms.length} farms are equipped`;
-      case "level": return levelsKnown ? `Tank levels at ${qhm(q)}: move the time on the load chart` : "Tank levels hour by hour: 1 June, 14 July and 21 July, 50 % equipped";
+      case "level": return levelsKnown ? `Tank levels at ${qhm(q)}: move the time on the load chart` : `Tank levels hour by hour: ${tsDaysText}, 50 % equipped`;
       case "water": { const over = ratios.filter((r) => r !== null && r > 1.1).length, irr = ratios.filter((r) => r !== null).length; return `${over} of ${irr} farms with a crop need today get more than 110 % of it`; }
       case "alerts": return `${alerts.length} alert${alerts.length === 1 ? "" : "s"} today in ${new Set(alerts.map((x) => x.farm_id)).size} farms`;
     }

@@ -136,7 +136,7 @@ function EnergyCard({ id, date, a }: { id: number; date: string; a: Share }) {
   return (
     <Card id="energy" className="c4" label="Energy, today"
       title={e.kwh === null ? "Energy" : eq && e.kwhEveningWithout !== null && e.kwhEveningWith !== null ? `Pumping in STEG's evening peak: ${fmt(e.kwhEveningWithout, 1)} → ${fmt(e.kwhEveningWith, 1)} kWh` : `${fmt(e.kwh, 1)} kWh of pumping, at the usual times`}
-      how={<p>Pump energy = rated power × running time. STEG's evening price peak is 19–23 h; the line's own evening peak is 17–20 h. Moving pumping in time does not change the energy used, so no CO₂ is claimed for it.</p>}>
+      how={<p>Pump energy = rated power × running time. STEG's evening price peak is 19–23 h; the line's own evening peak is {hm(meta.peak_window_min[0])}–{hm(meta.peak_window_min[1])}. Moving pumping in time does not change the energy used, so no CO₂ is claimed for it.</p>}>
       <div className="kpis two">
         <Kpi size="sm" label="Pump energy today" info={K.farmKwh} value={e.kwh === null ? null : fmt(e.kwh, 1)} unit="kWh" />
         <Kpi size="sm" label="Moved out of 17:00–20:00" info={K.farmMoved} value={eq ? (e.movedOutOfPeak === null ? null : fmt(e.movedOutOfPeak, 1)) : "0"} unit="kWh" tone={eq ? "with" : "ink"} note={eq ? undefined : "Not equipped: nothing moves."} />

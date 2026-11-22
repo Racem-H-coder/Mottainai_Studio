@@ -285,7 +285,7 @@ export function farmWater(date: string, farmId: number, a: Share) {
   };
 }
 
-/** One farm's energy on a day: pump kWh without Tameru, of which in 19–23 h, and kWh moved out of 17–20 h. */
+/** One farm's energy on a day: pump kWh without Tameru, of which in 19–23 h, and kWh moved out of the feeder peak window. */
 export function farmEnergy(date: string, farmId: number, a: Share) {
   const i = farms.findIndex((f) => f.id === farmId);
   const v = (xs: (number | null)[] | null) => (i >= 0 ? xs?.[i] ?? null : null);
@@ -293,7 +293,7 @@ export function farmEnergy(date: string, farmId: number, a: Share) {
     kwh: v(fmColumn(UNMANAGED, date, "pump_kwh")),
     kwhEveningWithout: v(fmColumn(UNMANAGED, date, "pump_kwh_19_23")),
     kwhEveningWith: v(fmColumn(scenarioOf(a), date, "pump_kwh_19_23")),
-    movedOutOfPeak: v(fmColumn(scenarioOf(a), date, "kwh_shifted_out_of_peak")),
+    movedOutOfPeak: v(fmColumn(scenarioOf(a), date, "kwh_shifted_out_of_feeder_peak")),
   };
 }
 

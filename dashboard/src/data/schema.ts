@@ -55,14 +55,14 @@ export const BacktestRow = z.object({
   grid_triggers: nnum,
   grid_stops: nnum,
   auto_stop_min: nnum,
-  pump_kwh_17_20: num,
+  pump_kwh_feeder_peak: num,
   max_starts: nnum,
   solve_s: nnum,
   replans: nnum,
   overrides: nnum,
   unmet_m3: num,
   end_deficit_m3: nnum,
-  failsafe_kwh_17_20: nnum,
+  failsafe_kwh_feeder_peak: nnum,
 });
 export const Backtest = z.object({ status: z.literal("ok"), source: z.string(), rows: z.array(BacktestRow).min(1) });
 
@@ -184,7 +184,7 @@ const col = z.array(num.nullable());
 /** farm_metrics.csv, columnar: scenarios[key][date][column] = 200 values in farm_ids order. */
 export const FM_COLUMNS = [
   "controllable", "farmer_use_m3", "pumped_m3", "over_pumped_m3", "unmet_need_m3", "curtailed_excess_m3",
-  "pump_kwh", "pump_kwh_17_20", "pump_kwh_19_23", "pump_kwh_23_08", "pump_kwh_22_01", "kwh_shifted_out_of_peak",
+  "pump_kwh", "pump_kwh_feeder_peak", "pump_kwh_19_23", "pump_kwh_23_08", "pump_kwh_22_01", "kwh_shifted_out_of_feeder_peak",
   "peak_contrib_kw", "reserve_violation_q_before_need", "starts", "energy_saved_kwh", "co2_avoided_kg",
   "bill_steg_bt_3p_ht_tnd", "bill_legacy_flat_ht_tnd", "bill_proposed_cpp_ht_tnd", "override", "budget_exceeded_q",
 ] as const;
@@ -222,9 +222,8 @@ export const Anomalies = pendingOr({
   })),
 });
 
-export const AnomalyMetrics = pendingOr({
-  data: row({ precision: num, recall: num, mean_delay_min: num }),
-});
+/** anomaly_metrics.json: the pipeline's evaluation report (per fault type, physics / IsolationForest, contract v2). */
+export const AnomalyMetrics = pendingOr({ data: z.record(z.string(), z.unknown()) });
 
 /** water_budget.json: district means per day keyed "scenario@adoption" plus reference blocks (contract v2). */
 export const WaterBudget = pendingOr({ data: z.record(z.string(), z.unknown()) });

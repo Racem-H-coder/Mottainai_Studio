@@ -47,9 +47,9 @@ export function words(h: string): string[] {
 }
 
 describe("Overview data source (recorded)", () => {
-  it("20 test days, opens on the worst day (21 July 2026), 1,000 kW line", () => {
+  it("20 test days, opens on the worst day (22 July 2026), 1,000 kW line", () => {
     expect(src.days).toHaveLength(20);
-    expect(src.defaultDay).toBe("2026-07-21");
+    expect(src.defaultDay).toBe("2026-07-22");
     expect(src.capKw).toBe(1000);
     expect(src.kind).toBe("recorded");
     expect(src.now()).toBeNull();
@@ -62,7 +62,7 @@ describe("Overview data source (recorded)", () => {
       expect(l.hoursOver.with[0]).toBe(l.hoursOver.without);
     }
     const p = src.periodHours();
-    expect([p.with[0], p.with[0.5], p.with[0.7]]).toEqual([75.25, 4.5, 0]);   // never the open-loop 7 h at 50 %
+    expect([p.with[0], p.with[0.5], p.with[0.7]]).toEqual([27.75, 0, 0]);   // closed loop, never the open-loop sweep
   });
   it("equipped farms: 94 at 50 %, 136 at 70 %, none at 0 %, nested", () => {
     const n = (a: 0 | 0.5 | 0.7) => src.farms.filter((f) => src.equipped(f.id, a)).length;
@@ -77,7 +77,7 @@ describe("Overview data source (recorded)", () => {
       expect(g[0]!.items[0]!.value).toBe(fmt(max(c.showWith ? c.with : c.without)));
     }
   });
-  it("hours over the limit per day = quarters above the limit on the curve (one known exception)", () => {
+  it("hours over the limit per day = quarters above the limit on the curve", () => {
     const off: string[] = [];
     for (const d of src.days) {
       const l = src.load(d.date)!;
@@ -86,34 +86,33 @@ describe("Overview data source (recorded)", () => {
       chk("50", l.with[0.5], l.hoursOver.with[0.5]);
       chk("70", l.with[0.7], l.hoursOver.with[0.7]);
     }
-    // 14 July without Tameru: the curve has 17 quarters above 1,000 kW, backtest.csv 16 (asked Rayan, DATA_REQUESTS)
-    expect(off).toEqual(["2026-07-14 without"]);
+    expect(off).toEqual([]);   // data v2: no exception (v1 had one on 14 July)
   });
 });
 
 describe("Overview numbers follow the controls", () => {
-  it("21 July without Tameru: 1,363 kW, 4.8 h; 20 days: 75.2 h", () => {
-    expect(figText(stepView(0))).toEqual(["1,363 kW", "4.8 h", "75.2 h"]);
+  it("22 July without Tameru: 1,156 kW, 2.8 h; 20 days: 27.8 h", () => {
+    expect(figText(stepView(0))).toEqual(["1,156 kW", "2.8 h", "27.8 h"]);
   });
-  it("21 July with Tameru, 50 %: 1,363 → 1,051 kW, still over the limit; 4.8 → 3 h; 20 days 75.2 → 4.5 h", () => {
+  it("22 July with Tameru, 50 %: 1,156 → 978 kW, within the limit; 2.8 → 0 h; 20 days 27.8 → 0 h", () => {
     const g = figures(src, stepView(1));
-    expect(figText(stepView(1))).toEqual(["1,363 → 1,051 kW", "4.8 → 3 h", "75.2 → 4.5 h"]);
-    expect(g[0]!.items[0]!.label).toBe("peak, over the limit");
-    expect(g[0]!.items[0]!.tone).toBe("without");
+    expect(figText(stepView(1))).toEqual(["1,156 → 978 kW", "2.8 → 0 h", "27.8 → 0 h"]);
+    expect(g[0]!.items[0]!.label).toBe("peak, within the limit");
+    expect(g[0]!.items[0]!.tone).toBe("with");
     expect(g[1]!.heading).toBe("20 highest-load days");
   });
-  it("70 % equipped: 1,363 → 950 kW within the limit, 0 h that day, 0 h across the 20 days", () => {
-    expect(figText(stepView(2))).toEqual(["1,363 → 950 kW", "4.8 → 0 h", "75.2 → 0 h"]);
+  it("step 3, the smallest share with no day over (50 %): 1,156 → 978 kW, 0 h that day, 0 h across the 20 days", () => {
+    expect(figText(stepView(2))).toEqual(["1,156 → 978 kW", "2.8 → 0 h", "27.8 → 0 h"]);
   });
   it("Tameru off = nobody acts, whatever the equipped setting", () => {
     const v = { ...initialView(src), tameru: false, adoption: 0.7 as const };
     expect(effective(v)).toBe(0);
-    expect(figText(v)).toEqual(["1,363 kW", "4.8 h", "75.2 h"]);
+    expect(figText(v)).toEqual(["1,156 kW", "2.8 h", "27.8 h"]);
   });
-  it("the 20-day mean peak (975 / 1,285 kW) is never on the Overview", () => {
+  it("the 20-day mean peak (873 / 1,055 kW) is never on the Overview", () => {
     const text = (h: string) => h.replace(/<[^>]+>/g, " ");   // visible text only (not SVG coordinates)
-    for (let k = 0; k < steps.length; k++) expect(text(html(k))).not.toMatch(/\b975\b|1,285/);
-    expect(text(html(null))).not.toMatch(/\b975\b|1,285/);
+    for (let k = 0; k < steps.length; k++) expect(text(html(k))).not.toMatch(/\b873\b|1,055/);
+    expect(text(html(null))).not.toMatch(/\b873\b|1,055/);
   });
 });
 
@@ -122,32 +121,32 @@ describe("guided tour: five states of the same screen", () => {
     expect(steps.map((s) => s.caption)).toEqual([
       "On the hottest days, the evening load goes over what the line can carry.",
       "Tameru fills tanks at night and pauses pumps at the peak.",
-      "From 70 % of farms equipped, no day went over the limit.",
+      "From 50 % of farms equipped, no day went over the limit.",
       "Irrigation at the usual time. Only the pumping moves.",
       "Pumping moves to the cheapest hours.",
     ]);
-    expect(minAdoptionZero(src)).toBe(0.7);
+    expect(minAdoptionZero(src)).toBe(0.5);
   });
-  it("states: without → with 50 % → 70 % → farm panel (50 %) → money", () => {
+  it("states: without → with 50 % → smallest share with no day over (50 %) → farm panel (50 %) → money", () => {
     const vs = steps.map((_, k) => stepView(k));
     expect(vs.map((v) => [v.date, v.tameru, v.adoption, v.side])).toEqual([
-      ["2026-07-21", false, 0.5, "numbers"], ["2026-07-21", true, 0.5, "numbers"], ["2026-07-21", true, 0.7, "numbers"],
-      ["2026-07-21", true, 0.5, "farm"], ["2026-07-21", true, 0.5, "money"],
+      ["2026-07-22", false, 0.5, "numbers"], ["2026-07-22", true, 0.5, "numbers"], ["2026-07-22", true, 0.5, "numbers"],
+      ["2026-07-22", true, 0.5, "farm"], ["2026-07-22", true, 0.5, "money"],
     ]);
-    expect(vs[3]!.farmId).toBe(src.storyFarm("2026-07-21"));
+    expect(vs[3]!.farmId).toBe(src.storyFarm("2026-07-22"));
   });
-  it("quiet line: grid figures use the budget off; with it on 3.75 h (50 %) / 0 h (70 %); none without Tameru", () => {
-    expect(gridNote(src, stepView(1))).toBe("Grid figures: water budget off. With it on: 3.75 h over the limit across the 20 days.");
+  it("quiet line: grid figures use the budget off; with it on 0 h at 50 %; none without Tameru", () => {
+    expect(gridNote(src, stepView(1))).toBe("Grid figures: water budget off. With it on: 0 h over the limit across the 20 days.");
     expect(gridNote(src, stepView(2))).toBe("Grid figures: water budget off. With it on: 0 h over the limit across the 20 days.");
     expect(gridNote(src, stepView(0))).toBeNull();
-    expect(html(1)).toContain("With it on: 3.75 h over the limit");
+    expect(html(1)).toContain("With it on: 0 h over the limit");
   });
   it("step 4: the story farm irrigates at the usual time, only the pumping moves, its tank fills at night", () => {
-    const id = src.storyFarm("2026-07-21")!;
-    const f = src.farmDay("2026-07-21", 0.5, id)!;
+    const id = src.storyFarm("2026-07-22")!;
+    const f = src.farmDay("2026-07-22", 0.5, id)!;
     expect(f.equipped).toBe(true);
     expect(f.strip).not.toBeNull();
-    const w = farmSeries("2026-07-21", CLOSED_50, id)!, u = farmSeries("2026-07-21", UNMANAGED, id)!;
+    const w = farmSeries("2026-07-22", CLOSED_50, id)!, u = farmSeries("2026-07-22", UNMANAGED, id)!;
     expect(w.irrigating).toEqual(u.irrigating);
     expect(w.on).not.toEqual(u.on);
     expect(f.filledAtNight).toBe(true);
@@ -155,11 +154,11 @@ describe("guided tour: five states of the same screen", () => {
     expect(sms.en).toBe(`Irrigate as usual at ${f.irrigationStarts[0]}. Your tank filled overnight.`);
     expect(sms.ar).toContain(f.irrigationStarts[0]!);
   });
-  it("step 5: STEG 116 / 140 / 391; 508 kWh out of 19–23 h on 21 July; median saving 25 TND per equipped farm (budget on)", () => {
-    const m = src.money("2026-07-21", 0.5)!;
+  it("step 5: STEG 116 / 140 / 391; 550 kWh out of 19–23 h on 22 July; median saving 29.78 TND before tax per equipped farm (budget on)", () => {
+    const m = src.money("2026-07-22", 0.5)!;
     expect(m.periods.map((p) => p.millPerKwh)).toEqual([116, 140, 391]);
-    expect(Math.round(m.kwhOutOfPricePeak!)).toBe(508);
-    expect(m.bill).toEqual({ medianTnd: 25.28, days: 20, adopters: 94, farmsBillUp: 1, adoption: 0.5 });
+    expect(Math.round(m.kwhOutOfPricePeak!)).toBe(550);
+    expect(m.bill).toEqual({ medianTnd: 29.78, days: 20, adopters: 94, farmsBillUp: 3, adoption: 0.5 });
     expect(html(4)).toContain("median saving per equipped farm over 20 days");
     expect(html(4)).toContain("Modest: before tax, water budget on.");
   });
@@ -184,7 +183,7 @@ describe("one data source interface: a live source plugs in", () => {
     ...src,
     kind: "live",
     load: (d) => { const l = src.load(d)!; return { ...l, without: l.without.slice(0, 41) }; },
-    now: () => ({ date: "2026-07-21", quarter: 40, clock: "10:00" }),
+    now: () => ({ date: "2026-07-22", quarter: 40, clock: "10:00" }),
   };
   it("the curve stops at the current quarter and the cursor follows the clock", () => {
     const c = chartData(live, initialView(live))!;

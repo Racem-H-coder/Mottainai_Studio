@@ -13,7 +13,7 @@ const HOURS = [0, 6, 12, 18, 24];
 const hourLabel = (h: number) => `${String(h).padStart(2, "0")}:00`;
 const niceMax = (v: number, step: number) => Math.max(step, Math.ceil((v * 1.08) / step) * step);
 /**
- * Hours summed over the test days: one decimal from 10 h up (75.25 → "75.2", as published and on the Overview),
+ * Hours summed over the test days: one decimal from 10 h up (27.75 → "27.8", as published and on the Overview),
  * up to two below (4.75, 3.75, 4.5, 0). Day hours use the Overview's own formatter (overview/model.ts hText).
  */
 export const hText = (h: number) => (h >= 10 ? (Number.isInteger(h) ? fmt(h) : fmt(h, 1)) : fmt(h, 2).replace(/\.?0+$/, ""));
