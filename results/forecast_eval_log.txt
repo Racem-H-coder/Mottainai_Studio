@@ -1,0 +1,25 @@
+Test 2026-06-01 .. 2026-10-31 (153 days), simulated data. Model v1 + conformal p90, best iterations {'p50': 155, 'p90': 311}
+                                    cv v1  cv v1_cal      cv v2    test v1    test v2
+  MAE kW                             25.1       25.1       25.2       26.2       26.4
+  MAPE                               7.4%       7.4%       7.5%       7.6%       7.7%
+  MAPE peak window                   7.3%       7.3%       7.2%       7.1%       6.9%
+  p90 coverage hot window           27.4%      84.9%      82.5%      99.5%      90.1%
+  p90 coverage peak hour            73.7%      94.0%      92.8%     100.0%      90.7%
+  MAPE 17-20 h                       8.6%       8.6%       8.7%       7.9%       7.5%
+  MAPE heatwave days                 8.9%       8.9%       8.0%       8.4%       8.8%
+  hot-evening bias kW               -41.0      -41.0      -29.9       -3.6      +12.8
+  worst hot-eve peak err kW        -127.4     -127.4     -130.7     -141.3      -91.6
+  daily peak error kW                43.0       43.0       37.5       39.0       34.2
+  p90 coverage                      84.8%      90.8%      90.6%      89.4%      84.5%
+  p90 coverage 18-19 h              75.7%      92.4%      91.3%      96.2%      86.4%
+  p90 coverage hot evenings         36.1%      76.6%      84.9%      96.4%      84.9%
+  rule: cv_MAE_lower FAIL, cv_hot_window_coverage_ok FAIL, cv_peak_window_MAPE_not_worse OK, cv_heatwave_MAPE_not_worse OK
+  ADOPTED: v1
+               MAE kW    RMSE    MAPE  window peak err peak min
+  p50            26.2    36.0    7.6%    7.1%     39.0      119
+  yesterday      28.2    39.0    8.2%    6.7%     37.6      124
+  last_week      45.7    64.0   13.1%   12.0%     61.7      162
+  skill vs yesterday 7%, vs last week 43%; p90 coverage 89.4%; pinball p50 13.1, p90 6.7
+  ablation MAE: forecast temp 26.2 kW vs perfect temp 25.4 kW
+  intraday correction, remaining-day MAE: 06:00 29.2->29.3, 09:00 31.5->28.8, 12:00 33.0->33.1, 15:00 31.9->30.5, 17:00 30.6->30.5, 19:00 29.9->27.4
+EXIT 0

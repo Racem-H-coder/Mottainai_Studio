@@ -1,0 +1,40 @@
+{
+ "worst": "2026-07-22",
+ "median": "2026-07-19",
+ "most_faults": "2026-07-14",
+ "fault_episodes": [
+  20,
+  15,
+  25
+ ],
+ "days_20": [
+  "2026-07-22",
+  "2026-07-21",
+  "2026-07-20",
+  "2026-07-18",
+  "2026-08-03",
+  "2026-07-15",
+  "2026-07-17",
+  "2026-07-23",
+  "2026-07-12",
+  "2026-07-16",
+  "2026-07-19",
+  "2026-07-25",
+  "2026-08-04",
+  "2026-06-26",
+  "2026-07-31",
+  "2026-07-09",
+  "2026-07-14",
+  "2026-06-23",
+  "2026-08-01",
+  "2026-07-11"
+ ],
+ "peak_window": [
+  [
+   "19:00",
+   "22:00"
+  ]
+ ],
+ "rule": "worst = highest unmanaged 15-min peak of the 20 highest-load test days; median = days[len // 2] of those 20 sorted by load; most_faults = most injected fault episodes (5 types) among the others",
+ "simulated": true
+}

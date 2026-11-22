@@ -1,21 +1,22 @@
-[1/20    87s] 2026-07-21: unmanaged 1363  open_lp_round_m0 1082  open_lp_round_m5 1082  open_lp_round_m10 1082  open_milp_m0 1070  open_milp_m10 1074  closed_lp_round_m0 1051  oracle_lp_round_m0 1071
-[2/20   183s] 2026-06-23: unmanaged 1337  open_lp_round_m0 1001  open_lp_round_m5 1001  open_lp_round_m10 1001  open_milp_m0 999  open_milp_m10 999  closed_lp_round_m0 999  oracle_lp_round_m0 1001
-[3/20   271s] 2026-07-20: unmanaged 1314  open_lp_round_m0 999  open_lp_round_m5 999  open_lp_round_m10 999  open_milp_m0 1003  open_milp_m10 998  closed_lp_round_m0 999  oracle_lp_round_m0 998
-[4/20   367s] 2026-07-22: unmanaged 1311  open_lp_round_m0 1040  open_lp_round_m5 1040  open_lp_round_m10 1040  open_milp_m0 1040  open_milp_m10 1044  closed_lp_round_m0 1040  oracle_lp_round_m0 1040
-[5/20   490s] 2026-07-23: unmanaged 1308  open_lp_round_m0 1007  open_lp_round_m5 1007  open_lp_round_m10 1010  open_milp_m0 1007  open_milp_m10 1010  closed_lp_round_m0 1002  oracle_lp_round_m0 1007
-[6/20   576s] 2026-07-15: unmanaged 1306  open_lp_round_m0 1019  open_lp_round_m5 1019  open_lp_round_m10 1019  open_milp_m0 1019  open_milp_m10 1009  closed_lp_round_m0 1003  oracle_lp_round_m0 1017
-[7/20   673s] 2026-06-22: unmanaged 1301  open_lp_round_m0 996  open_lp_round_m5 1000  open_lp_round_m10 996  open_milp_m0 996  open_milp_m10 996  closed_lp_round_m0 996  oracle_lp_round_m0 996
-[8/20   768s] 2026-06-19: unmanaged 1297  open_lp_round_m0 988  open_lp_round_m5 988  open_lp_round_m10 988  open_milp_m0 988  open_milp_m10 988  closed_lp_round_m0 985  oracle_lp_round_m0 988
-[9/20   864s] 2026-07-14: unmanaged 1276  open_lp_round_m0 993  open_lp_round_m5 993  open_lp_round_m10 993  open_milp_m0 981  open_milp_m10 992  closed_lp_round_m0 955  oracle_lp_round_m0 988
-[10/20  1017s] 2026-07-12: unmanaged 1277  open_lp_round_m0 958  open_lp_round_m5 967  open_lp_round_m10 967  open_milp_m0 969  open_milp_m10 969  closed_lp_round_m0 948  oracle_lp_round_m0 962
-[11/20  1111s] 2026-06-01: unmanaged 1275  open_lp_round_m0 971  open_lp_round_m5 975  open_lp_round_m10 970  open_milp_m0 982  open_milp_m10 980  closed_lp_round_m0 947  oracle_lp_round_m0 965
-[12/20  1202s] 2026-07-17: unmanaged 1274  open_lp_round_m0 972  open_lp_round_m5 975  open_lp_round_m10 975  open_milp_m0 973  open_milp_m10 973  closed_lp_round_m0 976  oracle_lp_round_m0 972
-[13/20  1291s] 2026-06-24: unmanaged 1271  open_lp_round_m0 962  open_lp_round_m5 965  open_lp_round_m10 965  open_milp_m0 965  open_milp_m10 962  closed_lp_round_m0 962  oracle_lp_round_m0 965
-[14/20  1383s] 2026-07-18: unmanaged 1267  open_lp_round_m0 954  open_lp_round_m5 954  open_lp_round_m10 954  open_milp_m0 958  open_milp_m10 970  closed_lp_round_m0 954  oracle_lp_round_m0 954
-[15/20  1475s] 2026-07-13: unmanaged 1265  open_lp_round_m0 992  open_lp_round_m5 992  open_lp_round_m10 992  open_milp_m0 986  open_milp_m10 986  closed_lp_round_m0 979  oracle_lp_round_m0 992
-[16/20  1574s] 2026-06-03: unmanaged 1265  open_lp_round_m0 956  open_lp_round_m5 956  open_lp_round_m10 956  open_milp_m0 959  open_milp_m10 957  closed_lp_round_m0 953  oracle_lp_round_m0 956
-[17/20  1686s] 2026-06-02: unmanaged 1263  open_lp_round_m0 949  open_lp_round_m5 950  open_lp_round_m10 949  open_milp_m0 956  open_milp_m10 956  closed_lp_round_m0 950  oracle_lp_round_m0 949
-[18/20  1775s] 2026-08-03: unmanaged 1248  open_lp_round_m0 980  open_lp_round_m5 980  open_lp_round_m10 980  open_milp_m0 973  open_milp_m10 972  closed_lp_round_m0 962  oracle_lp_round_m0 980
-[19/20  1866s] 2026-07-19: unmanaged 1244  open_lp_round_m0 931  open_lp_round_m5 931  open_lp_round_m10 931  open_milp_m0 950  open_milp_m10 950  closed_lp_round_m0 926  oracle_lp_round_m0 931
-[20/20  2018s] 2026-07-24: unmanaged 1238  open_lp_round_m0 935  open_lp_round_m5 935  open_lp_round_m10 935  open_milp_m0 948  open_milp_m10 948  closed_lp_round_m0 921  oracle_lp_round_m0 921
-wrote C:\Users\MSI\Desktop\projets\kizuna\results\backtest.csv (480 rows), 5443 grid-safety stops logged to events
+[1/20    84s] 2026-07-22: unmanaged 1156  open_lp_round_m0 986  open_lp_round_m5 984  open_lp_round_m10 984  open_milp_m0 986  open_milp_m10 986  closed_lp_round_m0 978  oracle_lp_round_m0 980
+[2/20   177s] 2026-07-21: unmanaged 1146  open_lp_round_m0 949  open_lp_round_m5 948  open_lp_round_m10 950  open_milp_m0 948  open_milp_m10 949  closed_lp_round_m0 950  oracle_lp_round_m0 946
+[3/20   260s] 2026-07-20: unmanaged 1119  open_lp_round_m0 944  open_lp_round_m5 949  open_lp_round_m10 944  open_milp_m0 950  open_milp_m10 948  closed_lp_round_m0 941  oracle_lp_round_m0 946
+[4/20   353s] 2026-07-18: unmanaged 1098  open_lp_round_m0 941  open_lp_round_m5 944  open_lp_round_m10 944  open_milp_m0 940  open_milp_m10 945  closed_lp_round_m0 923  oracle_lp_round_m0 929
+[5/20   435s] 2026-08-03: unmanaged 1087  open_lp_round_m0 908  open_lp_round_m5 906  open_lp_round_m10 906  open_milp_m0 894  open_milp_m10 899  closed_lp_round_m0 900  oracle_lp_round_m0 905
+[6/20   526s] 2026-07-15: unmanaged 1083  open_lp_round_m0 919  open_lp_round_m5 919  open_lp_round_m10 919  open_milp_m0 925  open_milp_m10 925  closed_lp_round_m0 923  oracle_lp_round_m0 919
+[7/20   614s] 2026-07-17: unmanaged 1083  open_lp_round_m0 893  open_lp_round_m5 893  open_lp_round_m10 893  open_milp_m0 894  open_milp_m10 891  closed_lp_round_m0 877  oracle_lp_round_m0 891
+[8/20   710s] 2026-07-23: unmanaged 1080  open_lp_round_m0 889  open_lp_round_m5 889  open_lp_round_m10 888  open_milp_m0 905  open_milp_m10 888  closed_lp_round_m0 888  oracle_lp_round_m0 887
+[9/20   830s] 2026-07-12: unmanaged 1070  open_lp_round_m0 857  open_lp_round_m5 857  open_lp_round_m10 857  open_milp_m0 850  open_milp_m10 851  closed_lp_round_m0 861  oracle_lp_round_m0 863
+[10/20   976s] 2026-07-16: unmanaged 1056  open_lp_round_m0 892  open_lp_round_m5 885  open_lp_round_m10 885  open_milp_m0 888  open_milp_m10 886  closed_lp_round_m0 876  oracle_lp_round_m0 885
+[11/20  1063s] 2026-07-19: unmanaged 1051  open_lp_round_m0 876  open_lp_round_m5 876  open_lp_round_m10 876  open_milp_m0 870  open_milp_m10 872  closed_lp_round_m0 880  oracle_lp_round_m0 871
+[12/20  1163s] 2026-07-25: unmanaged 1032  open_lp_round_m0 840  open_lp_round_m5 840  open_lp_round_m10 840  open_milp_m0 832  open_milp_m10 828  closed_lp_round_m0 834  oracle_lp_round_m0 840
+[13/20  1236s] 2026-08-04: unmanaged 1031  open_lp_round_m0 880  open_lp_round_m5 880  open_lp_round_m10 880  open_milp_m0 884  open_milp_m10 881  closed_lp_round_m0 874  oracle_lp_round_m0 878
+[14/20  1396s] 2026-06-26: unmanaged 1014  open_lp_round_m0 820  open_lp_round_m5 821  open_lp_round_m10 821  open_milp_m0 809  open_milp_m10 808  closed_lp_round_m0 832  oracle_lp_round_m0 816
+[15/20  1505s] 2026-07-31: unmanaged 1009  open_lp_round_m0 849  open_lp_round_m5 849  open_lp_round_m10 849  open_milp_m0 838  open_milp_m10 838  closed_lp_round_m0 838  oracle_lp_round_m0 849
+[16/20  1670s] 2026-07-09: unmanaged 1006  open_lp_round_m0 813  open_lp_round_m5 812  open_lp_round_m10 812  open_milp_m0 819  open_milp_m10 819  closed_lp_round_m0 821  oracle_lp_round_m0 813
+[17/20  1824s] 2026-07-14: unmanaged 996  open_lp_round_m0 834  open_lp_round_m5 834  open_lp_round_m10 834  open_milp_m0 822  open_milp_m10 840  closed_lp_round_m0 810  oracle_lp_round_m0 809
+[18/20  1960s] 2026-06-23: unmanaged 996  open_lp_round_m0 806  open_lp_round_m5 806  open_lp_round_m10 806  open_milp_m0 814  open_milp_m10 817  closed_lp_round_m0 822  oracle_lp_round_m0 806
+[19/20  2066s] 2026-08-01: unmanaged 995  open_lp_round_m0 846  open_lp_round_m5 846  open_lp_round_m10 842  open_milp_m0 828  open_milp_m10 831  closed_lp_round_m0 834  oracle_lp_round_m0 844
+[20/20  2178s] 2026-07-11: unmanaged 993  open_lp_round_m0 778  open_lp_round_m5 778  open_lp_round_m10 778  open_milp_m0 787  open_milp_m10 786  closed_lp_round_m0 806  oracle_lp_round_m0 780
+wrote c:\Users\MSI\Desktop\projets\kizuna\results\backtest.csv (500 rows), 377 grid-safety stops logged to events
+EXIT 0

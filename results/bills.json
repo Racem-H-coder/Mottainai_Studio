@@ -1,25 +1,25 @@
 {
  "days": [
-  "2026-07-21",
-  "2026-06-23",
-  "2026-07-20",
   "2026-07-22",
-  "2026-07-23",
-  "2026-07-15",
-  "2026-06-22",
-  "2026-06-19",
-  "2026-07-14",
-  "2026-07-12",
-  "2026-06-01",
-  "2026-07-17",
-  "2026-06-24",
+  "2026-07-21",
+  "2026-07-20",
   "2026-07-18",
-  "2026-07-13",
-  "2026-06-03",
-  "2026-06-02",
   "2026-08-03",
+  "2026-07-15",
+  "2026-07-17",
+  "2026-07-23",
+  "2026-07-12",
+  "2026-07-16",
   "2026-07-19",
-  "2026-07-24"
+  "2026-07-25",
+  "2026-08-04",
+  "2026-06-26",
+  "2026-07-31",
+  "2026-07-09",
+  "2026-07-14",
+  "2026-06-23",
+  "2026-08-01",
+  "2026-07-11"
  ],
  "tariffs": {
   "steg_bt_3p": {
@@ -41,9 +41,11 @@
   },
   "proposed_cpp": {
    "adder_mill_per_kwh": 400,
-   "window": [
-    "17:00",
-    "20:00"
+   "windows": [
+    [
+     "19:00",
+     "22:00"
+    ]
    ],
    "rebate_mill_per_kw": 1000,
    "critical_day": "forecast p90 base load + usual pumping of all farms > feeder capacity in the window",
@@ -57,223 +59,247 @@
   "closed_loop@0.5_vs_unmanaged": {
    "steg_bt_3p_ht": {
     "adopters": 94,
-    "saving_tnd_20_days_median": 13.9,
-    "p10": -0.31,
-    "p90": 57.97,
-    "farms_bill_up": 11,
-    "district_unmanaged_tnd": 25659.9,
-    "district_scenario_tnd": 23206.2
+    "saving_tnd_20_days_median": 20.4,
+    "p10": -3.24,
+    "p90": 101.63,
+    "farms_bill_up": 16,
+    "district_unmanaged_tnd": 23494.2,
+    "district_scenario_tnd": 20144.2
    },
    "steg_bt_3p_ttc": {
     "adopters": 94,
-    "saving_tnd_20_days_median": 14.75,
-    "p10": -0.58,
-    "p90": 61.8,
-    "farms_bill_up": 12,
-    "district_unmanaged_tnd": 28592.2,
-    "district_scenario_tnd": 25995.5
+    "saving_tnd_20_days_median": 21.75,
+    "p10": -3.89,
+    "p90": 109.83,
+    "farms_bill_up": 18,
+    "district_unmanaged_tnd": 26301.5,
+    "district_scenario_tnd": 22706.0
    },
    "legacy_flat_ht": {
     "adopters": 94,
-    "saving_tnd_20_days_median": -3.48,
-    "p10": -12.42,
-    "p90": -0.1,
-    "farms_bill_up": 84,
-    "district_unmanaged_tnd": 20903.1,
-    "district_scenario_tnd": 21432.3
+    "saving_tnd_20_days_median": -3.02,
+    "p10": -11.66,
+    "p90": 17.1,
+    "farms_bill_up": 68,
+    "district_unmanaged_tnd": 21393.8,
+    "district_scenario_tnd": 21190.5
    },
    "legacy_flat_ttc": {
     "adopters": 94,
-    "saving_tnd_20_days_median": -3.91,
-    "p10": -13.96,
-    "p90": -0.11,
-    "farms_bill_up": 84,
-    "district_unmanaged_tnd": 23502.3,
-    "district_scenario_tnd": 24097.4
+    "saving_tnd_20_days_median": -3.39,
+    "p10": -13.11,
+    "p90": 19.22,
+    "farms_bill_up": 68,
+    "district_unmanaged_tnd": 24054.1,
+    "district_scenario_tnd": 23825.5
    },
    "proposed_cpp_ht": {
     "adopters": 94,
-    "saving_tnd_20_days_median": 118.36,
-    "p10": 3.43,
-    "p90": 296.93,
-    "farms_bill_up": 4,
-    "district_unmanaged_tnd": 40680.5,
-    "district_scenario_tnd": 26353.6
+    "saving_tnd_20_days_median": 77.97,
+    "p10": -2.77,
+    "p90": 304.87,
+    "farms_bill_up": 14,
+    "district_unmanaged_tnd": 33587.0,
+    "district_scenario_tnd": 23237.4
    },
    "proposed_cpp_ttc": {
     "adopters": 94,
-    "saving_tnd_20_days_median": 126.42,
-    "p10": 3.54,
-    "p90": 317.9,
-    "farms_bill_up": 4,
-    "district_unmanaged_tnd": 44664.2,
-    "district_scenario_tnd": 29363.1
+    "saving_tnd_20_days_median": 83.43,
+    "p10": -3.25,
+    "p90": 327.3,
+    "farms_bill_up": 16,
+    "district_unmanaged_tnd": 37100.8,
+    "district_scenario_tnd": 26015.7
    },
    "adopter_kwh_share": {
     "19_23": {
-     "unmanaged": 0.345175,
-     "scenario": 0.174401
+     "unmanaged": 0.265365,
+     "scenario": 0.078916
     },
     "23_08": {
-     "unmanaged": 0.163932,
-     "scenario": 0.596467
+     "unmanaged": 0.218913,
+     "scenario": 0.653231
     },
     "22_01": {
-     "unmanaged": 0.112722,
-     "scenario": 0.204302
+     "unmanaged": 0.101103,
+     "scenario": 0.200366
+    },
+    "13_17": {
+     "unmanaged": 0.112433,
+     "scenario": 0.029797
+    },
+    "feeder_peak": {
+     "unmanaged": 0.2138,
+     "scenario": 0.047233
     }
    },
    "adopter_kwh": {
-    "unmanaged": 55236.3,
-    "scenario": 58112.4
+    "unmanaged": 55759.8,
+    "scenario": 54654.3
    }
   },
   "closed_loop_enforced@0.5_vs_unmanaged": {
    "steg_bt_3p_ht": {
     "adopters": 94,
-    "saving_tnd_20_days_median": 25.28,
-    "p10": 5.63,
-    "p90": 95.59,
-    "farms_bill_up": 1,
-    "district_unmanaged_tnd": 25659.9,
-    "district_scenario_tnd": 22018.5
+    "saving_tnd_20_days_median": 29.78,
+    "p10": 2.18,
+    "p90": 106.23,
+    "farms_bill_up": 3,
+    "district_unmanaged_tnd": 23494.2,
+    "district_scenario_tnd": 19341.9
    },
    "steg_bt_3p_ttc": {
     "adopters": 94,
-    "saving_tnd_20_days_median": 27.26,
-    "p10": 6.27,
-    "p90": 102.55,
-    "farms_bill_up": 1,
-    "district_unmanaged_tnd": 28592.2,
-    "district_scenario_tnd": 24672.1
+    "saving_tnd_20_days_median": 32.05,
+    "p10": 2.37,
+    "p90": 113.58,
+    "farms_bill_up": 3,
+    "district_unmanaged_tnd": 26301.5,
+    "district_scenario_tnd": 21801.0
    },
    "legacy_flat_ht": {
     "adopters": 94,
-    "saving_tnd_20_days_median": 2.62,
-    "p10": -2.52,
-    "p90": 16.79,
-    "farms_bill_up": 26,
-    "district_unmanaged_tnd": 20903.1,
-    "district_scenario_tnd": 20465.7
+    "saving_tnd_20_days_median": 3.85,
+    "p10": -4.26,
+    "p90": 29.57,
+    "farms_bill_up": 22,
+    "district_unmanaged_tnd": 21393.8,
+    "district_scenario_tnd": 20335.5
    },
    "legacy_flat_ttc": {
     "adopters": 94,
-    "saving_tnd_20_days_median": 2.95,
-    "p10": -2.84,
-    "p90": 18.88,
-    "farms_bill_up": 26,
-    "district_unmanaged_tnd": 23502.3,
-    "district_scenario_tnd": 23010.5
+    "saving_tnd_20_days_median": 4.33,
+    "p10": -4.79,
+    "p90": 33.25,
+    "farms_bill_up": 22,
+    "district_unmanaged_tnd": 24054.1,
+    "district_scenario_tnd": 22864.1
    },
    "proposed_cpp_ht": {
     "adopters": 94,
-    "saving_tnd_20_days_median": 144.71,
-    "p10": 12.61,
-    "p90": 327.32,
-    "farms_bill_up": 1,
-    "district_unmanaged_tnd": 40680.5,
-    "district_scenario_tnd": 25020.2
+    "saving_tnd_20_days_median": 82.96,
+    "p10": 2.46,
+    "p90": 309.29,
+    "farms_bill_up": 3,
+    "district_unmanaged_tnd": 33587.0,
+    "district_scenario_tnd": 22267.5
    },
    "proposed_cpp_ttc": {
     "adopters": 94,
-    "saving_tnd_20_days_median": 154.91,
-    "p10": 13.67,
-    "p90": 350.83,
-    "farms_bill_up": 1,
-    "district_unmanaged_tnd": 44664.2,
-    "district_scenario_tnd": 27883.9
+    "saving_tnd_20_days_median": 88.88,
+    "p10": 2.68,
+    "p90": 331.46,
+    "farms_bill_up": 3,
+    "district_unmanaged_tnd": 37100.8,
+    "district_scenario_tnd": 24931.4
    },
    "adopter_kwh_share": {
     "19_23": {
-     "unmanaged": 0.345175,
-     "scenario": 0.155126
+     "unmanaged": 0.265365,
+     "scenario": 0.070888
     },
     "23_08": {
-     "unmanaged": 0.163932,
-     "scenario": 0.629375
+     "unmanaged": 0.218913,
+     "scenario": 0.679692
     },
     "22_01": {
-     "unmanaged": 0.112722,
-     "scenario": 0.189131
+     "unmanaged": 0.101103,
+     "scenario": 0.186455
+    },
+    "13_17": {
+     "unmanaged": 0.112433,
+     "scenario": 0.019139
+    },
+    "feeder_peak": {
+     "unmanaged": 0.2138,
+     "scenario": 0.043746
     }
    },
    "adopter_kwh": {
-    "unmanaged": 55236.3,
-    "scenario": 52859.0
+    "unmanaged": 55759.8,
+    "scenario": 50007.4
    }
   },
   "closed_loop@0.7_vs_unmanaged": {
    "steg_bt_3p_ht": {
     "adopters": 136,
-    "saving_tnd_20_days_median": 12.04,
-    "p10": -0.85,
-    "p90": 56.41,
-    "farms_bill_up": 18,
-    "district_unmanaged_tnd": 25659.9,
-    "district_scenario_tnd": 22207.8
+    "saving_tnd_20_days_median": 21.29,
+    "p10": -3.69,
+    "p90": 92.67,
+    "farms_bill_up": 27,
+    "district_unmanaged_tnd": 23494.2,
+    "district_scenario_tnd": 18873.3
    },
    "steg_bt_3p_ttc": {
     "adopters": 136,
-    "saving_tnd_20_days_median": 12.49,
-    "p10": -1.05,
-    "p90": 60.19,
-    "farms_bill_up": 20,
-    "district_unmanaged_tnd": 28592.2,
-    "district_scenario_tnd": 24942.3
+    "saving_tnd_20_days_median": 21.92,
+    "p10": -4.27,
+    "p90": 101.08,
+    "farms_bill_up": 27,
+    "district_unmanaged_tnd": 26301.5,
+    "district_scenario_tnd": 21351.6
    },
    "legacy_flat_ht": {
     "adopters": 136,
-    "saving_tnd_20_days_median": -3.52,
-    "p10": -13.54,
-    "p90": -0.63,
-    "farms_bill_up": 127,
-    "district_unmanaged_tnd": 20903.1,
-    "district_scenario_tnd": 21711.5
+    "saving_tnd_20_days_median": -2.86,
+    "p10": -11.75,
+    "p90": 15.75,
+    "farms_bill_up": 101,
+    "district_unmanaged_tnd": 21393.8,
+    "district_scenario_tnd": 21292.2
    },
    "legacy_flat_ttc": {
     "adopters": 136,
-    "saving_tnd_20_days_median": -3.96,
-    "p10": -15.22,
-    "p90": -0.71,
-    "farms_bill_up": 127,
-    "district_unmanaged_tnd": 23502.3,
-    "district_scenario_tnd": 24411.2
+    "saving_tnd_20_days_median": -3.22,
+    "p10": -13.21,
+    "p90": 17.7,
+    "farms_bill_up": 101,
+    "district_unmanaged_tnd": 24054.1,
+    "district_scenario_tnd": 23939.9
    },
    "proposed_cpp_ht": {
     "adopters": 136,
-    "saving_tnd_20_days_median": 112.44,
-    "p10": 1.03,
-    "p90": 303.96,
-    "farms_bill_up": 9,
-    "district_unmanaged_tnd": 40680.5,
-    "district_scenario_tnd": 20640.5
+    "saving_tnd_20_days_median": 79.46,
+    "p10": -3.69,
+    "p90": 283.23,
+    "farms_bill_up": 27,
+    "district_unmanaged_tnd": 33587.0,
+    "district_scenario_tnd": 18933.9
    },
    "proposed_cpp_ttc": {
     "adopters": 136,
-    "saving_tnd_20_days_median": 120.02,
-    "p10": 1.0,
-    "p90": 325.13,
-    "farms_bill_up": 10,
-    "district_unmanaged_tnd": 44664.2,
-    "district_scenario_tnd": 23265.3
+    "saving_tnd_20_days_median": 84.61,
+    "p10": -4.26,
+    "p90": 303.65,
+    "farms_bill_up": 27,
+    "district_unmanaged_tnd": 37100.8,
+    "district_scenario_tnd": 21416.4
    },
    "adopter_kwh_share": {
     "19_23": {
-     "unmanaged": 0.348764,
-     "scenario": 0.171986
+     "unmanaged": 0.271728,
+     "scenario": 0.079376
     },
     "23_08": {
-     "unmanaged": 0.164704,
-     "scenario": 0.578212
+     "unmanaged": 0.2182,
+     "scenario": 0.637562
     },
     "22_01": {
-     "unmanaged": 0.110966,
-     "scenario": 0.197518
+     "unmanaged": 0.103835,
+     "scenario": 0.192454
+    },
+    "13_17": {
+     "unmanaged": 0.114788,
+     "scenario": 0.035166
+    },
+    "feeder_peak": {
+     "unmanaged": 0.217549,
+     "scenario": 0.046685
     }
    },
    "adopter_kwh": {
-    "unmanaged": 77279.2,
-    "scenario": 81672.3
+    "unmanaged": 77830.3,
+    "scenario": 77277.8
    }
   }
  },

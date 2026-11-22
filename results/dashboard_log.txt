@@ -1,246 +1,271 @@
-showcase days (worst, median, most faults): ['2026-07-21', '2026-06-01', '2026-07-14'] [18, 16, 25]
-[1/20  169s] 2026-07-21: unmanaged@0% 1363  unmanaged_faults@0% 1362  closed_loop@50% 1051  closed_loop_advisory@50% 1051  closed_loop_enforced@50% 1049  closed_loop_faults@50% 1055  closed_loop@70% 950  closed_loop_advisory@70% 950  closed_loop_enforced@70% 950  closed_loop_faults@70% 949
-[2/20  282s] 2026-06-23: unmanaged@0% 1337  unmanaged_faults@0% 1337  closed_loop@50% 999  closed_loop_advisory@50% 999  closed_loop_enforced@50% 992  closed_loop_faults@50% 999  closed_loop@70% 883  closed_loop_advisory@70% 883  closed_loop_enforced@70% 862  closed_loop_faults@70% 883
-[3/20  405s] 2026-07-20: unmanaged@0% 1314  unmanaged_faults@0% 1314  closed_loop@50% 999  closed_loop_advisory@50% 999  closed_loop_enforced@50% 996  closed_loop_faults@50% 1003  closed_loop@70% 909  closed_loop_advisory@70% 909  closed_loop_enforced@70% 878  closed_loop_faults@70% 910
-[4/20  545s] 2026-07-22: unmanaged@0% 1311  unmanaged_faults@0% 1305  closed_loop@50% 1040  closed_loop_advisory@50% 1040  closed_loop_enforced@50% 1019  closed_loop_faults@50% 1033  closed_loop@70% 943  closed_loop_advisory@70% 943  closed_loop_enforced@70% 912  closed_loop_faults@70% 936
-[5/20  682s] 2026-07-23: unmanaged@0% 1308  unmanaged_faults@0% 1308  closed_loop@50% 1002  closed_loop_advisory@50% 1002  closed_loop_enforced@50% 1002  closed_loop_faults@50% 1005  closed_loop@70% 877  closed_loop_advisory@70% 877  closed_loop_enforced@70% 867  closed_loop_faults@70% 888
-[6/20  774s] 2026-07-15: unmanaged@0% 1306  unmanaged_faults@0% 1302  closed_loop@50% 1003  closed_loop_advisory@50% 1003  closed_loop_enforced@50% 999  closed_loop_faults@50% 1005  closed_loop@70% 922  closed_loop_advisory@70% 922  closed_loop_enforced@70% 884  closed_loop_faults@70% 916
-[7/20  818s] 2026-06-22: unmanaged@0% 1301  unmanaged_faults@0% 1301  closed_loop@50% 996  closed_loop_advisory@50% 996  closed_loop_enforced@50% 996  closed_loop_faults@50% 996  closed_loop@70% 858  closed_loop_advisory@70% 858  closed_loop_enforced@70% 858  closed_loop_faults@70% 867
-[8/20  864s] 2026-06-19: unmanaged@0% 1297  unmanaged_faults@0% 1293  closed_loop@50% 985  closed_loop_advisory@50% 985  closed_loop_enforced@50% 983  closed_loop_faults@50% 985  closed_loop@70% 865  closed_loop_advisory@70% 865  closed_loop_enforced@70% 863  closed_loop_faults@70% 883
-[9/20 1020s] 2026-07-14: unmanaged@0% 1276  unmanaged_faults@0% 1273  closed_loop@50% 955  closed_loop_advisory@50% 955  closed_loop_enforced@50% 955  closed_loop_faults@50% 952  closed_loop@70% 886  closed_loop_advisory@70% 886  closed_loop_enforced@70% 855  closed_loop_faults@70% 900
-[10/20 1146s] 2026-07-12: unmanaged@0% 1277  unmanaged_faults@0% 1277  closed_loop@50% 948  closed_loop_advisory@50% 948  closed_loop_enforced@50% 938  closed_loop_faults@50% 950  closed_loop@70% 875  closed_loop_advisory@70% 875  closed_loop_enforced@70% 838  closed_loop_faults@70% 886
-[11/20 1289s] 2026-06-01: unmanaged@0% 1275  unmanaged_faults@0% 1274  closed_loop@50% 947  closed_loop_advisory@50% 947  closed_loop_enforced@50% 941  closed_loop_faults@50% 946  closed_loop@70% 823  closed_loop_advisory@70% 823  closed_loop_enforced@70% 813  closed_loop_faults@70% 819
-[12/20 1404s] 2026-07-17: unmanaged@0% 1274  unmanaged_faults@0% 1273  closed_loop@50% 976  closed_loop_advisory@50% 976  closed_loop_enforced@50% 963  closed_loop_faults@50% 971  closed_loop@70% 892  closed_loop_advisory@70% 892  closed_loop_enforced@70% 845  closed_loop_faults@70% 903
-[13/20 1518s] 2026-06-24: unmanaged@0% 1271  unmanaged_faults@0% 1271  closed_loop@50% 962  closed_loop_advisory@50% 962  closed_loop_enforced@50% 962  closed_loop_faults@50% 962  closed_loop@70% 853  closed_loop_advisory@70% 853  closed_loop_enforced@70% 838  closed_loop_faults@70% 849
-[14/20 1645s] 2026-07-18: unmanaged@0% 1267  unmanaged_faults@0% 1267  closed_loop@50% 954  closed_loop_advisory@50% 954  closed_loop_enforced@50% 954  closed_loop_faults@50% 953  closed_loop@70% 877  closed_loop_advisory@70% 877  closed_loop_enforced@70% 851  closed_loop_faults@70% 868
-[15/20 1793s] 2026-07-13: unmanaged@0% 1265  unmanaged_faults@0% 1265  closed_loop@50% 979  closed_loop_advisory@50% 979  closed_loop_enforced@50% 979  closed_loop_faults@50% 979  closed_loop@70% 871  closed_loop_advisory@70% 871  closed_loop_enforced@70% 853  closed_loop_faults@70% 853
-[16/20 1924s] 2026-06-03: unmanaged@0% 1265  unmanaged_faults@0% 1262  closed_loop@50% 953  closed_loop_advisory@50% 953  closed_loop_enforced@50% 952  closed_loop_faults@50% 955  closed_loop@70% 878  closed_loop_advisory@70% 878  closed_loop_enforced@70% 827  closed_loop_faults@70% 866
-[17/20 2043s] 2026-06-02: unmanaged@0% 1263  unmanaged_faults@0% 1256  closed_loop@50% 950  closed_loop_advisory@50% 950  closed_loop_enforced@50% 950  closed_loop_faults@50% 942  closed_loop@70% 840  closed_loop_advisory@70% 840  closed_loop_enforced@70% 832  closed_loop_faults@70% 824
-[18/20 2145s] 2026-08-03: unmanaged@0% 1248  unmanaged_faults@0% 1240  closed_loop@50% 962  closed_loop_advisory@50% 962  closed_loop_enforced@50% 956  closed_loop_faults@50% 959  closed_loop@70% 867  closed_loop_advisory@70% 867  closed_loop_enforced@70% 851  closed_loop_faults@70% 871
-[19/20 2265s] 2026-07-19: unmanaged@0% 1244  unmanaged_faults@0% 1240  closed_loop@50% 926  closed_loop_advisory@50% 926  closed_loop_enforced@50% 926  closed_loop_faults@50% 926  closed_loop@70% 815  closed_loop_advisory@70% 815  closed_loop_enforced@70% 799  closed_loop_faults@70% 817
-[20/20 2387s] 2026-07-24: unmanaged@0% 1238  unmanaged_faults@0% 1231  closed_loop@50% 921  closed_loop_advisory@50% 921  closed_loop_enforced@50% 921  closed_loop_faults@50% 922  closed_loop@70% 850  closed_loop_advisory@70% 850  closed_loop_enforced@70% 831  closed_loop_faults@70% 846
+showcase days (worst, median, most faults): ['2026-07-22', '2026-07-19', '2026-07-14'] [20, 15, 25]
+[1/20   38s] 2026-07-22: unmanaged@0% 1156  unmanaged_faults@0% 1151  closed_loop@50% 978  closed_loop_advisory@50% 978  closed_loop_enforced@50% 965  closed_loop_faults@50% 982  closed_loop@70% 913  closed_loop_advisory@70% 913  closed_loop_enforced@70% 897  closed_loop_faults@70% 937
+[2/20   75s] 2026-07-21: unmanaged@0% 1146  unmanaged_faults@0% 1143  closed_loop@50% 950  closed_loop_advisory@50% 950  closed_loop_enforced@50% 939  closed_loop_faults@50% 944  closed_loop@70% 945  closed_loop_advisory@70% 945  closed_loop_enforced@70% 906  closed_loop_faults@70% 941
+[3/20  109s] 2026-07-20: unmanaged@0% 1119  unmanaged_faults@0% 1119  closed_loop@50% 941  closed_loop_advisory@50% 941  closed_loop_enforced@50% 933  closed_loop_faults@50% 949  closed_loop@70% 879  closed_loop_advisory@70% 879  closed_loop_enforced@70% 861  closed_loop_faults@70% 881
+[4/20  143s] 2026-07-18: unmanaged@0% 1098  unmanaged_faults@0% 1098  closed_loop@50% 923  closed_loop_advisory@50% 923  closed_loop_enforced@50% 914  closed_loop_faults@50% 930  closed_loop@70% 884  closed_loop_advisory@70% 884  closed_loop_enforced@70% 837  closed_loop_faults@70% 882
+[5/20  175s] 2026-08-03: unmanaged@0% 1087  unmanaged_faults@0% 1087  closed_loop@50% 900  closed_loop_advisory@50% 900  closed_loop_enforced@50% 896  closed_loop_faults@50% 904  closed_loop@70% 841  closed_loop_advisory@70% 841  closed_loop_enforced@70% 829  closed_loop_faults@70% 842
+[6/20  210s] 2026-07-15: unmanaged@0% 1083  unmanaged_faults@0% 1080  closed_loop@50% 923  closed_loop_advisory@50% 923  closed_loop_enforced@50% 935  closed_loop_faults@50% 930  closed_loop@70% 858  closed_loop_advisory@70% 858  closed_loop_enforced@70% 859  closed_loop_faults@70% 866
+[7/20  243s] 2026-07-17: unmanaged@0% 1083  unmanaged_faults@0% 1083  closed_loop@50% 877  closed_loop_advisory@50% 877  closed_loop_enforced@50% 873  closed_loop_faults@50% 877  closed_loop@70% 817  closed_loop_advisory@70% 817  closed_loop_enforced@70% 812  closed_loop_faults@70% 820
+[8/20  275s] 2026-07-23: unmanaged@0% 1080  unmanaged_faults@0% 1080  closed_loop@50% 888  closed_loop_advisory@50% 888  closed_loop_enforced@50% 888  closed_loop_faults@50% 889  closed_loop@70% 824  closed_loop_advisory@70% 824  closed_loop_enforced@70% 812  closed_loop_faults@70% 811
+[9/20  310s] 2026-07-12: unmanaged@0% 1070  unmanaged_faults@0% 1063  closed_loop@50% 861  closed_loop_advisory@50% 861  closed_loop_enforced@50% 872  closed_loop_faults@50% 863  closed_loop@70% 810  closed_loop_advisory@70% 810  closed_loop_enforced@70% 798  closed_loop_faults@70% 820
+[10/20  348s] 2026-07-16: unmanaged@0% 1056  unmanaged_faults@0% 1056  closed_loop@50% 876  closed_loop_advisory@50% 876  closed_loop_enforced@50% 869  closed_loop_faults@50% 876  closed_loop@70% 804  closed_loop_advisory@70% 804  closed_loop_enforced@70% 793  closed_loop_faults@70% 830
+[11/20  383s] 2026-07-19: unmanaged@0% 1051  unmanaged_faults@0% 1051  closed_loop@50% 880  closed_loop_advisory@50% 880  closed_loop_enforced@50% 861  closed_loop_faults@50% 872  closed_loop@70% 815  closed_loop_advisory@70% 815  closed_loop_enforced@70% 790  closed_loop_faults@70% 810
+[12/20  417s] 2026-07-25: unmanaged@0% 1032  unmanaged_faults@0% 1029  closed_loop@50% 834  closed_loop_advisory@50% 834  closed_loop_enforced@50% 826  closed_loop_faults@50% 836  closed_loop@70% 770  closed_loop_advisory@70% 770  closed_loop_enforced@70% 740  closed_loop_faults@70% 760
+[13/20  449s] 2026-08-04: unmanaged@0% 1031  unmanaged_faults@0% 1031  closed_loop@50% 874  closed_loop_advisory@50% 874  closed_loop_enforced@50% 870  closed_loop_faults@50% 894  closed_loop@70% 817  closed_loop_advisory@70% 817  closed_loop_enforced@70% 797  closed_loop_faults@70% 812
+[14/20  484s] 2026-06-26: unmanaged@0% 1014  unmanaged_faults@0% 1014  closed_loop@50% 832  closed_loop_advisory@50% 832  closed_loop_enforced@50% 819  closed_loop_faults@50% 839  closed_loop@70% 738  closed_loop_advisory@70% 738  closed_loop_enforced@70% 724  closed_loop_faults@70% 750
+[15/20  515s] 2026-07-31: unmanaged@0% 1009  unmanaged_faults@0% 1009  closed_loop@50% 838  closed_loop_advisory@50% 838  closed_loop_enforced@50% 838  closed_loop_faults@50% 844  closed_loop@70% 772  closed_loop_advisory@70% 772  closed_loop_enforced@70% 766  closed_loop_faults@70% 778
+[16/20  553s] 2026-07-09: unmanaged@0% 1006  unmanaged_faults@0% 1006  closed_loop@50% 821  closed_loop_advisory@50% 821  closed_loop_enforced@50% 833  closed_loop_faults@50% 824  closed_loop@70% 760  closed_loop_advisory@70% 760  closed_loop_enforced@70% 750  closed_loop_faults@70% 756
+[17/20  590s] 2026-07-14: unmanaged@0% 996  unmanaged_faults@0% 991  closed_loop@50% 810  closed_loop_advisory@50% 810  closed_loop_enforced@50% 809  closed_loop_faults@50% 819  closed_loop@70% 768  closed_loop_advisory@70% 768  closed_loop_enforced@70% 748  closed_loop_faults@70% 758
+[18/20  624s] 2026-06-23: unmanaged@0% 996  unmanaged_faults@0% 992  closed_loop@50% 822  closed_loop_advisory@50% 822  closed_loop_enforced@50% 821  closed_loop_faults@50% 816  closed_loop@70% 744  closed_loop_advisory@70% 744  closed_loop_enforced@70% 732  closed_loop_faults@70% 763
+[19/20  655s] 2026-08-01: unmanaged@0% 995  unmanaged_faults@0% 995  closed_loop@50% 834  closed_loop_advisory@50% 834  closed_loop_enforced@50% 840  closed_loop_faults@50% 843  closed_loop@70% 774  closed_loop_advisory@70% 774  closed_loop_enforced@70% 772  closed_loop_faults@70% 784
+[20/20  690s] 2026-07-11: unmanaged@0% 993  unmanaged_faults@0% 993  closed_loop@50% 806  closed_loop_advisory@50% 806  closed_loop_enforced@50% 801  closed_loop_faults@50% 797  closed_loop@70% 742  closed_loop_advisory@70% 742  closed_loop_enforced@70% 730  closed_loop_faults@70% 745
 {
  "closed_loop@0.5_vs_unmanaged": {
   "steg_bt_3p_ht": {
    "adopters": 94,
-   "saving_tnd_20_days_median": 13.9,
-   "p10": -0.31,
-   "p90": 57.97,
-   "farms_bill_up": 11,
-   "district_unmanaged_tnd": 25659.9,
-   "district_scenario_tnd": 23206.2
+   "saving_tnd_20_days_median": 20.4,
+   "p10": -3.24,
+   "p90": 101.63,
+   "farms_bill_up": 16,
+   "district_unmanaged_tnd": 23494.2,
+   "district_scenario_tnd": 20144.2
   },
   "steg_bt_3p_ttc": {
    "adopters": 94,
-   "saving_tnd_20_days_median": 14.75,
-   "p10": -0.58,
-   "p90": 61.8,
-   "farms_bill_up": 12,
-   "district_unmanaged_tnd": 28592.2,
-   "district_scenario_tnd": 25995.5
+   "saving_tnd_20_days_median": 21.75,
+   "p10": -3.89,
+   "p90": 109.83,
+   "farms_bill_up": 18,
+   "district_unmanaged_tnd": 26301.5,
+   "district_scenario_tnd": 22706.0
   },
   "legacy_flat_ht": {
    "adopters": 94,
-   "saving_tnd_20_days_median": -3.48,
-   "p10": -12.42,
-   "p90": -0.1,
-   "farms_bill_up": 84,
-   "district_unmanaged_tnd": 20903.1,
-   "district_scenario_tnd": 21432.3
+   "saving_tnd_20_days_median": -3.02,
+   "p10": -11.66,
+   "p90": 17.1,
+   "farms_bill_up": 68,
+   "district_unmanaged_tnd": 21393.8,
+   "district_scenario_tnd": 21190.5
   },
   "legacy_flat_ttc": {
    "adopters": 94,
-   "saving_tnd_20_days_median": -3.91,
-   "p10": -13.96,
-   "p90": -0.11,
-   "farms_bill_up": 84,
-   "district_unmanaged_tnd": 23502.3,
-   "district_scenario_tnd": 24097.4
+   "saving_tnd_20_days_median": -3.39,
+   "p10": -13.11,
+   "p90": 19.22,
+   "farms_bill_up": 68,
+   "district_unmanaged_tnd": 24054.1,
+   "district_scenario_tnd": 23825.5
   },
   "proposed_cpp_ht": {
    "adopters": 94,
-   "saving_tnd_20_days_median": 118.36,
-   "p10": 3.43,
-   "p90": 296.93,
-   "farms_bill_up": 4,
-   "district_unmanaged_tnd": 40680.5,
-   "district_scenario_tnd": 26353.6
+   "saving_tnd_20_days_median": 77.97,
+   "p10": -2.77,
+   "p90": 304.87,
+   "farms_bill_up": 14,
+   "district_unmanaged_tnd": 33587.0,
+   "district_scenario_tnd": 23237.4
   },
   "proposed_cpp_ttc": {
    "adopters": 94,
-   "saving_tnd_20_days_median": 126.42,
-   "p10": 3.54,
-   "p90": 317.9,
-   "farms_bill_up": 4,
-   "district_unmanaged_tnd": 44664.2,
-   "district_scenario_tnd": 29363.1
+   "saving_tnd_20_days_median": 83.43,
+   "p10": -3.25,
+   "p90": 327.3,
+   "farms_bill_up": 16,
+   "district_unmanaged_tnd": 37100.8,
+   "district_scenario_tnd": 26015.7
   },
   "adopter_kwh_share": {
    "19_23": {
-    "unmanaged": 0.345175,
-    "scenario": 0.174401
+    "unmanaged": 0.265365,
+    "scenario": 0.078916
    },
    "23_08": {
-    "unmanaged": 0.163932,
-    "scenario": 0.596467
+    "unmanaged": 0.218913,
+    "scenario": 0.653231
    },
    "22_01": {
-    "unmanaged": 0.112722,
-    "scenario": 0.204302
+    "unmanaged": 0.101103,
+    "scenario": 0.200366
+   },
+   "13_17": {
+    "unmanaged": 0.112433,
+    "scenario": 0.029797
+   },
+   "feeder_peak": {
+    "unmanaged": 0.2138,
+    "scenario": 0.047233
    }
   },
   "adopter_kwh": {
-   "unmanaged": 55236.3,
-   "scenario": 58112.4
+   "unmanaged": 55759.8,
+   "scenario": 54654.3
   }
  },
  "closed_loop_enforced@0.5_vs_unmanaged": {
   "steg_bt_3p_ht": {
    "adopters": 94,
-   "saving_tnd_20_days_median": 25.28,
-   "p10": 5.63,
-   "p90": 95.59,
-   "farms_bill_up": 1,
-   "district_unmanaged_tnd": 25659.9,
-   "district_scenario_tnd": 22018.5
+   "saving_tnd_20_days_median": 29.78,
+   "p10": 2.18,
+   "p90": 106.23,
+   "farms_bill_up": 3,
+   "district_unmanaged_tnd": 23494.2,
+   "district_scenario_tnd": 19341.9
   },
   "steg_bt_3p_ttc": {
    "adopters": 94,
-   "saving_tnd_20_days_median": 27.26,
-   "p10": 6.27,
-   "p90": 102.55,
-   "farms_bill_up": 1,
-   "district_unmanaged_tnd": 28592.2,
-   "district_scenario_tnd": 24672.1
+   "saving_tnd_20_days_median": 32.05,
+   "p10": 2.37,
+   "p90": 113.58,
+   "farms_bill_up": 3,
+   "district_unmanaged_tnd": 26301.5,
+   "district_scenario_tnd": 21801.0
   },
   "legacy_flat_ht": {
    "adopters": 94,
-   "saving_tnd_20_days_median": 2.62,
-   "p10": -2.52,
-   "p90": 16.79,
-   "farms_bill_up": 26,
-   "district_unmanaged_tnd": 20903.1,
-   "district_scenario_tnd": 20465.7
+   "saving_tnd_20_days_median": 3.85,
+   "p10": -4.26,
+   "p90": 29.57,
+   "farms_bill_up": 22,
+   "district_unmanaged_tnd": 21393.8,
+   "district_scenario_tnd": 20335.5
   },
   "legacy_flat_ttc": {
    "adopters": 94,
-   "saving_tnd_20_days_median": 2.95,
-   "p10": -2.84,
-   "p90": 18.88,
-   "farms_bill_up": 26,
-   "district_unmanaged_tnd": 23502.3,
-   "district_scenario_tnd": 23010.5
+   "saving_tnd_20_days_median": 4.33,
+   "p10": -4.79,
+   "p90": 33.25,
+   "farms_bill_up": 22,
+   "district_unmanaged_tnd": 24054.1,
+   "district_scenario_tnd": 22864.1
   },
   "proposed_cpp_ht": {
    "adopters": 94,
-   "saving_tnd_20_days_median": 144.71,
-   "p10": 12.61,
-   "p90": 327.32,
-   "farms_bill_up": 1,
-   "district_unmanaged_tnd": 40680.5,
-   "district_scenario_tnd": 25020.2
+   "saving_tnd_20_days_median": 82.96,
+   "p10": 2.46,
+   "p90": 309.29,
+   "farms_bill_up": 3,
+   "district_unmanaged_tnd": 33587.0,
+   "district_scenario_tnd": 22267.5
   },
   "proposed_cpp_ttc": {
    "adopters": 94,
-   "saving_tnd_20_days_median": 154.91,
-   "p10": 13.67,
-   "p90": 350.83,
-   "farms_bill_up": 1,
-   "district_unmanaged_tnd": 44664.2,
-   "district_scenario_tnd": 27883.9
+   "saving_tnd_20_days_median": 88.88,
+   "p10": 2.68,
+   "p90": 331.46,
+   "farms_bill_up": 3,
+   "district_unmanaged_tnd": 37100.8,
+   "district_scenario_tnd": 24931.4
   },
   "adopter_kwh_share": {
    "19_23": {
-    "unmanaged": 0.345175,
-    "scenario": 0.155126
+    "unmanaged": 0.265365,
+    "scenario": 0.070888
    },
    "23_08": {
-    "unmanaged": 0.163932,
-    "scenario": 0.629375
+    "unmanaged": 0.218913,
+    "scenario": 0.679692
    },
    "22_01": {
-    "unmanaged": 0.112722,
-    "scenario": 0.189131
+    "unmanaged": 0.101103,
+    "scenario": 0.186455
+   },
+   "13_17": {
+    "unmanaged": 0.112433,
+    "scenario": 0.019139
+   },
+   "feeder_peak": {
+    "unmanaged": 0.2138,
+    "scenario": 0.043746
    }
   },
   "adopter_kwh": {
-   "unmanaged": 55236.3,
-   "scenario": 52859.0
+   "unmanaged": 55759.8,
+   "scenario": 50007.4
   }
  },
  "closed_loop@0.7_vs_unmanaged": {
   "steg_bt_3p_ht": {
    "adopters": 136,
-   "saving_tnd_20_days_median": 12.04,
-   "p10": -0.85,
-   "p90": 56.41,
-   "farms_bill_up": 18,
-   "district_unmanaged_tnd": 25659.9,
-   "district_scenario_tnd": 22207.8
+   "saving_tnd_20_days_median": 21.29,
+   "p10": -3.69,
+   "p90": 92.67,
+   "farms_bill_up": 27,
+   "district_unmanaged_tnd": 23494.2,
+   "district_scenario_tnd": 18873.3
   },
   "steg_bt_3p_ttc": {
    "adopters": 136,
-   "saving_tnd_20_days_median": 12.49,
-   "p10": -1.05,
-   "p90": 60.19,
-   "farms_bill_up": 20,
-   "district_unmanaged_tnd": 28592.2,
-   "district_scenario_tnd": 24942.3
+   "saving_tnd_20_days_median": 21.92,
+   "p10": -4.27,
+   "p90": 101.08,
+   "farms_bill_up": 27,
+   "district_unmanaged_tnd": 26301.5,
+   "district_scenario_tnd": 21351.6
   },
   "legacy_flat_ht": {
    "adopters": 136,
-   "saving_tnd_20_days_median": -3.52,
-   "p10": -13.54,
-   "p90": -0.63,
-   "farms_bill_up": 127,
-   "district_unmanaged_tnd": 20903.1,
-   "district_scenario_tnd": 21711.5
+   "saving_tnd_20_days_median": -2.86,
+   "p10": -11.75,
+   "p90": 15.75,
+   "farms_bill_up": 101,
+   "district_unmanaged_tnd": 21393.8,
+   "district_scenario_tnd": 21292.2
   },
   "legacy_flat_ttc": {
    "adopters": 136,
-   "saving_tnd_20_days_median": -3.96,
-   "p10": -15.22,
-   "p90": -0.71,
-   "farms_bill_up": 127,
-   "district_unmanaged_tnd": 23502.3,
-   "district_scenario_tnd": 24411.2
+   "saving_tnd_20_days_median": -3.22,
+   "p10": -13.21,
+   "p90": 17.7,
+   "farms_bill_up": 101,
+   "district_unmanaged_tnd": 24054.1,
+   "district_scenario_tnd": 23939.9
   },
   "proposed_cpp_ht": {
    "adopters": 136,
-   "saving_tnd_20_days_median": 112.44,
-   "p10": 1.03,
-   "p90": 303.96,
-   "farms_bill_up": 9,
-   "district_unmanaged_tnd": 40680.5,
-   "district_scenario_tnd": 20640.5
+   "saving_tnd_20_days_median": 79.46,
+   "p10": -3.69,
+   "p90": 283.23,
+   "farms_bill_up": 27,
+   "district_unmanaged_tnd": 33587.0,
+   "district_scenario_tnd": 18933.9
   },
   "proposed_cpp_ttc": {
    "adopters": 136,
-   "saving_tnd_20_days_median": 120.02,
-   "p10": 1.0,
-   "p90": 325.13,
-   "farms_bill_up": 10,
-   "district_unmanaged_tnd": 44664.2,
-   "district_scenario_tnd": 23265.3
+   "saving_tnd_20_days_median": 84.61,
+   "p10": -4.26,
+   "p90": 303.65,
+   "farms_bill_up": 27,
+   "district_unmanaged_tnd": 37100.8,
+   "district_scenario_tnd": 21416.4
   },
   "adopter_kwh_share": {
    "19_23": {
-    "unmanaged": 0.348764,
-    "scenario": 0.171986
+    "unmanaged": 0.271728,
+    "scenario": 0.079376
    },
    "23_08": {
-    "unmanaged": 0.164704,
-    "scenario": 0.578212
+    "unmanaged": 0.2182,
+    "scenario": 0.637562
    },
    "22_01": {
-    "unmanaged": 0.110966,
-    "scenario": 0.197518
+    "unmanaged": 0.103835,
+    "scenario": 0.192454
+   },
+   "13_17": {
+    "unmanaged": 0.114788,
+    "scenario": 0.035166
+   },
+   "feeder_peak": {
+    "unmanaged": 0.217549,
+    "scenario": 0.046685
    }
   },
   "adopter_kwh": {
-   "unmanaged": 77279.2,
-   "scenario": 81672.3
+   "unmanaged": 77830.3,
+   "scenario": 77277.8
   }
  }
 }
 check vs backtest.csv: 60 scenario-days compared, max peak difference 0.00 kW
+EXIT 0
