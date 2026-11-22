@@ -1,0 +1,42 @@
+{
+ "generated_by": "scripts/sync_from_kizuna.py",
+ "synced_at": "2026-11-22T10:20:50+00:00",
+ "source": {
+  "repo": "https://github.com/rayanrejeb/kizunabackup.git",
+  "commit": "c65b0b2c4070e3378b96999375a6677ec6509be0",
+  "commit_date": "2026-11-22T08:45:08Z",
+  "dirty": false
+ },
+ "dashboard": {
+  "status": "missing",
+  "detail": "dashboard/dist-single/dashboard.html not found in the source repo"
+ },
+ "files": {
+  "data/charts/load_profiles.json": "ff4c05253b473cc8bf55bd1f6c11fc8d677e307bc0cbb7235304c63dd07a1547",
+  "data/charts/shedding_calendar.json": "34dce6a0bcf72b57572e9a7451c1f2d155a1dd10e3408423175f5df1290985ca",
+  "data/charts/shedding_day.json": "18b8c69904e8f5f94c1bf036d0bf76a1d8c0f9a9088f2fdd5bd54af8b97cd169",
+  "data/charts/shedding_headline.json": "994d300784a87d53063fc8462ccfcb162e4fa6902a174985cd2b736018b6a842",
+  "data/charts/tariff_periods.json": "2c6fdf29968290d86bdf2075d7fa986aed0b531e28b00d1a925f96bcf2bbbaf1",
+  "data/charts/water.json": "ec2a327d074272e2716c341405bc6200767c88649d1465ad7c22511f5061ef0a",
+  "data/charts/worst_day.json": "5a0b22eb8161400bf3c8637b1be60b82d1036c1c8cd778749a40f84b6375f061",
+  "data/charts.js": "7df0edfdac62ffb7fe61759221547b40fa0a8f9917996c051f1163abe79836db",
+  "data/shedding_calendar_2026.csv": "e43fbb1b315de24c11add235ea6380591098b652a0e3f48223b5db5554d6adf1",
+  "data/site_data.js": "f56f56b88c23f72afb49104d62971f1ec4196781ca1a27b14795907723821e73",
+  "data/site_data.json": "beb15f39a81d864fe3e6fc2eaae395c3cd27c62b0c7beaf961555fdf254ffe46",
+  "data/sources.js": "fdf7fb800fd9d5becaf42b6d6a83d84578608831e39411a3598f5544af4d9f6c",
+  "figures/load_profiles.png": "5c733e771ebec38906ebc6cbd93852cb5812e5bc3ea759cb84d656517d05c4c7",
+  "figures/load_profiles.svg": "901fd0326e64e9a04e6ae77f5ff3356f3aab6a16fefcebf564147773ba1ccbb8",
+  "figures/shedding_calendar.png": "697c99a63fc94e730efb3669f3fcb522c26ea1d4d471f7fcc6496a627239bb44",
+  "figures/shedding_calendar.svg": "74e58f046e226aa6c0643c3b366d7e64bdc3fafc0895f1fb0a05fc0829a7bcdc",
+  "figures/shedding_day.png": "71eaaacdf2e1c38c396bf3a9b9531515144571173589835c95708690fdcfa424",
+  "figures/shedding_day.svg": "4d270abc6470a2d9be0b522731e0556864deeebb1d6f89fd1425920809afc371",
+  "figures/shedding_headline.png": "2ff73d7492bd19d334ccd330c70ea75159055b7fa2780bb1c3248781abd6d517",
+  "figures/shedding_headline.svg": "3cd4b18da6ac2b8034bc6b93db715c9c48ea1bdd5e7223a909ade86e85bb4e58",
+  "figures/tariff_periods.png": "b5e72781956db4c7b34aa8c6dcf37c233615df386ae17b4b649eb7ee3dd9bc2a",
+  "figures/tariff_periods.svg": "f511e1a8e6364cacc47c6609604baa3c5c97386133c635c0b745fa889c22f8a3",
+  "figures/water.png": "25e382605560f4a92f2f188647461e5edfd6b631bbed491ae41cf3169a95f652",
+  "figures/water.svg": "85ba131a8fa285f62604e340e44f98b31ab71d641183c236634bf3479d79ff43",
+  "figures/worst_day.png": "3dede7a0e1d64d44a798a0047d22921a6dc47dc380f260d0ec8577b0e93166f6",
+  "figures/worst_day.svg": "c115f58feb8dbb983349c8095527014d9123184367acde0d312c4a6ac8e6a673"
+ }
+}

@@ -1,0 +1,71 @@
+{
+ "title": "Feeder outage on the 22 shedding days of 2026",
+ "caption": "Base gap g = 14 %; low_g / high_g = 10 % / 25 %.",
+ "simulated": true,
+ "type": "bar",
+ "data": {
+  "labels": [
+   "Without Tameru",
+   "Tameru alone 50 % of farms",
+   "Tameru alone 70 % of farms (target)"
+  ],
+  "datasets": [
+   {
+    "label": "Feeder outage hours",
+    "data": [
+     20.25,
+     11.75,
+     7.25
+    ],
+    "borderColor": "#eb6834",
+    "backgroundColor": [
+     "#eb6834",
+     "#1baf7a",
+     "#0e7a54"
+    ],
+    "low_g": [
+     15.0,
+     7.0,
+     4.25
+    ],
+    "high_g": [
+     37.25,
+     28.5,
+     22.5
+    ]
+   }
+  ]
+ },
+ "options": {
+  "responsive": true,
+  "interaction": {
+   "mode": "index",
+   "intersect": false
+  },
+  "plugins": {
+   "title": {
+    "display": true,
+    "text": "Feeder outage on the 22 shedding days of 2026"
+   },
+   "subtitle": {
+    "display": true,
+    "text": "Simulated: synthetic 200-farm district on real Open-Meteo weather. Not a field measurement."
+   }
+  },
+  "scales": {
+   "x": {
+    "title": {
+     "display": true,
+     "text": ""
+    }
+   },
+   "y": {
+    "title": {
+     "display": true,
+     "text": "hours"
+    }
+   }
+  }
+ },
+ "assumption": true
+}

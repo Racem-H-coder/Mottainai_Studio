@@ -1,0 +1,93 @@
+{
+ "title": "Water: irrigation is kept, and the budget trims over-pumping",
+ "caption": "Mean per day over the 20 highest-load test days, 50 % adoption.",
+ "simulated": true,
+ "type": "bar",
+ "data": {
+  "labels": [
+   "Without Tameru",
+   "Tameru 50 %, budget off",
+   "Tameru 50 %, budget enforced"
+  ],
+  "datasets": [
+   {
+    "label": "Water pumped, m³/day",
+    "data": [
+     34676,
+     34496,
+     33079
+    ],
+    "borderColor": "#2a78d6",
+    "backgroundColor": "#2a78d6"
+   },
+   {
+    "label": "FAO-56 crop need",
+    "data": [
+     32935,
+     32935,
+     32935
+    ],
+    "borderColor": "#0b0b0b",
+    "backgroundColor": "#0b0b0b",
+    "type": "line",
+    "borderWidth": 2,
+    "pointRadius": 0,
+    "fill": false
+   },
+   {
+    "label": "Budget (110 % of need)",
+    "data": [
+     36229,
+     36229,
+     36229
+    ],
+    "borderColor": "#52514e",
+    "backgroundColor": "#52514e",
+    "type": "line",
+    "borderWidth": 2,
+    "pointRadius": 0,
+    "fill": false,
+    "borderDash": [
+     6,
+     4
+    ]
+   }
+  ]
+ },
+ "options": {
+  "responsive": true,
+  "interaction": {
+   "mode": "index",
+   "intersect": false
+  },
+  "plugins": {
+   "title": {
+    "display": true,
+    "text": "Water: irrigation is kept, and the budget trims over-pumping"
+   },
+   "subtitle": {
+    "display": true,
+    "text": "Simulated: synthetic 200-farm district on real Open-Meteo weather. Not a field measurement."
+   }
+  },
+  "scales": {
+   "x": {
+    "title": {
+     "display": true,
+     "text": ""
+    }
+   },
+   "y": {
+    "title": {
+     "display": true,
+     "text": "m³/day"
+    }
+   }
+  }
+ },
+ "shedding_unmet_need_m3": {
+  "without": 95,
+  "tameru_50": 0,
+  "tameru_70": 0
+ }
+}

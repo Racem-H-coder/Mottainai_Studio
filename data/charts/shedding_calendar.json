@@ -1,0 +1,393 @@
+{
+ "title": "Summer 2026 STEG shedding calendar",
+ "caption": "19 of 25 dated notices were published at or after the window had started. Real data, not simulated.",
+ "simulated": false,
+ "type": "bar",
+ "data": {
+  "labels": [
+   "16 Jul",
+   "17 Jul",
+   "18 Jul",
+   "20 Jul",
+   "21 Jul",
+   "22 Jul",
+   "23 Jul",
+   "24 Jul",
+   "03 Aug",
+   "04 Aug",
+   "05 Aug",
+   "19 Aug",
+   "20 Aug",
+   "24 Aug",
+   "25 Aug",
+   "26 Aug",
+   "27 Aug",
+   "28 Aug",
+   "31 Aug",
+   "01 Sep",
+   "02 Sep",
+   "03 Sep"
+  ],
+  "datasets": [
+   {
+    "label": "Daytime window",
+    "data": [
+     {
+      "x": [
+       13.0,
+       16.0
+      ],
+      "y": "16 Jul",
+      "type": "daytime",
+      "status": "main",
+      "announced_at": "",
+      "lead_min": ""
+     },
+     {
+      "x": [
+       11.0,
+       15.0
+      ],
+      "y": "17 Jul",
+      "type": "daytime",
+      "status": "main",
+      "announced_at": "2026-07-17 12:09",
+      "lead_min": "-69"
+     },
+     {
+      "x": [
+       12.0,
+       16.0
+      ],
+      "y": "18 Jul",
+      "type": "daytime",
+      "status": "main",
+      "announced_at": "2026-07-18 12:43",
+      "lead_min": "-43"
+     },
+     {
+      "x": [
+       10.0,
+       17.0
+      ],
+      "y": "20 Jul",
+      "type": "daytime",
+      "status": "main",
+      "announced_at": "2026-07-20 11:15",
+      "lead_min": "-75"
+     },
+     {
+      "x": [
+       12.0,
+       22.0
+      ],
+      "y": "21 Jul",
+      "type": "daytime",
+      "status": "main",
+      "announced_at": "2026-07-21 12:49",
+      "lead_min": "-49"
+     },
+     {
+      "x": [
+       10.0,
+       16.0
+      ],
+      "y": "22 Jul",
+      "type": "daytime",
+      "status": "main",
+      "announced_at": "2026-07-22 11:22",
+      "lead_min": "-82"
+     },
+     {
+      "x": [
+       11.0,
+       17.0
+      ],
+      "y": "24 Jul",
+      "type": "daytime",
+      "status": "main",
+      "announced_at": "",
+      "lead_min": ""
+     },
+     {
+      "x": [
+       12.0,
+       17.0
+      ],
+      "y": "03 Aug",
+      "type": "daytime",
+      "status": "main",
+      "announced_at": "2026-08-03 12:04",
+      "lead_min": "-4"
+     },
+     {
+      "x": [
+       11.5,
+       17.0
+      ],
+      "y": "04 Aug",
+      "type": "daytime",
+      "status": "main",
+      "announced_at": "2026-08-04 11:04",
+      "lead_min": "26"
+     },
+     {
+      "x": [
+       12.5,
+       17.0
+      ],
+      "y": "05 Aug",
+      "type": "daytime",
+      "status": "main",
+      "announced_at": "2026-08-05 12:29",
+      "lead_min": "1"
+     },
+     {
+      "x": [
+       13.5,
+       17.0
+      ],
+      "y": "19 Aug",
+      "type": "daytime",
+      "status": "main",
+      "announced_at": "2026-08-19 14:51",
+      "lead_min": "-81"
+     },
+     {
+      "x": [
+       13.5,
+       17.0
+      ],
+      "y": "20 Aug",
+      "type": "daytime",
+      "status": "main",
+      "announced_at": "2026-08-20 13:43",
+      "lead_min": "-13"
+     },
+     {
+      "x": [
+       13.0,
+       17.0
+      ],
+      "y": "24 Aug",
+      "type": "daytime",
+      "status": "main",
+      "announced_at": "2026-08-24 13:42",
+      "lead_min": "-42"
+     },
+     {
+      "x": [
+       13.0,
+       17.0
+      ],
+      "y": "25 Aug",
+      "type": "daytime",
+      "status": "main",
+      "announced_at": "2026-08-24 22:01",
+      "lead_min": "899"
+     },
+     {
+      "x": [
+       11.5,
+       18.0
+      ],
+      "y": "26 Aug",
+      "type": "daytime",
+      "status": "main",
+      "announced_at": "2026-08-25 17:32",
+      "lead_min": "1078"
+     },
+     {
+      "x": [
+       9.5,
+       18.0
+      ],
+      "y": "27 Aug",
+      "type": "daytime",
+      "status": "main",
+      "announced_at": "2026-08-27 11:47",
+      "lead_min": "-137"
+     },
+     {
+      "x": [
+       9.0,
+       18.0
+      ],
+      "y": "28 Aug",
+      "type": "daytime",
+      "status": "main",
+      "announced_at": "2026-08-28 10:24",
+      "lead_min": "-84"
+     },
+     {
+      "x": [
+       13.0,
+       18.5
+      ],
+      "y": "31 Aug",
+      "type": "daytime",
+      "status": "main",
+      "announced_at": "",
+      "lead_min": ""
+     },
+     {
+      "x": [
+       13.0,
+       18.0
+      ],
+      "y": "01 Sep",
+      "type": "daytime",
+      "status": "main",
+      "announced_at": "2026-09-01 13:06",
+      "lead_min": "-6"
+     },
+     {
+      "x": [
+       12.0,
+       17.0
+      ],
+      "y": "02 Sep",
+      "type": "daytime",
+      "status": "main",
+      "announced_at": "2026-09-02 13:39",
+      "lead_min": "-99"
+     },
+     {
+      "x": [
+       13.0,
+       17.0
+      ],
+      "y": "03 Sep",
+      "type": "daytime",
+      "status": "main",
+      "announced_at": "2026-09-03 15:00",
+      "lead_min": "-120"
+     }
+    ],
+    "borderColor": "#eb6834",
+    "backgroundColor": "#eb6834"
+   },
+   {
+    "label": "Evening window",
+    "data": [
+     {
+      "x": [
+       17.0,
+       21.0
+      ],
+      "y": "16 Jul",
+      "type": "evening",
+      "status": "main",
+      "announced_at": "2026-07-16 18:50",
+      "lead_min": "-110"
+     },
+     {
+      "x": [
+       17.0,
+       24.0
+      ],
+      "y": "20 Jul",
+      "type": "evening",
+      "status": "main",
+      "announced_at": "2026-07-20 18:33",
+      "lead_min": "-93"
+     },
+     {
+      "x": [
+       18.0,
+       22.0
+      ],
+      "y": "22 Jul",
+      "type": "evening",
+      "status": "main",
+      "announced_at": "2026-07-22 18:09",
+      "lead_min": "-9"
+     },
+     {
+      "x": [
+       18.0,
+       24.0
+      ],
+      "y": "23 Jul",
+      "type": "evening",
+      "status": "main",
+      "announced_at": "2026-07-23 19:39",
+      "lead_min": "-99"
+     },
+     {
+      "x": [
+       21.0,
+       24.0
+      ],
+      "y": "28 Aug",
+      "type": "evening",
+      "status": "main",
+      "announced_at": "2026-08-28 21:00",
+      "lead_min": "0"
+     },
+     {
+      "x": [
+       20.0,
+       24.0
+      ],
+      "y": "31 Aug",
+      "type": "evening",
+      "status": "main",
+      "announced_at": "2026-08-31 19:05",
+      "lead_min": "55"
+     },
+     {
+      "x": [
+       20.0,
+       24.0
+      ],
+      "y": "02 Sep",
+      "type": "evening",
+      "status": "main",
+      "announced_at": "2026-09-02 19:28",
+      "lead_min": "32"
+     }
+    ],
+    "borderColor": "#2a78d6",
+    "backgroundColor": "#2a78d6"
+   }
+  ]
+ },
+ "options": {
+  "responsive": true,
+  "interaction": {
+   "mode": "index",
+   "intersect": false
+  },
+  "plugins": {
+   "title": {
+    "display": true,
+    "text": "Summer 2026 STEG shedding calendar"
+   },
+   "subtitle": {
+    "display": true,
+    "text": "Real STEG announcements (sourced), not simulated."
+   }
+  },
+  "scales": {
+   "x": {
+    "title": {
+     "display": true,
+     "text": "hour"
+    }
+   },
+   "y": {
+    "title": {
+     "display": true,
+     "text": "day"
+    }
+   }
+  },
+  "indexAxis": "y",
+  "parsing": {
+   "xAxisKey": "x",
+   "yAxisKey": "y"
+  }
+ },
+ "source": "results/shedding_calendar_2026.csv"
+}

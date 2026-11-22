@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TAMERU (蓄める) — Japan × Tunisia Water &amp; Energy Digital Twin</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+<style>
+:root{
+  --bg:#090e15;
+  --panel:rgba(245,240,230,.94);
+  --panel-2:rgba(255,255,255,.75);
+  --line:rgba(23,23,23,.12);
+  --line-2:rgba(23,23,23,.22);
+  --text:#171717;
+  --muted:#5b6573;
+  --dim:#848f9d;
+  --chachia:#C8102E;
+  --burgundy:#8B1428;
+  --green:#16a34a;
+  --cyan:#0284c7;
+  --amber:#d97706;
+  --red:#C8102E;
+  --water:#0284c7;
+  --r:12px;
+  --sans:'Jost','Inter',system-ui,-apple-system,sans-serif;
+  --serif:'Shippori Mincho',Georgia,serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;line-height:1.4;overflow:hidden;-webkit-font-smoothing:antialiased;-webkit-user-select:none;-moz-user-select:none;user-select:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+#scene{position:fixed;inset:0;display:block;width:100vw;height:100vh;outline:none;touch-action:none}
+.vignette{position:fixed;inset:0;pointer-events:none;background:radial-gradient(120% 95% at 50% 42%,transparent 55%,rgba(9,14,21,.78) 100%)}
+#alarm{position:fixed;inset:0;pointer-events:none;opacity:0;transition:opacity .8s;box-shadow:inset 0 0 180px rgba(200,16,46,.38)}
+#alarm.on{opacity:1;animation:alarm 1.6s ease-in-out infinite}
+@keyframes alarm{50%{box-shadow:inset 0 0 90px rgba(200,16,46,.18)}}
+#fade{position:fixed;inset:0;background:#05080c;opacity:0;pointer-events:none;transition:opacity .55s ease;z-index:40}
+#fade.on{opacity:1}
+
+.glass{background:var(--panel);backdrop-filter:blur(20px) saturate(160%);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 12px 36px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.8)}
+
+/* ---------- Top bar ---------- */
+.topbar{position:fixed;top:14px;left:16px;right:16px;height:58px;display:flex;align-items:center;gap:18px;padding:0 10px 0 16px;z-index:10}
+.brand{display:flex;align-items:center;gap:11px;width:300px;flex-shrink:0}
+.brand-seal{display:flex;align-items:center;justify-content:center;text-decoration:none;transition:transform .2s;flex-shrink:0}
+.brand-seal:hover{transform:scale(1.05)}
+.wordmark{font-family:var(--serif);font-weight:700;letter-spacing:.14em;font-size:14.5px;color:var(--text)}
+.wordmark span{color:var(--chachia);font-weight:600;font-size:13px}
+.tagline{font-size:10.5px;color:var(--muted);letter-spacing:.02em}
+.banner{flex:1;display:flex;justify-content:center;min-width:0}
+.bpill{display:flex;align-items:center;gap:12px;padding:7px 18px 7px 13px;border-radius:999px;border:1px solid var(--line-2);background:rgba(255,255,255,.65);transition:background .5s,border-color .5s;max-width:100%;min-width:0}
+.bpill .dot{width:9px;height:9px;border-radius:50%;background:var(--muted);flex-shrink:0;box-shadow:0 0 0 4px rgba(23,23,23,.06);transition:background .4s}
+.bpill .b-title{font-weight:700;letter-spacing:.08em;font-size:11.5px;white-space:nowrap;color:var(--text)}
+.bpill .b-sub{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bpill[data-state=red]{border-color:rgba(200,16,46,.65);background:rgba(200,16,46,.12)}
+.bpill[data-state=red] .dot{background:var(--red);box-shadow:0 0 0 4px rgba(200,16,46,.2),0 0 14px var(--red);animation:blink .9s steps(2) infinite}
+.bpill[data-state=red] .b-title{color:var(--chachia)}
+.bpill[data-state=green]{border-color:rgba(22,163,74,.5);background:rgba(22,163,74,.1)}
+.bpill[data-state=green] .dot{background:var(--green);box-shadow:0 0 0 4px rgba(22,163,74,.18),0 0 12px var(--green)}
+.bpill[data-state=green] .b-title{color:#15803d}
+.bpill[data-state=amber]{border-color:rgba(217,119,6,.5);background:rgba(217,119,6,.1)}
+.bpill[data-state=amber] .dot{background:var(--amber);box-shadow:0 0 0 4px rgba(217,119,6,.18),0 0 12px var(--amber)}
+.bpill[data-state=amber] .b-title{color:#b45309}
+@keyframes blink{50%{opacity:.25}}
+.top-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+
+.seg{display:flex;padding:3px;background:rgba(23,23,23,.06);border:1px solid var(--line);border-radius:10px;gap:2px}
+.seg button{padding:6px 11px;border-radius:7px;color:var(--muted);font-weight:600;font-size:12px;transition:background .2s,color .2s;white-space:nowrap}
+.seg button:hover{color:var(--text)}
+.seg button.on{background:white;color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+#scenarioSeg button[data-s="0"].on{background:rgba(200,16,46,.12);color:var(--chachia);box-shadow:inset 0 0 0 1px rgba(200,16,46,.3)}
+#scenarioSeg button[data-s="1"].on{background:rgba(22,163,74,.14);color:#15803d;box-shadow:inset 0 0 0 1px rgba(22,163,74,.3)}
+.btn-demo{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;font-weight:700;font-size:12px;letter-spacing:.04em;background:var(--chachia);border:1px solid var(--chachia-dark);color:white;transition:transform .15s,background .2s;box-shadow:0 2px 6px rgba(200,16,46,.25)}
+.btn-demo:hover{background:var(--burgundy)}
+.btn-demo:active{transform:scale(.97)}
+.btn-demo svg{width:13px;height:13px}
+
+/* ---------- Panels ---------- */
+#left{position:fixed;top:86px;left:16px;bottom:16px;width:278px;z-index:5;display:flex;flex-direction:column;overflow:hidden}
+#right{position:fixed;top:86px;right:16px;bottom:16px;width:320px;z-index:5;display:flex;flex-direction:column;overflow:hidden}
+.scroll{overflow-y:auto;padding:14px 14px 16px;flex:1;scrollbar-width:thin;scrollbar-color:rgba(23,23,23,.18) transparent}
+.scroll::-webkit-scrollbar{width:5px}.scroll::-webkit-scrollbar-thumb{background:rgba(23,23,23,.15);border-radius:3px}
+.sec{padding:2px 0 14px;margin-bottom:14px;border-bottom:1px solid var(--line)}
+.sec:last-child{border-bottom:0;margin-bottom:0}
+.sec-h{display:flex;align-items:center;justify-content:space-between;font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--chachia);margin-bottom:10px;font-family:var(--sans)}
+.row{display:flex;gap:8px;margin-bottom:8px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:9px 12px;border-radius:10px;background:white;border:1px solid var(--line);font-weight:600;font-size:12.5px;color:var(--text);transition:background .2s,border-color .2s,transform .12s;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.btn:hover{background:var(--panel-2);border-color:var(--line-2)}
+.btn:active{transform:scale(.98)}
+.btn svg{width:14px;height:14px;flex-shrink:0}
+.btn.primary{flex:1;background:var(--chachia);color:white;border-color:var(--burgundy)}
+.btn.primary:hover{background:var(--burgundy)}
+.btn.icon{width:40px;padding:9px 0}
+#speedSeg{width:100%}#speedSeg button{flex:1;font-family:var(--mono);font-size:11.5px}
+.ev{width:100%;justify-content:flex-start;text-align:left;margin-bottom:7px;padding:9px 11px;background:white}
+.ev .ev-t{display:flex;flex-direction:column;flex:1;min-width:0}
+.ev small{color:var(--muted);font-size:10.5px;font-weight:400}
+.ev .ev-state{font-family:var(--mono);font-size:10px;padding:2px 6px;border-radius:5px;background:rgba(23,23,23,.06);color:var(--muted);font-weight:600}
+.ev.active{border-color:rgba(217,119,6,.5);background:rgba(217,119,6,.08)}
+.ev.active .ev-state{background:rgba(217,119,6,.2);color:#b45309}
+.ev.flash{animation:evflash .9s ease}
+@keyframes evflash{0%{background:rgba(200,16,46,.25)}100%{background:white}}
+
+.sw-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 11px;border-radius:10px;border:1px solid var(--line);background:white;transition:border-color .3s,background .3s}
+.sw-row.on{border-color:rgba(22,163,74,.4);background:rgba(22,163,74,.06)}
+.sw-title{font-weight:700;font-size:12.5px;color:var(--text)}
+.sw-sub{font-size:10.5px;color:var(--muted);margin-top:1px}
+.switch{width:40px;height:23px;border-radius:999px;background:rgba(23,23,23,.18);position:relative;flex-shrink:0;transition:background .25s}
+.switch span{position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:#fff;transition:transform .25s cubic-bezier(.4,1.4,.6,1),background .25s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.switch[aria-checked=true]{background:var(--chachia)}
+.switch[aria-checked=true] span{transform:translateX(17px);background:#fff}
+
+#fcCanvas{width:100%;height:74px;display:block;border-radius:8px;background:white;border:1px solid var(--line);margin-bottom:9px}
+.kv{display:grid;grid-template-columns:1fr auto;gap:4px 8px;font-size:11.5px}
+.kv dt{color:var(--muted)}
+.kv dd{font-family:var(--mono);font-size:11px;text-align:right;color:var(--text);font-weight:600}
+.strategy{margin-top:9px;padding:8px 10px;border-radius:9px;background:white;border:1px solid var(--line);font-size:11.5px;color:var(--muted);line-height:1.45}
+.strategy b{color:var(--text);font-weight:700;letter-spacing:.04em;font-size:10.5px;display:block;margin-bottom:2px}
+.strategy[data-p=prefill] b{color:var(--cyan)}
+.strategy[data-p=peak] b{color:var(--green)}
+.strategy[data-p=recovery] b{color:#0284c7}
+.strategy[data-p=off] b{color:var(--chachia)}
+
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;font-size:11px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:7px}
+.legend i{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+details.assump{font-size:11px;color:var(--muted)}
+details.assump summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:6px;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--text)}
+details.assump summary::-webkit-details-marker{display:none}
+details.assump summary::before{content:'+';font-family:var(--mono);color:var(--chachia);font-weight:bold}
+details.assump[open] summary::before{content:'–'}
+details.assump ul{margin:8px 0 0 14px;display:grid;gap:3px}
+details.assump p{margin-top:8px;font-size:10.5px;color:var(--dim)}
+
+/* right */
+.pill{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;padding:3px 7px;border-radius:6px;background:rgba(23,23,23,.06);color:var(--muted);font-weight:600}
+.pill.green{background:rgba(22,163,74,.15);color:#15803d}
+.pill.amber{background:rgba(217,119,6,.15);color:#b45309}
+.pill.red{background:rgba(200,16,46,.15);color:var(--chachia);animation:blink 1s steps(2) infinite}
+.big-row{display:flex;align-items:flex-end;gap:10px;margin-bottom:10px}
+.big{font-family:var(--mono);font-size:34px;font-weight:600;letter-spacing:-.02em;line-height:1;color:var(--text)}
+.unit{font-size:11px;color:var(--muted);line-height:1.25;padding-bottom:2px}
+.unit b{color:var(--text);font-weight:600}
+.ubar{position:relative;height:8px;border-radius:5px;background:rgba(23,23,23,.08);overflow:visible;margin-bottom:6px}
+.ubar-fill{position:absolute;left:0;top:0;bottom:0;border-radius:5px;width:0;background:var(--green);transition:background .4s}
+.ubar i{position:absolute;top:-3px;bottom:-3px;width:1px;background:rgba(23,23,23,.4)}
+.ubar i.crit{background:var(--red);width:2px}
+.ubar-lbl{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-bottom:12px}
+.ubar-lbl b{font-family:var(--mono);color:var(--text);font-weight:600}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.tile{padding:9px 10px;border-radius:10px;background:white;border:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.tile .tl-l{font-size:10.5px;color:var(--muted);margin-bottom:3px;white-space:nowrap}
+.tile .tl-v{font-family:var(--mono);font-size:17px;font-weight:600;color:var(--text)}
+.tile .tl-v small{font-size:10.5px;color:var(--dim);margin-left:3px;font-weight:400}
+.tile.good .tl-v{color:#15803d}.tile.warn .tl-v{color:#b45309}.tile.bad .tl-v{color:var(--chachia)}
+.chart-box{position:relative;height:96px;margin-top:10px}
+.cmp{display:grid;grid-template-columns:1.25fr 1fr 1fr;font-size:11.5px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:white}
+.cmp>div{padding:6px 9px;border-bottom:1px solid var(--line)}
+.cmp>div:nth-last-child(-n+3){border-bottom:0}
+.cmp .h{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:rgba(23,23,23,.03);font-weight:700}
+.cmp .h.a{color:var(--chachia)}.cmp .h.b{color:#15803d}
+.cmp .l{color:var(--muted)}
+.cmp .v{font-family:var(--mono);font-size:11px;text-align:right;color:var(--text);font-weight:600}
+.cmp .h.a,.cmp .h.b{text-align:right}
+.note{font-size:10px;color:var(--dim);margin-top:7px}
+
+/* bottom */
+#bottom{position:fixed;left:306px;right:348px;bottom:16px;height:204px;z-index:5;padding:12px 16px 10px;display:flex;gap:18px}
+.clock-col{width:132px;flex-shrink:0;display:flex;flex-direction:column;justify-content:space-between;padding:2px 0 4px}
+.clock{font-family:var(--mono);font-size:34px;font-weight:600;letter-spacing:-.02em;line-height:1;color:var(--text)}
+.day{font-size:11px;color:var(--muted);margin-top:5px;font-weight:500}
+.phase{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:4px 8px;border-radius:7px;font-size:10px;font-weight:700;letter-spacing:.08em;background:rgba(23,23,23,.06);color:var(--muted);width:-moz-max-content;width:max-content}
+.phase.peak{background:rgba(217,119,6,.15);color:#b45309}
+.phase.peak::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--amber)}
+.mini-legend{display:grid;gap:4px;font-size:10.5px;color:var(--muted)}
+.mini-legend span{display:flex;align-items:center;gap:7px}
+.mini-legend i{width:14px;height:2px;border-radius:2px}
+.mini-legend i.dash{background:repeating-linear-gradient(90deg,rgba(23,23,23,.4) 0 4px,transparent 4px 7px)}
+.chart-col{flex:1;display:flex;flex-direction:column;min-width:0}
+.chart-head{display:flex;justify-content:space-between;align-items:center;font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--chachia);margin-bottom:2px}
+.chart-head .lbl{font-weight:400;letter-spacing:0;text-transform:none;color:var(--dim)}
+#demandWrap{position:relative;flex:1;min-height:0}
+.tl{position:relative;height:22px;margin:4px 0 0 44px}
+.tl-track{position:absolute;left:0;right:0;top:9px;height:4px;border-radius:3px;background:rgba(23,23,23,.08)}
+.tl-band{position:absolute;top:7px;height:8px;border-radius:3px;background:rgba(200,16,46,.25)}
+.tl-prog{position:absolute;left:0;top:9px;height:4px;border-radius:3px;background:linear-gradient(90deg,var(--chachia),var(--burgundy))}
+#timeline{position:absolute;inset:0;width:100%;height:22px;-webkit-appearance:none;-moz-appearance:none;appearance:none;background:transparent;cursor:pointer;margin:0}
+#timeline::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--chachia);border:2px solid white;box-shadow:0 1px 6px rgba(0,0,0,.3)}
+#timeline::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--chachia);border:2px solid white}
+#timeline::-webkit-slider-runnable-track{background:transparent}
+.tl-ticks{display:flex;justify-content:space-between;margin-left:44px;font-family:var(--mono);font-size:9.5px;color:var(--dim)}
+
+/* labels over 3D */
+#labels{position:fixed;inset:0;pointer-events:none;z-index:3;overflow:hidden}
+.chip{position:absolute;left:0;top:0;transform:translate(-50%,-100%);padding:4px 9px 4px 8px;border-radius:8px;background:rgba(245,240,230,.92);border:1px solid var(--line-2);font-size:10.5px;white-space:nowrap;display:flex;align-items:center;gap:7px;backdrop-filter:blur(8px);transition:border-color .3s,background .3s;will-change:transform;color:var(--text);box-shadow:0 3px 8px rgba(0,0,0,.1)}
+.chip b{font-weight:700;letter-spacing:.08em;font-size:10px}
+.chip span{font-family:var(--mono);color:var(--muted);font-size:10px}
+.chip i{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.chip.off{border-color:rgba(200,16,46,.6);background:rgba(253,242,243,.95)}
+.chip.off i{background:var(--red);animation:blink .8s steps(2) infinite}
+.chip.off span{color:var(--chachia)}
+.chip.warn i{background:var(--amber)}
+.chip.st{border-color:rgba(23,23,23,.25)}
+.chip.st.over{border-color:rgba(200,16,46,.8)}
+
+/* inspector */
+#inspector{position:fixed;top:86px;left:306px;width:268px;z-index:6;padding:14px;transition:opacity .25s,transform .25s}
+#inspector.hidden{opacity:0;transform:translateY(-6px);pointer-events:none}
+.ins-h{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.ins-title{font-family:var(--serif);font-weight:700;font-size:15px;color:var(--text)}
+.ins-sub{font-size:11px;color:var(--muted)}
+.ins-close{width:26px;height:26px;border-radius:7px;color:var(--muted);display:grid;place-items:center}
+.ins-close:hover{background:rgba(23,23,23,.07);color:var(--text)}
+.ins-status{display:inline-flex;align-items:center;gap:7px;padding:4px 9px;border-radius:7px;font-size:11px;font-weight:700;margin-bottom:11px;background:white;border:1px solid var(--line)}
+.ins-status i{width:7px;height:7px;border-radius:50%}
+.ins-row{display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:5px}
+.ins-row span:first-child{color:var(--muted)}
+.ins-row span:last-child{font-family:var(--mono);font-size:11px;color:var(--text);font-weight:600}
+.ins-bar{height:6px;border-radius:4px;background:rgba(23,23,23,.08);margin:3px 0 10px;position:relative;overflow:hidden}
+.ins-bar div{position:absolute;inset:0 auto 0 0;border-radius:4px}
+.ins-bar i{position:absolute;top:0;bottom:0;width:2px;background:var(--text)}
+.ins-sched{font-size:10.5px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--line);line-height:1.5}
+.ins-sched b{color:var(--text);font-family:var(--mono);font-weight:600;font-size:10.5px}
+.ins-back{margin-top:10px;width:100%}
+
+/* demo caption */
+#caption{position:fixed;top:86px;left:50%;transform:translateX(-50%);width:min(580px,calc(100vw - 700px));min-width:380px;z-index:20;padding:14px 18px 12px;transition:opacity .35s,transform .35s}
+#caption.hidden{opacity:0;transform:translate(-50%,-8px);pointer-events:none}
+.cap-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.cap-tag{font-size:10.5px;font-weight:700;letter-spacing:.14em;color:var(--chachia);display:flex;align-items:center;gap:7px}
+.cap-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--chachia);animation:blink 1.2s steps(2) infinite}
+.cap-exit{font-size:11px;color:var(--muted);padding:3px 8px;border-radius:6px;border:1px solid var(--line);pointer-events:auto;background:white}
+.cap-exit:hover{color:var(--text);border-color:var(--line-2)}
+#capText{font-size:13.5px;line-height:1.5;color:var(--text);min-height:40px}
+#capText b{color:var(--burgundy);font-weight:700}
+.cap-dots{display:flex;gap:4px;margin-top:10px}
+.cap-dots i{flex:1;height:3px;border-radius:2px;background:rgba(23,23,23,.1);transition:background .4s}
+.cap-dots i.done{background:var(--chachia)}
+body.demo #left .scroll,body.demo #scenarioSeg,body.demo #bottom .tl,body.demo #demoBtn{pointer-events:none;opacity:.55}
+
+/* compare modal */
+#compare{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:rgba(12,18,25,.6);transition:opacity .4s}
+#compare.hidden{opacity:0;pointer-events:none}
+.cmp-card{width:min(740px,94vw);padding:24px 26px 22px;background:white;border-radius:14px}
+.cmp-card h2{font-family:var(--serif);font-size:21px;font-weight:700;color:var(--text)}
+.cmp-card .sub{color:var(--muted);font-size:12.5px;margin:4px 0 18px}
+.cmp-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr .8fr;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.cmp-grid>div{padding:11px 14px;border-bottom:1px solid var(--line);font-size:13px}
+.cmp-grid>div:nth-last-child(-n+4){border-bottom:0}
+.cmp-grid .h{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:rgba(23,23,23,.03);font-weight:700}
+.cmp-grid .num{font-family:var(--mono);text-align:right;font-weight:600}
+.cmp-grid .a{color:var(--chachia)}.cmp-grid .b{color:#15803d}
+.cmp-grid .d{font-family:var(--mono);text-align:right;color:var(--cyan);font-size:12px;font-weight:600}
+.cmp-grid .h.num,.cmp-grid .h.d{text-align:right}
+.cmp-hero{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.hero{padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel-2)}
+.hero .hv{font-family:var(--mono);font-size:26px;font-weight:700;color:#15803d}
+.hero .hl{font-size:11px;color:var(--muted);margin-top:2px}
+.cmp-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.cmp-foot{font-size:10.5px;color:var(--dim);margin-top:12px}
+
+/* toast */
+#toast{position:fixed;left:50%;bottom:236px;transform:translate(-50%,10px);z-index:25;padding:9px 14px;border-radius:10px;font-size:12px;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap;background:white;color:var(--text);border:1px solid var(--line);box-shadow:0 4px 14px rgba(0,0,0,.12)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* loader */
+#loader{position:fixed;inset:0;z-index:50;background:radial-gradient(80% 70% at 50% 40%,#F5F0E6 0%,#E8DFC8 100%);display:grid;place-items:center;transition:opacity .8s ease;color:var(--text)}
+#loader.done{opacity:0;pointer-events:none}
+.ld{display:flex;flex-direction:column;align-items:center;gap:14px;width:320px;text-align:center}
+.ld svg{width:54px;height:54px}
+.ld .wm{font-family:var(--serif);font-weight:700;letter-spacing:.32em;font-size:22px;color:var(--text);margin-left:.32em}
+.ld .ts{color:var(--muted);font-size:12px;margin-top:-6px}
+.ld-bar{width:100%;height:4px;border-radius:2px;background:rgba(23,23,23,.1);overflow:hidden;margin-top:10px}
+.ld-bar div{height:100%;width:0;background:linear-gradient(90deg,var(--chachia),var(--burgundy));transition:width .35s ease}
+#ldStep{font-family:var(--mono);font-size:11px;color:var(--muted);height:16px}
+#ldErr{display:none;margin-top:6px;padding:12px 14px;border-radius:10px;border:1px solid rgba(200,16,46,.4);background:rgba(200,16,46,.08);color:var(--chachia);font-size:12px;line-height:1.5}
+
+/* responsive */
+@media (max-width:1360px){
+  #left{width:260px}#right{width:296px}
+  #bottom{left:286px;right:324px}
+  #inspector{left:286px}
+  .brand{width:240px}
+  .seg button{padding:6px 9px}
+}
+@media (max-width:1120px){
+  .tagline{display:none}.brand{width:auto}
+  .bpill .b-sub{display:none}
+  #caption{width:calc(100vw - 600px);min-width:320px}
+}
+@media (max-width:980px){
+  body{overflow:auto;display:flex;flex-direction:column}
+  .topbar{position:relative;top:auto;left:auto;right:auto;margin:12px;height:auto;flex-wrap:wrap;padding:10px 12px;gap:10px}
+  .banner{order:3;flex-basis:100%}
+  #scene{position:relative;width:100%;height:58vh;flex-shrink:0}
+  .vignette,#labels{display:none}
+  #left,#right,#bottom{position:relative;inset:auto;width:auto;margin:0 12px 12px;height:auto}
+  #bottom{height:230px;flex-direction:column}
+  .clock-col{width:auto;flex-direction:row;align-items:center;gap:14px}
+  #inspector{left:12px;top:12px}
+  #caption{width:calc(100vw - 24px);min-width:0;top:12px}
+  .scroll{overflow:visible}
+}
+
+/* ---- Tameru website: this twin is an illustrative concept. Hide every number, counter or time window that
+   could be read as a result (the simulated results live on the site's Results page). Display only. ---- */
+#right .scroll > .sec:not(.illus-note), #fcConf, #left .kv, #fcStrategy, details.assump, #surgeSub, #heatSub,
+#tlBand, #bSub, .cmp-hero, #cmpGrid, #cmpSub, #iSched, .ins-row:has(#iTgt) { display: none !important; }
+#illusLabel { position: fixed; z-index: 60; left: 50%; top: 74px; transform: translateX(-50%); padding: 5px 12px;
+  background: #FEF3C7; color: #92400E; border: 1px solid rgba(180,83,9,.35); font: 600 11px/1.3 'Inter', sans-serif;
+  letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; pointer-events: none; }
+.illus-note { font-size: 12.5px; line-height: 1.55; color: #303030; }
+.illus-note b { display: block; margin-bottom: 4px; color: #92400E; }
+@media (max-width: 640px) { #illusLabel { white-space: normal; text-align: center; width: 90%; top: 64px; } }
+</style>
+  <script defer src="./assets/index-Dr6SefMT.js"></script>
+  <link rel="stylesheet" href="./assets/style-CXmlez0H.css">
+</head>
+<body>
+<canvas id="scene" tabindex="0" aria-label="3D agricultural district"></canvas>
+<div class="vignette"></div>
+<div id="alarm"></div>
+<div id="labels"></div>
+<div id="illusLabel" role="note">Illustrative visual concept: not our simulation results</div>
+
+<!-- Loader -->
+<div id="loader">
+  <div class="ld">
+    <div style="display:flex;align-items:center;gap:12px">
+      <img src="./assets/tameru-icon-BvA0cPPb.png" alt="TAMERU" style="height:36px;width:auto;object-fit:contain" />
+      <div class="wm">TAMERU 蓄める</div>
+    </div>
+    <div class="ts" id="ldTag">Illustrative 3D concept · not our simulation results</div>
+    <div class="ld-bar"><div id="ldBar"></div></div>
+    <div id="ldStep">Loading 3D simulation…</div>
+    <div id="ldErr"></div>
+  </div>
+</div>
+
+<!-- Top bar -->
+<header class="topbar glass">
+  <div class="brand">
+    <a href="../index.html#/" target="_top" class="brand-seal" title="Tameru">
+      <img src="./assets/tameru-icon-BvA0cPPb.png" alt="TAMERU" style="height:32px;width:auto;object-fit:contain" />
+    </a>
+    <div>
+      <div class="wordmark">TAMERU <span>蓄める</span></div>
+      <div class="tagline" id="topTag">Illustrative 3D concept</div>
+    </div>
+  </div>
+  <div class="banner">
+    <div class="bpill" id="banner" data-state="neutral">
+      <span class="dot"></span>
+      <div style="min-width:0">
+        <div class="b-title" id="bTitle">INITIALIZING</div>
+        <div class="b-sub" id="bSub">Building district…</div>
+      </div>
+    </div>
+  </div>
+  <div class="top-right">
+    <div class="seg" id="scenarioSeg" role="tablist" aria-label="Scenario">
+      <button data-s="0" class="on" id="btnScenWithout">Without Tameru</button>
+      <button data-s="1" id="btnScenWith">With Tameru</button>
+    </div>
+    <button class="btn-demo" id="demoBtn" title="Guided presentation (D)">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9-5.5-9-5.5Z"/></svg><span id="demoBtnLbl">DEMO MODE</span>
+    </button>
+  </div>
+</header>
+
+<!-- Left panel -->
+<aside id="left" class="glass">
+  <div class="scroll">
+    <div class="sec">
+      <div class="sec-h" id="hSim">Simulation Controls</div>
+      <div class="row">
+        <button class="btn primary" id="playBtn" title="Start / pause (Space)">
+          <svg id="playIco" viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9-5.5-9-5.5Z"/></svg>
+          <span id="playLbl">Start</span>
+        </button>
+        <button class="btn icon" id="resetBtn" title="Reset simulation (R)" aria-label="Reset">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2.8 8a5.2 5.2 0 1 0 1.6-3.8"/><path d="M2.5 2.2v2.6h2.6"/></svg>
+        </button>
+      </div>
+      <div class="seg" id="speedSeg" aria-label="Simulation speed">
+        <button data-v="1">1×</button><button data-v="2">2×</button><button data-v="5">5×</button><button data-v="10">10×</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h" id="hEngine">Tameru Engine (蓄積制御)</div>
+      <div class="sw-row" id="swRow">
+        <div>
+          <div class="sw-title" id="swTitle">Smart scheduling</div>
+          <div class="sw-sub" id="swSub">Off — pumps follow farm schedules</div>
+        </div>
+        <button class="switch" id="tameruSwitch" role="switch" aria-checked="false" aria-label="Toggle Tameru (T)"><span></span></button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h" id="hStress">Stress Events (過負荷・熱波)</div>
+      <button class="btn ev" id="peakBtn">
+        <svg viewBox="0 0 16 16" fill="currentColor" style="color:var(--amber)"><path d="M9.2 1 3 9.2h4.2L6.6 15 13 6.6H8.8L9.2 1Z"/></svg>
+        <span class="ev-t"><span id="surgeLbl">Trigger peak demand surge</span><small id="surgeSub">Unplanned +270 kW surge · 2 h</small></span>
+        <span class="ev-state" id="peakState">READY</span>
+      </button>
+      <button class="btn ev" id="heatBtn">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="color:#d97706"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6 13 13M3 13l1.4-1.4M11.6 4.4 13 3" stroke-linecap="round"/></svg>
+        <span class="ev-t"><span id="heatLbl">Simulated Mediterranean heatwave</span><small id="heatSub">+40% crop water need · −6% line rating</small></span>
+        <span class="ev-state" id="heatState">OFF</span>
+      </button>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><span id="hForecast">Forecast AI Module</span> <span class="pill" id="fcConf">CONF 94%</span></div>
+      <canvas id="fcCanvas"></canvas>
+      <dl class="kv">
+        <dt id="lblRisk">Overload risk</dt><dd id="fcRisk">—</dd>
+        <dt id="lblPeak">Predicted peak</dt><dd id="fcPeak">—</dd>
+        <dt id="lblWin">Managed window</dt><dd id="fcWin">—</dd>
+        <dt id="lblNext">Next peak in</dt><dd id="fcNext">—</dd>
+      </dl>
+      <div class="strategy" id="fcStrategy" data-p="off"><b>INACTIVE</b>Forecast available, scheduling disabled.</div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h" id="hLegend">Farm Status Indicators</div>
+      <div class="legend">
+        <span><i style="background:var(--cyan);box-shadow:0 0 6px var(--cyan)"></i><span id="lgPump">Pumping</span></span>
+        <span><i style="background:var(--green);box-shadow:0 0 6px var(--green)"></i><span id="lgStored">On stored water</span></span>
+        <span><i style="background:var(--amber);box-shadow:0 0 6px var(--amber)"></i><span id="lgResched">Rescheduled</span></span>
+        <span><i style="background:#ff7a2a;box-shadow:0 0 6px #ff7a2a"></i><span id="lgReserve">Reserve top-up</span></span>
+        <span><i style="background:var(--red);box-shadow:0 0 6px var(--red)"></i><span id="lgCut">Power cut / dry</span></span>
+        <span><i style="background:#848f9d"></i><span id="lgIdle">Idle</span></span>
+      </div>
+    </div>
+
+    <details class="assump">
+      <summary id="smAssump">Simulated Assumptions</summary>
+      <ul>
+        <li>200 farms in 4 sectors (A–D)</li>
+        <li>Pumps 4–6 kW (avg ≈ 5 kW)</li>
+        <li>Feeder capacity 1,000 kW (illustrative)</li>
+        <li>Tariff peak window (illustrative)</li>
+        <li>Tanks 35–90 m³, gravity-fed irrigation</li>
+        <li>Crop demand 7–14 m³/h per farm</li>
+        <li>Minimum reserve kept by Tameru: 15%</li>
+        <li>Rotating load shedding, 60-min slots</li>
+      </ul>
+      <p>All values are deterministic illustrative assumptions based on Mediterranean-Japanese agrivoltaic modeling.</p>
+    </details>
+  </div>
+</aside>
+
+<!-- Right panel -->
+<aside id="right" class="glass">
+  <div class="scroll">
+    <div class="sec illus-note" id="illusNote"><b>An illustration, not a result.</b> This animation runs its own simplified district to show the idea. Its loads, times and totals are hidden on purpose: our simulated results, with their basis and limits, are on the Results page of the site.</div>
+    <div class="sec">
+      <div class="sec-h"><span id="hElectricity">Electricity</span> <span class="pill" id="gridPill">NOMINAL</span></div>
+      <div class="big-row">
+        <div class="big" id="mDemand">0.00</div>
+        <div class="unit"><span id="uDemand">MW demand</span><br><span id="mCap">of <b>1.00 MW</b> capacity</span></div>
+      </div>
+      <div class="ubar" title="0–130% of grid capacity"><div class="ubar-fill" id="uFill"></div><i style="left:65.38%"></i><i class="crit" style="left:76.92%"></i></div>
+      <div class="ubar-lbl"><span id="uUtilLbl">Grid utilization <b id="mUtil">0%</b></span><span>85% · <span style="color:var(--chachia)">100%</span></span></div>
+      <div class="tiles">
+        <div class="tile"><div class="tl-l" id="tlPumps">Active pumps</div><div class="tl-v"><span id="mPumps">0</span><small>/ 200</small></div></div>
+        <div class="tile" id="tResched"><div class="tl-l" id="tlResched">Pumps rescheduled</div><div class="tl-v" id="mResched">0</div></div>
+        <div class="tile" id="tRed"><div class="tl-l" id="tlRed">Peak reduction</div><div class="tl-v" id="mRed">—</div></div>
+        <div class="tile" id="tShed"><div class="tl-l" id="tlShed">Sectors shed</div><div class="tl-v"><span id="mShed">0</span><small>/ 4</small></div></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h" id="hWater">Water Management</div>
+      <div class="tiles">
+        <div class="tile"><div class="tl-l" id="tlStored">Total stored</div><div class="tl-v"><span id="wStored">0</span><small>m³</small></div></div>
+        <div class="tile"><div class="tl-l" id="tlFill">Avg tank fill</div><div class="tl-v"><span id="wFill">0</span><small>%</small></div></div>
+        <div class="tile good"><div class="tl-l" id="tlIrr">Farms irrigating</div><div class="tl-v" id="wIrr">0</div></div>
+        <div class="tile" id="tShort"><div class="tl-l" id="tlShort">Water shortages</div><div class="tl-v" id="wShort">0</div></div>
+      </div>
+      <div class="chart-box"><canvas id="waterChart"></canvas></div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><span id="hCompare">Scenario Comparison</span> <span class="pill" id="pillToday">TODAY</span></div>
+      <div class="cmp">
+        <div class="h"></div><div class="h a" id="hWithout">Without</div><div class="h b" id="hWith">With</div>
+        <div class="l" id="cRowPeak">Peak demand</div><div class="v" id="cPeakA">—</div><div class="v" id="cPeakB">—</div>
+        <div class="l" id="cRowShed">Load shedding</div><div class="v" id="cShedA">—</div><div class="v" id="cShedB">—</div>
+        <div class="l" id="cRowInt">Farms interrupted</div><div class="v" id="cIntA">—</div><div class="v" id="cIntB">—</div>
+        <div class="l" id="cRowDry">Farm-hours dry</div><div class="v" id="cDryA">—</div><div class="v" id="cDryB">—</div>
+        <div class="l" id="cRowKwh">Pump kWh in peak</div><div class="v" id="cPkA">—</div><div class="v" id="cPkB">—</div>
+      </div>
+      <div class="note" id="cmpNote">Both scenarios run in parallel on identical farms, schedules and weather.</div>
+    </div>
+  </div>
+</aside>
+
+<!-- Bottom panel -->
+<section id="bottom" class="glass">
+  <div class="clock-col">
+    <div>
+      <div class="clock" id="clock">06:00</div>
+      <div class="day" id="dayLbl">Day 1 · simulated</div>
+      <div class="phase" id="phase">OFF-PEAK</div>
+    </div>
+    <div class="mini-legend">
+      <span><i style="background:var(--chachia)"></i><span id="mlWithout">Without Tameru</span></span>
+      <span><i style="background:#16a34a"></i><span id="mlWith">With Tameru</span></span>
+      <span><i class="dash"></i><span id="mlCap">Grid capacity</span></span>
+    </div>
+  </div>
+  <div class="chart-col">
+    <div class="chart-head"><span id="chTitle">Electricity demand · 24 h</span> <span class="lbl" id="chSub">requested load, kW</span></div>
+    <div id="demandWrap"><canvas id="demandChart"></canvas></div>
+    <div class="tl">
+      <div class="tl-track"></div>
+      <div class="tl-prog" id="tlProg"></div>
+      <div class="tl-band" id="tlBand"></div>
+      <input type="range" id="timeline" min="0" max="1439" step="1" value="360" aria-label="Simulated time of day" />
+    </div>
+    <div class="tl-ticks"><span>00</span><span>03</span><span>06</span><span>09</span><span>12</span><span>15</span><span>18</span><span>21</span><span>24</span></div>
+  </div>
+</section>
+
+<!-- Farm inspector -->
+<div id="inspector" class="glass hidden" aria-live="polite">
+  <div class="ins-h">
+    <div><div class="ins-title" id="iTitle">Farm 001</div><div class="ins-sub" id="iSub">Sector A</div></div>
+    <button class="ins-close" id="iClose" aria-label="Close">✕</button>
+  </div>
+  <div class="ins-status" id="iStatus"><i></i><span>—</span></div>
+  <div class="ins-row"><span id="lblInsTank">Tank level</span><span id="iTank">—</span></div>
+  <div class="ins-bar"><div id="iTankBar"></div><i id="iTarget"></i></div>
+  <div class="ins-row"><span id="lblInsMoist">Field moisture</span><span id="iMoist">—</span></div>
+  <div class="ins-bar"><div id="iMoistBar" style="background:#556B2F"></div></div>
+  <div class="ins-row"><span id="lblInsPump">Pump</span><span id="iPump">—</span></div>
+  <div class="ins-row"><span id="lblInsIrr">Irrigation</span><span id="iIrr">—</span></div>
+  <div class="ins-row"><span id="lblInsTgt">Tameru fill target</span><span id="iTgt">—</span></div>
+  <div class="ins-sched" id="iSched"></div>
+  <button class="btn ins-back" id="iBack">Back to overview</button>
+</div>
+
+<!-- Demo caption -->
+<div id="caption" class="glass hidden">
+  <div class="cap-top"><span class="cap-tag" id="capTag">DEMO · 1 / 8</span><button class="cap-exit" id="capExit">Exit demo (Esc)</button></div>
+  <div id="capText"></div>
+  <div class="cap-dots" id="capDots"></div>
+</div>
+
+<!-- Comparison modal -->
+<div id="compare" class="hidden">
+  <div class="cmp-card glass">
+    <h2 id="cmpModalTitle">Same district, same day — two outcomes</h2>
+    <div class="sub" id="cmpSub">Results up to 19:50, identical farms, schedules and weather.</div>
+    <div class="cmp-hero">
+      <div class="hero"><div class="hv" id="hRed">—</div><div class="hl" id="cmpRedLbl">Peak demand reduction</div></div>
+      <div class="hero"><div class="hv" id="hShed">—</div><div class="hl" id="cmpShedLbl">Load-shedding avoided</div></div>
+      <div class="hero"><div class="hv" id="hFarms">—</div><div class="hl" id="cmpFarmsLbl">Farms kept irrigating</div></div>
+    </div>
+    <div class="cmp-grid" id="cmpGrid"></div>
+    <div class="cmp-foot" id="cmpFootNote">Illustrative visual concept: not our simulation results. Our simulated results are on the Results page of the site.</div>
+    <div class="cmp-actions">
+      <button class="btn" id="cmpReplay">Replay demo</button>
+      <button class="btn primary" style="flex:0 0 auto;padding:9px 18px" id="cmpClose">Explore freely</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="glass"></div>
+<div id="fade"></div>
+
+<script>
+window.__tameruBooted = false;
+setTimeout(function(){
+  if (!window.__tameruBooted) {
+    var e = document.getElementById('ldErr');
+    e.style.display = 'block';
+    e.innerHTML = '<b>The 3D view could not start.</b><br>Reload the page. If it persists, this browser may block WebGL.';
+    document.getElementById('ldStep').textContent = 'Still starting…';
+  }
+}, 15000);
+</script>
+
+</body>
+</html>

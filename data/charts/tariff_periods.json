@@ -1,0 +1,68 @@
+{
+ "title": "Bills: pumping moves out of the 19-23 h peak rate (26.5 -> 7.9 %) into the night (21.9 -> 65.3 %)",
+ "caption": "Share of the equipped farms' pumping kWh by STEG BT tariff period (real prices).",
+ "simulated": true,
+ "type": "bar",
+ "data": {
+  "labels": [
+   "Without Tameru",
+   "Tameru, 50 % of farms"
+  ],
+  "datasets": [
+   {
+    "label": "Night 23-08 h, 116 mill/kWh",
+    "data": [
+     21.9,
+     65.3
+    ],
+    "borderColor": "#1baf7a",
+    "backgroundColor": "#1baf7a"
+   },
+   {
+    "label": "Day 08-19 h, 140 mill/kWh",
+    "data": [
+     51.6,
+     26.8
+    ],
+    "borderColor": "#eda100",
+    "backgroundColor": "#eda100"
+   },
+   {
+    "label": "Peak 19-23 h, 391 mill/kWh",
+    "data": [
+     26.5,
+     7.9
+    ],
+    "borderColor": "#eb6834",
+    "backgroundColor": "#eb6834"
+   }
+  ]
+ },
+ "options": {
+  "responsive": true,
+  "interaction": {
+   "mode": "index",
+   "intersect": false
+  },
+  "plugins": {
+   "title": {
+    "display": true,
+    "text": "Bills: pumping moves out of the 19-23 h peak rate (26.5 -> 7.9 %) into the night (21.9 -> 65.3 %)"
+   },
+   "subtitle": {
+    "display": true,
+    "text": "Simulated: synthetic 200-farm district on real Open-Meteo weather. Not a field measurement."
+   }
+  },
+  "scales": {
+   "x": {
+    "stacked": true,
+    "max": 100
+   },
+   "y": {
+    "stacked": true
+   }
+  },
+  "indexAxis": "y"
+ }
+}
