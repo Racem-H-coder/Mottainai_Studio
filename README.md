@@ -356,20 +356,11 @@ Chart.js; the twin uses three.js and Chart.js.
 
 ## 12. Team: Mottainai Studio
 
-- **Rayan Rejeb**: AI (forecasting, optimization, simulation)
-- **[name]** (hardware)
-- **[name]** (website & dashboard)
-- **[name]** ([role])
+- **Rayan Rejeb**
+- **Racem Hannachi** 
+- **Yassine Hadded** 
+- **Ines Hassene** 
 
-School / programme: [school] · Contact: [email]
+School / programme: Esprit 
 
-## 13. Résumé en français
 
-Tameru déplace le pompage d'irrigation, pas l'irrigation. Les fermes du Cap Bon ont déjà des bassins (jabia) :
-Tameru remplit le bassin quand le réseau est disponible et arrête la pompe quand il est saturé, et le champ est
-irrigué depuis le bassin à l'heure habituelle. Un modèle LightGBM prévoit la charge du départ la veille à minuit,
-un programme linéaire (HiGHS) planifie chaque pompe par demi-heure et se recalcule toutes les heures, et un boîtier
-ESP32 garde ses règles de sécurité en local. Dans notre simulation d'un départ du Cap Bon (200 fermes, météo
-réelle), sur les 22 jours de délestage STEG de l'été 2026, la coupure passe de 20,25 h à 7,25 h avec 70 % des
-fermes équipées, sans aucun préavis de la STEG, et aucune culture ne manque d'eau (95 m³ → 0). Tous les résultats
-sont simulés ; le calendrier des délestages et les tarifs STEG sont réels et sourcés.
